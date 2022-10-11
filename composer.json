@@ -1,0 +1,137 @@
+{
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The Laravel Framework.",
+    "keywords": ["framework", "laravel"],
+    "license": "MIT",
+    "require": {
+        "php": "^7.3|^8.0",
+        "adrianorosa/laravel-geolocation": "^1.1",
+        "amrshawky/laravel-currency": "^5.0",
+        "fruitcake/laravel-cors": "^2.0",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "intervention/image": "^2.7",
+        "izal/knet-payment-php": "^3.1",
+        "laravel/framework": "^8.75",
+        "laravel/nexmo-notification-channel": "^2.5",
+        "laravel/passport": "^10.3",
+        "laravel/sanctum": "^2.14",
+        "laravel/tinker": "^2.5",
+        "laravel/ui": "^3.4",
+        "makidizajnerica/laravel-geolocation": "^1.1",
+        "nwidart/laravel-modules": "^8.3",
+        "pusher/pusher-php-server": "^7.0",
+        "qirolab/laravel-themer": "^1.7",
+        "santigarcor/laratrust": "^7.0",
+        "stevebauman/location": "^6.5",
+        "torann/geoip": "^3.0"
+    },
+    "require-dev": {
+        "facade/ignition": "^2.5",
+        "fakerphp/faker": "^1.9.1",
+        "laravel/sail": "^1.0.1",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^5.10",
+        "phpunit/phpunit": "^9.5.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Modules\\":"Modules/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/",
+            
+             "Modules\\Auth\\Database\\Migrations\\": "Modules/Auth/Database/Migrations/",
+          "Modules\\Auth\\Database\\Seeders\\": "Modules/Auth/Database/Seeders/",
+          "Modules\\Banner\\Database\\Migrations\\": "Modules/Banner/Database/Migrations/",
+          "Modules\\Banner\\Database\\Seeders\\": "Modules/Banner/Database/Seeders/",
+          "Modules\\BuyingSystemMount\\Database\\Migrations\\": "Modules/BuyingSystemMount/Database/Migrations/",
+          "Modules\\BuyingSystemMount\\Database\\Seeders\\": "Modules/BuyingSystemMount/Database/Seeders/",
+          "Modules\\Cart\\Database\\Migrations\\": "Modules/Cart/Database/Migrations/",
+
+          "Modules\\Category\\Database\\Migrations\\": "Modules/Category/Database/Migrations/",
+          "Modules\\Category\\Database\\Seeders\\": "Modules/Category/Database/Seeders/",
+          "Modules\\Chat\\Database\\Migrations\\": "Modules/Chat/Database/Migrations/",
+          "Modules\\Chat\\Database\\Seeders\\": "Modules/Chat/Database/Seeders/",
+
+        "Modules\\Coupon\\Database\\Migrations\\": "Modules/Coupon/Database/Migrations/",
+          "Modules\\Coupon\\Database\\Seeders\\": "Modules/Coupon/Database/Seeders/",
+          "Modules\\Favorite\\Database\\Migrations\\": "Modules/Favorite/Database/Migrations/",
+          "Modules\\Favorite\\Database\\Seeders\\": "Modules/Favorite/Database/Seeders/",
+          "Modules\\Geocode\\Database\\Migrations\\": "Modules/Geocode/Database/Migrations/",
+          "Modules\\Geocode\\Database\\Seeders\\": "Modules/Geocode/Database/Seeders/",
+          "Modules\\Movement\\Database\\Migrations\\": "Modules/Movement/Database/Migrations/",
+          "Modules\\Movement\\Database\\Seeders\\": "Modules/Movement/Database/Seeders/",
+          "Modules\\Order\\Database\\Migrations\\": "Modules/Order/Database/Migrations/",
+          "Modules\\Order\\Database\\Seeders\\": "Modules/Order/Database/Seeders/",
+
+           "Modules\\Payment\\Database\\Migrations\\": "Modules/Payment/Database/Migrations/",
+          "Modules\\Payment\\Database\\Seeders\\": "Modules/Payment/Database/Seeders/",
+          "Modules\\Product\\Database\\Migrations\\": "Modules/Product/Database/Migrations/",
+          "Modules\\Product\\Database\\Seeders\\": "Modules/Product/Database/Seeders/",
+          "Modules\\ProductAttribute\\Database\\Migrations\\": "Modules/ProductAttribute/Database/Migrations/",
+          "Modules\\ProductAttribute\\Database\\Seeders\\": "Modules/ProductAttribute/Database/Seeders/",
+          "Modules\\PushNotification\\Database\\Migrations\\": "Modules/PushNotification/Database/Migrations/",
+
+          "Modules\\Review\\Database\\Migrations\\": "Modules/Review/Database/Migrations/",
+          "Modules\\Review\\Database\\Seeders\\": "Modules/Review/Database/Seeders/",
+
+         "Modules\\Reward\\Database\\Migrations\\": "Modules/Reward/Database/Migrations/",
+          "Modules\\Reward\\Database\\Seeders\\": "Modules/Reward/Database/Seeders/",
+          "Modules\\Rule\\Database\\Migrations\\": "Modules/Rule/Database/Migrations/",
+          "Modules\\Rule\\Database\\Seeders\\": "Modules/Rule/Database/Seeders/",
+          "Modules\\Search\\Database\\Migrations\\": "Modules/Search/Database/Migrations/",
+          "Modules\\Search\\Database\\Seeders\\": "Modules/Search/Database/Seeders/",
+          "Modules\\Service\\Database\\Migrations\\": "Modules/Service/Database/Migrations/",
+          "Modules\\Service\\Database\\Seeders\\": "Modules/Service/Database/Seeders/",
+          "Modules\\SimilarProduct\\Database\\Migrations\\": "Modules/SimilarProduct/Database/Migrations/",
+          "Modules\\SimilarProduct\\Database\\Seeders\\": "Modules/SimilarProduct/Database/Seeders/",
+
+         "Modules\\StorageDetail\\Database\\Migrations\\": "Modules/StorageDetail/Database/Migrations/",
+          "Modules\\StorageDetail\\Database\\Seeders\\": "Modules/StorageDetail/Database/Seeders/",
+          "Modules\\SystemReview\\Database\\Migrations\\": "Modules/SystemReview/Database/Migrations/",
+          "Modules\\SystemReview\\Database\\Seeders\\": "Modules/SystemReview/Database/Seeders/",
+          "Modules\\UpSell\\Database\\Migrations\\": "Modules/UpSell/Database/Migrations/",
+
+          "Modules\\View\\Database\\Migrations\\": "Modules/View/Database/Migrations/",
+          "Modules\\View\\Database\\Seeders\\": "Modules/View/Database/Seeders/",
+          "Modules\\Wallet\\Database\\Migrations\\": "Modules/Wallet/Database/Migrations/",
+          "Modules\\Wallet\\Database\\Seeders\\": "Modules/Wallet/Database/Seeders/"
+        },
+        "files": [
+            "app/Helper/media.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

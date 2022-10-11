@@ -1,0 +1,13 @@
+{
+    "name": "SimilarProduct",
+    "alias": "similarproduct",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\SimilarProduct\\Providers\\SimilarProductServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

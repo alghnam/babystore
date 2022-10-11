@@ -1,0 +1,13 @@
+{
+    "name": "Reward",
+    "alias": "reward",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Reward\\Providers\\RewardServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

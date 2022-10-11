@@ -1,0 +1,58 @@
+<?php
+
+namespace Modules\Review\Http\Controllers\API\User;
+
+
+use  Modules\Review\Entities\Review;
+
+use App\Repositories\BaseRepository;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Modules\Comment\Http\Requests\DeleteReviewRequest;
+use Modules\Review\Http\Requests\StoreReviewRequest;
+use Modules\Review\Http\Requests\UpdateReviewRequest;
+use Modules\Review\Repositories\ReviewRepository;
+use Modules\Review\Http\Requests\AddReviewRequest;
+
+class ReviewController extends Controller
+{
+        /**
+     * @var BaseRepository
+     */
+    protected $baseRepo;
+    /**
+     * @var ReviewRepository
+     */
+    protected $reviewRepo;
+        /**
+     * @var Review
+     */
+    protected $review;
+   
+
+    /**
+     * ReviewsController constructor.
+     *
+     * @param ReviewRepository $reviews
+     */
+    public function __construct(BaseRepository $baseRepo, Review $review,ReviewRepository $reviewRepo)
+    {
+     //   $this->middleware(['permission:reviews_add'])->only('addReview');
+        $this->baseRepo = $baseRepo;
+        $this->review = $review;
+        $this->reviewRepo = $reviewRepo;
+    }
+
+        public function addReview(AddReviewRequest $request,$productId)
+    {
+       $review= $this->reviewRepo->addReview($request,$this->review,$productId);
+        return response()->json([
+            'status'=>true,
+            'code' => 200,
+            'message' => 'your review on this product has been added successfully',
+            'data'=> $review
+        ]);
+    }
+
+}
