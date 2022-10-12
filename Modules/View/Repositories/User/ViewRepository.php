@@ -7,9 +7,13 @@ use Modules\View\Repositories\User\ViewRepositoryInterface;
 use Carbon\Carbon;
 use Modules\Product\Entities\Product;
 use AmrShawky\LaravelCurrency\Facade\Currency;
-
+use App\Repositories\BaseRepository;
 class ViewRepository extends EloquentRepository implements ViewRepositoryInterface
 {
+        public function __construct(BaseRepository $baseRepo)
+    {
+        $this->baseRepo = $baseRepo;
+    }
 
     public function myViews($model){
               $user=auth()->guard('api')->user();
@@ -17,29 +21,17 @@ class ViewRepository extends EloquentRepository implements ViewRepositoryInterfa
            if(count($views)==0){
                 return 'غير موجود';
            }
-                       $location = geoip(request()->ip());
-            $currencyCountry=$location->currency;
-                $currencySystem='KWD';
-            if($location->currency!==$currencySystem){
+            
+            if($location->currency!==config('constants.currency_system')){
                 foreach($views as $view){
-                //convert this price that in dinar into currency user
-                   
-                $view->currency_country=$location->currency;
-                    $convertingOriginalPriceAttr=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($view->product->original_price)
-                        ->get();
-                
-                    $view->product->original_price=round($convertingOriginalPriceAttr,2);
+                    //convert this price that in dinar into currency user
+                    $view->currency_country=$this->baseRepo->countryCurrency;
                     
-                    $convertingPriceEndsAttr=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($view->product->price_discount_ends)
-                        ->get();
-                
-                    $view->product->price_discount_ends=round($convertingPriceEndsAttr,2);
+                    $convertingOriginalPriceAttr =  $this->baseRepo->priceCalculation($view->product->original_price);
+                    $view->product->original_price=$convertingOriginalPriceAttr;
+                    
+                    $convertingPriceEndsAttr =  $this->priceCalculation($view->product->price_discount_ends);
+                    $view->product->price_discount_ends=$convertingPriceEndsAttr;
                 
             }
             }
