@@ -21,20 +21,18 @@ class CreateProductArrayAttributesTable extends Migration
                 ->references('id')
                 ->on('products')
                 ->onDelete('cascade'); 
-                            $table->unsignedBigInteger('product_attribute_id');
-            $table->foreign('product_attribute_id')
-                ->references('id')
-                ->on('attributes')
-                ->onDelete('cascade'); 
-            $table->integer('attributes');
-                        $table->integer('quantity')->nullable();
-			$table->integer('counter_discount')->nullable();
-			$table->float('original_price')->nullable();
-			$table->float('price_after_discount')->nullable();
-			$table->float('price_discount_ends')->nullable();
-			$table->string('sku');
-			$table->string('barcode');
-			$table->float('weight');
+            //  $table->unsignedBigInteger('product_attribute_id');
+            // $table->foreign('product_attribute_id')
+            //     ->references('id')
+            //     ->on('attributes')
+            //     ->onDelete('cascade'); 
+            $table->longText('attributes');
+                        $table->integer('quantity')->default(0);
+			$table->float('original_price')->default(0);
+			$table->float('price_discount_ends')->default(0);
+			$table->string('sku')->nullable();
+			$table->string('barcode')->nullable();
+			$table->float('weight')->nullable();
             $table->timestamps();
         });
     }

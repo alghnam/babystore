@@ -19,16 +19,7 @@ class PushNotification extends Model
         'body'
     ];    
     
-     public function getStatusAttribute($value){
-        if($value==0){
-            return 'InActive';
-        }elseif ($value==1) {
-            return 'Active';
-        }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
-    } 
+
     
     
         public function users(){

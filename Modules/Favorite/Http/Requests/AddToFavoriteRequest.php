@@ -31,9 +31,7 @@ class AddToFavoriteRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        //store Favorite for only superadministrator , admins 
-        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
+        $authorizeRes= $this->baseRepo->authorizeUser();
         if($authorizeRes==true){
                 return true;
             
@@ -74,6 +72,6 @@ class AddToFavoriteRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Favorite'));
+        throw new AuthorizationException(__('Only user can make this action'));
     }
 }

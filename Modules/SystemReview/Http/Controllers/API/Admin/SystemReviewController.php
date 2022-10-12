@@ -3,7 +3,6 @@
 namespace Modules\SystemReview\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\SystemReview\Entities\SystemReview;
@@ -54,25 +53,27 @@ class SystemReviewController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $systemReviews=$this->systemReviewRepo->all($this->systemReview);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReviews has been getten successfully',
-        'data'=> $systemReviews
-    ]);
+        try{
+            $systemReviews=$this->systemReviewRepo->all($this->systemReview);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviews],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllPaginates(Request $request){
-    
-    $systemReviews=$this->systemReviewRepo->getAllPaginates($this->systemReview,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReviews has been getten successfully(pagination)',
-        'data'=> $systemReviews
-    ]);
+        try{
+            $systemReviews=$this->systemReviewRepo->getAllPaginates($this->systemReview,$request);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviews],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -80,14 +81,15 @@ class SystemReviewController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-    $systemReviews=$this->systemReviewRepo->trash($this->systemReview,$request);
+        try{
+            $systemReviews=$this->systemReviewRepo->trash($this->systemReview,$request);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviews],200);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReviews has been getten successfully (in trash)',
-        'data'=> $systemReviews
-    ]);
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -99,13 +101,15 @@ class SystemReviewController extends Controller
     */
     public function store(StoreSystemReviewRequest $request)
     {
-    $systemReview=$this->systemReviewRepo->store($request,$this->systemReview);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReview has been stored successfully',
-        'data'=> $systemReview
-    ]);
+        try{
+            $systemReview=$this->systemReviewRepo->store($request,$this->systemReview);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReview],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
 
@@ -117,19 +121,20 @@ class SystemReviewController extends Controller
     */
     public function show($id)
     {
+        try{
     $systemReview=$this->systemReviewRepo->find($id,$this->systemReview);
     
         if(is_string($systemReview)){
             return response()->json(['status'=>false,'message'=>$systemReview],404);
         }
    
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'SystemReview has been getten successfully',
-            'data'=> $systemReview
-        ]);
-    
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReview],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -143,65 +148,53 @@ class SystemReviewController extends Controller
     */
     public function update(UpdateSystemReviewRequest $request,$id)
     {
+        try{
     $systemReview= $this->systemReviewRepo->update($request,$id,$this->systemReview);
     if(is_string($systemReview)){
             return response()->json(['status'=>false,'message'=>$systemReview],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReview has been updated successfully',
-        'data'=> $systemReview
-    ]);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReview],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
 
-    public function inventory(){
-    $systemReviewsInInventory= $this->systemReviewRepo->systemReviewsInInventory($this->systemReview);
-    if(empty($systemReviewsInInventory)){
-    if(is_string($systemReview)){
-            return response()->json(['status'=>false,'message'=>$systemReview],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReviewsInInventory getting successfully',
-        'data'=> $systemReviewsInInventory
-    ]);
-     
-    }
-    }
 
     //methods for restoring
     public function restore($id){
+        try{
+            $systemReview =  $this->systemReviewRepo->restore($id,$this->systemReview);
+             if(is_string($systemReview)){
+                    return response()->json(['status'=>false,'message'=>$systemReview],404);
+                }
     
-    $systemReview =  $this->systemReviewRepo->restore($id,$this->systemReview);
-     if(is_string($systemReview)){
-            return response()->json(['status'=>false,'message'=>$systemReview],404);
-        }
-    
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'SystemReview has been restored',
-                'data'=> $systemReview
-            ]);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReview],200);
+
         
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
     public function restoreAll(){
     $systemReviews =  $this->systemReviewRepo->restoreAll($this->systemReview);
-     if(is_string($systemReviews)){
-            return response()->json(['status'=>false,'message'=>$systemReviews],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $systemReviews
-        ]);
-    
+    try{
+         if(is_string($systemReviews)){
+                return response()->json(['status'=>false,'message'=>$systemReviews],404);
+            }
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviews],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
 
@@ -213,34 +206,36 @@ class SystemReviewController extends Controller
     */
     public function destroy(DeleteSystemReviewRequest $request,$id)
     {
-    $systemReview= $this->systemReviewRepo->destroy($id,$this->systemReview);
-     if(is_string($systemReview)){
-            return response()->json(['status'=>false,'message'=>$systemReview],404);
-        }
+        try{
+            $systemReview= $this->systemReviewRepo->destroy($id,$this->systemReview);
+             if(is_string($systemReview)){
+                    return response()->json(['status'=>false,'message'=>$systemReview],404);
+                }
   
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $systemReview
-    ]); 
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReview],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     public function forceDelete(DeleteSystemReviewRequest $request,$id)
     {
-    //to make force destroy for a SystemReview must be this SystemReview  not found in SystemReviews table  , must be found in trash SystemReviews
-    $systemReview=$this->systemReviewRepo->forceDelete($id,$this->systemReview);
-     if(is_string($systemReview)){
-            return response()->json(['status'=>false,'message'=>$systemReview],404);
-        }
+        try{
+            //to make force destroy for a SystemReview must be this SystemReview  not found in SystemReviews table  , must be found in trash SystemReviews
+            $systemReview=$this->systemReviewRepo->forceDelete($id,$this->systemReview);
+             if(is_string($systemReview)){
+                    return response()->json(['status'=>false,'message'=>$systemReview],404);
+                }
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReview],200);
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
-    
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
     

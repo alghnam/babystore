@@ -3,7 +3,6 @@
 namespace Modules\Wallet\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Wallet\Entities\Wallet;
@@ -54,25 +53,28 @@ class WalletController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $wallets=$this->walletRepo->all($this->wallet);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Wallets has been getten successfully',
-        'data'=> $wallets
-    ]);
+        try{
+            $wallets=$this->walletRepo->all($this->wallet);
+          
+         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallets],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllPaginates(Request $request){
-    
-    $wallets=$this->walletRepo->getAllPaginates($this->wallet,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Wallets has been getten successfully(pagination)',
-        'data'=> $wallets
-    ]);
+        try{
+            $wallets=$this->walletRepo->getAllPaginates($this->wallet,$request);
+         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallets],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -80,14 +82,19 @@ class WalletController extends Controller
 
     // methods for trash
     public function trash(Request $request){
+        try{
     $wallets=$this->walletRepo->trash($this->wallet,$request);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Wallets has been getten successfully (in trash)',
-        'data'=> $wallets
-    ]);
+        if(is_string($wallets)){
+            return response()->json(['status'=>false,'message'=>$wallets],404);
+        }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallets],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -99,13 +106,15 @@ class WalletController extends Controller
     */
     public function store(StoreWalletRequest $request)
     {
-    $wallet=$this->walletRepo->store($request,$this->wallet);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Wallet has been stored successfully',
-        'data'=> $wallet
-    ]);
+        try{
+        $wallet=$this->walletRepo->store($request,$this->wallet);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
 
@@ -117,18 +126,20 @@ class WalletController extends Controller
     */
     public function show($id)
     {
+        try{
     $wallet=$this->walletRepo->find($id,$this->wallet);
     
         if(is_string($wallet)){
             return response()->json(['status'=>false,'message'=>$wallet],404);
         }
    
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'Wallet has been getten successfully',
-            'data'=> $wallet
-        ]);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
 
@@ -143,64 +154,53 @@ class WalletController extends Controller
     */
     public function update(UpdateWalletRequest $request,$id)
     {
+        try{
     $wallet= $this->walletRepo->update($request,$id,$this->wallet);
     if(is_string($wallet)){
             return response()->json(['status'=>false,'message'=>$wallet],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Wallet has been updated successfully',
-        'data'=> $wallet
-    ]);
-    
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
 
-    public function inventory(){
-    $walletsInInventory= $this->walletRepo->walletsInInventory($this->wallet);
-    if(empty($walletsInInventory)){
-    if(is_string($wallet)){
-            return response()->json(['status'=>false,'message'=>$wallet],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'WalletsInInventory getting successfully',
-        'data'=> $walletsInInventory
-    ]);
-     
-    }
-    }
+
 
     //methods for restoring
     public function restore($id){
-    
+    try{
     $wallet =  $this->walletRepo->restore($id,$this->wallet);
      if(is_string($wallet)){
             return response()->json(['status'=>false,'message'=>$wallet],404);
         }
-    
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'Wallet has been restored',
-                'data'=> $wallet
-            ]);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
         
 
     }
     public function restoreAll(){
+        try{
     $wallets =  $this->walletRepo->restoreAll($this->wallet);
      if(is_string($wallets)){
             return response()->json(['status'=>false,'message'=>$wallets],404);
         }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $wallets
-        ]);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallets],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
@@ -213,33 +213,35 @@ class WalletController extends Controller
     */
     public function destroy(DeleteWalletRequest $request,$id)
     {
+        try{
     $wallet= $this->walletRepo->destroy($id,$this->wallet);
      if(is_string($wallet)){
             return response()->json(['status'=>false,'message'=>$wallet],404);
         }
-  
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $wallet
-    ]); 
-    
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     public function forceDelete(DeleteWalletRequest $request,$id)
     {
-    //to make force destroy for a Wallet must be this Wallet  not found in Wallets table  , must be found in trash Wallets
-    $wallet=$this->walletRepo->forceDelete($id,$this->wallet);
-     if(is_string($wallet)){
-            return response()->json(['status'=>false,'message'=>$wallet],404);
-        }
+        try{
+            //to make force destroy for a Wallet must be this Wallet  not found in Wallets table  , must be found in trash Wallets
+            $wallet=$this->walletRepo->forceDelete($id,$this->wallet);
+             if(is_string($wallet)){
+                    return response()->json(['status'=>false,'message'=>$wallet],404);
+                }
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     

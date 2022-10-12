@@ -50,22 +50,18 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'name' => ['required','max:255',Rule::unique('categories')],
-            'description' => ['string'],
-                        'quantity' => ['numeric'],
-                        'counter_discount' => ['numeric'],
-                        'original_price' => ['numeric'],
-                        'price_after_discount' => ['numeric'],
-                        'price_discount_ends' => ['numeric'],
-
+            'description' => ['nullable'],
+            'quantity' => ['numeric'],
+            'original_price' => ['required','numeric'],
+            'price_discount_ends' => ['numeric'],
             'category_id' => ['required','numeric','exists:categories,id,parent_id,!null'],
-            'product_images'=>['nullable', 'array'],
-           // 'product_images.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf'],
+                        'sub_category_id' => ['nullable','numeric','exists:sub_categoriess,id'],
+
+            // 'product_images'=>['sometimes', 'array','mimes:jpeg,bmp,png,gif,svg'],
+            'product_images'=>['sometimes', 'array'],
+
+            'is_offers' => ['required', 'in:1,0'],
             'status' => ['required', 'in:1,0'],
-            'featured' => ['sometimes', 'in:1,0'],
-            'the_best' => ['sometimes', 'in:1,0'],
-            'the_more_sale' => ['sometimes', 'in:1,0'],
-            'popular' => ['sometimes', 'in:1,0'],
-            'modern' => ['sometimes', 'in:1,0'],
         ];
     }
 

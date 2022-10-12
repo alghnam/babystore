@@ -52,32 +52,22 @@ class UpdateProductRequest extends FormRequest
     public function rules()
     {
         
-        // $product= Product::where('id',$this->id)->first();
-        // if($product!==null){
             return [
                 'name' => ['required','max:255',Rule::unique('products')->ignore($this->id)],
-                'description' => ['string'],
+                'description' => ['nullable'],
                 'category_id' => ['required','numeric','exists:categories,id,parent_id,!null'],
-                'product_images'=>['nullable', 'array'],
-                //  'product_images.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf'],
+                 'sub_category_id' => ['nullable','numeric','exists:sub_categoriess,id'],
+
+                // 'product_images'=>['sometimes', 'array','mimes:jpeg,jpg,png,gif,svg'],
+                            'product_images'=>['sometimes', 'array'],
+
                 'quantity'=>['required','numeric'],
-                'counter_discount'=>['numeric'],
-                'original_price'=>['numeric'],
-                'price_after_discount'=>['numeric'],
+            'original_price' => ['required','numeric'],
                 'price_discount_ends'=>['required','numeric'],
-                'status' => ['required', 'in:1,0'],
-                'featured' => ['sometimes', 'in:1,0'],
-                'the_best' => ['sometimes', 'in:1,0'],
-                'the_more_sale' => ['sometimes', 'in:1,0'],
-                'popular' => ['sometimes', 'in:1,0'],
-                'modern' => ['sometimes', 'in:1,0'],
+                            'is_offers' => ['required', 'in:1,0'],
+
+                'status' => ['required', 'in:1,0']
             ];
-
-        // }else{
-        //     return [
-
-        //     ];
-        // }
     }
 
     /**

@@ -50,7 +50,7 @@ class UpdateArrayProductAttributesRequest extends FormRequest
         
             return [
 
-                                            'attributes'=>['max:100000']
+                  'attributes'=>['required']
     
             ];
 

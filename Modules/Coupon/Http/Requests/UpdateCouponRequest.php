@@ -55,16 +55,16 @@ class UpdateCouponRequest extends FormRequest
 
             return [
                 'name' => ['max:225',Rule::unique('coupons')->ignore($this->id)],
-                'order_id' => ['required','numeric','exists:orders,id'],
-                'value' => ['required','max:225'],
-                'status' => ['sometimes', 'in:1,0'],
-                // 'is_used' => ['sometimes', 'in:1,0'],
-                                'end_date'=>['required','date']
+                'value' => ['required','max:225','numeric'],
+                 'end_date'=>['required','date'],
+                                 'is_used' => ['in:1,0'],
+
+                'status' => ['required', 'in:1,0']
 
             ];
 
 
-    }'status' => ['required'
+    }
 
     /**
      * @return array

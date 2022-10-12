@@ -6,7 +6,9 @@ use Modules\Order\Http\Controllers\API\User\OrderController as OrderControllerUs
 Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(function(){
     Route::prefix('orders')->group(function(){
         Route::get('/', [OrderControllerAdmin::class,'index'])->name('api.admin.orders.index');    
+        Route::get('/count', [OrderControllerAdmin::class,'countData'])->name('api.admin.orders.count-data');    
         Route::get('/get-all-paginates', [OrderControllerAdmin::class,'getAllPaginates'])->name('api.admin.orders.get-all-orders-paginate');
+        Route::get('/latest', [OrderControllerAdmin::class,'getLatestOrders'])->name('api.admin.orders.get-latest-orders');
             
         Route::get('trash', [OrderControllerAdmin::class,'trash'])->name('api.admin.orders.trash');
         Route::get('restore-all', [OrderControllerAdmin::class,'restoreAll'])->name('api.admin.orders.restore-all');
@@ -21,6 +23,7 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
 });
 
 /**************************Routes user***************************** */
+Route::post('payment-process', [OrderControllerUser::class,'paymentProcess'])->name('api.orders.payment-processs');
     Route::prefix('orders')->middleware(['auth:api'])->namespace('API')->group(function(){
       Route::get('show-data-user-address', [OrderControllerUser::class,'showDataUserAddress'])->name('api.admin.orders.show-data-user-address');
       Route::get('get-all-addresses-user', [OrderControllerUser::class,'getAllAddressesUser'])->name('api.admin.orders.get-all-addresses-user');
@@ -48,8 +51,14 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
       Route::post('update-address/{addressId}', [OrderControllerUser::class,'updateAddress'])->name('api.admin.orders.update-address');
       Route::get('delete-address/{addressId}', [OrderControllerUser::class,'deleteAddress'])->name('api.admin.orders.delete-address');
 
+     // Route::get('get-checkout-id/{price}', [OrderControllerUser::class,'getCheckoutId'])->name('api.admin.orders.get-checkout-id');
+      Route::get('result-payment/true', [OrderControllerUser::class,'resultPayment'])->name('api.admin.orders.result-payment');
+
       Route::post('finishing-order', [OrderControllerUser::class,'finishingOrder'])->name('api.admin.orders.finishing-order');
+    
       Route::post('re-finishing-order/{orderId}', [OrderControllerUser::class,'reFinishingOrder'])->name('api.admin.orders.re-finishing-order');
+      Route::post('cancel-order/{orderId}', [OrderControllerUser::class,'cancelOrder'])->name('api.admin.orders.cancel-order');
+
       Route::post('get-payment-status/{id}', [OrderControllerUser::class,'getPaymentStatus'])->name('api.admin.orders.get-payment-status');
     //   Route::get('get-coupon-order/{orderId}', [OrderControllerUser::class,'getCouponOrder'])->name('api.admin.orders.get-coupon-order');
       

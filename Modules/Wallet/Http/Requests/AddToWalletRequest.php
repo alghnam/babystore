@@ -31,9 +31,8 @@ class AddToWalletRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        //store Wallet for only superadministrator , admins 
-        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
+        //store Wallet for only user
+        $authorizeRes= $this->baseRepo->authorizeUser();
         if($authorizeRes==true){
                 return true;
             
@@ -51,8 +50,7 @@ class AddToWalletRequest extends FormRequest
     {
         return [
             'amount' => ['numeric','required'],
-            // 'name' => ['max:225'],
-                        'payment_id' => ['numeric','exists:payments,id'],
+            'payment_id' => ['numeric','required','exists:payments,id','in:3,4'],
         ];
     }
 
@@ -62,6 +60,10 @@ class AddToWalletRequest extends FormRequest
     public function messages()
     {
         return [
+            'amount.required'=>'يجب عليك وضع المبلغ ',
+            'amount.numeric'=>'يجب عليك كتابة المبلغ كرقم ',
+            'payment_id.required'=>'يجب عليك وضع وسيلة الدفع ',
+            'payment_id.in'=>'يجب ان تكون رقم وسيلة الدفع 1 او 2 او 3 او 4  ',
 
         ];
     }
@@ -74,6 +76,6 @@ class AddToWalletRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Wallet'));
+        throw new AuthorizationException(__('Only the user can make this action'));
     }
 }

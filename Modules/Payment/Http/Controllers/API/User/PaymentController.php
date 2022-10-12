@@ -8,18 +8,54 @@ use Illuminate\Routing\Controller;
 use Modules\Payment\Entities\Payment;
 class PaymentController extends Controller
 {
+       
+        /**
+    * PaymentsController constructor.
+    *
+    * @param MovementRepository $payments
+    */
+    public function __construct( Payment $payment)
+    {
+    $this->middleware(['permission:payments_get'])->only(['getAllPublicPayments','getAllPrivatePayments','getAllPublicPrivatePayments']);
+
+    // $this->payment = $payment;
+    }
     //for user
     public function getAllPublicPayments(){
+        try{
         $payments=Payment::where(['type'=>0])->get();
-                            return response()->json(['status'=>true,'message'=>'data has been getten successfully','data'=>$payments],200);
-    }
+        return response()->json(['status'=>true,'message'=>'data has been getten successfully','data'=>$payments],200);
+    
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+        }
         public function getAllPrivatePayments(){
-        $payments=Payment::where(['type'=>1])->get();
-                            return response()->json(['status'=>true,'message'=>'data has been getten successfully','data'=>$payments],200);
-    }
+            try{
+                $payments=Payment::where(['type'=>1])->get();
+                 return response()->json(['status'=>true,'message'=>'data has been getten successfully','data'=>$payments],200);
+    
+                        
+            }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+    
+            } 
+            }
     
             public function getAllPublicPrivatePayments(){
-        $payments=Payment::get();
-                            return response()->json(['status'=>true,'message'=>'data has been getten successfully','data'=>$payments],200);
-    }
+                try{
+                    $payments=Payment::get();
+                    return response()->json(['status'=>true,'message'=>'data has been getten successfully','data'=>$payments],200);
+    
+                            
+                    }catch(\Exception $ex){
+                        return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+            
+                    } 
+                }
+                
+
 }

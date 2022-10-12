@@ -2,20 +2,12 @@
 
 namespace Modules\Category\Http\Controllers\API\User;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Routing\Controller;
 use Modules\Category\Http\Requests\StoreCategoryRequest;
 use Modules\Category\Http\Requests\UpdateCategoryRequest;
 use Modules\Category\Http\Requests\DeleteCategoryRequest;
-use Modules\Auth\Repositories\Role\RoleRepository;
-use Modules\Auth\Repositories\Permission\PermissionRepository;
-use Modules\Geocode\Repositories\Country\CountryRepository;
-use Modules\Geocode\Repositories\City\CityRepository;
-use Modules\Geocode\Repositories\Town\TownRepository;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
-use Modules\Auth\Entities\User;
-use Illuminate\Support\Facades\Storage;
 use Modules\Category\Entities\Category;
 use Modules\Category\Entities\SubCategory;
 use Modules\Category\Repositories\User\CategoryRepository;
@@ -53,69 +45,66 @@ class CategoryController extends Controller
          $this->categoryRepo = $categoryRepo;
      }
      public function getMainCategoriesPaginate(Request $request){
+         try{
         $mainCategories=$this->categoryRepo->getMainCategoriesPaginate($this->category,$request);
-         return response()->json([
-             'status'=>true,
-             'code' => 200,
-             'message' => 'main categories has been getten successfully',
-             'data'=> $mainCategories
-         ]);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$mainCategories],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
      }
-     public function getSubCategories(){
+     public function getSubCategories(Request $request){
+         try{
                  $subCategories=$this->categoryRepo->getSubCategories($this->category);
-         return response()->json([
-             'status'=>true,
-             'code' => 200,
-             'message' => 'sub categories has been getten successfully',
-             'data'=> $subCategories
-         ]);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategories],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
      } 
      public function getSubCategoriesForMainCategoryPaginate(Request $request){
+         try{
                  $subCategories=$this->categoryRepo->getSubCategoriesForMainCategoryPaginate($this->category,$request);
          
-         return response()->json([
-             'status'=>true,
-             'code' => 200,
-             'message' => 'sub categories has been getten successfully',
-             'data'=> $subCategories
-         ]);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategories],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
          
          
      }  
           public function getSubCategoriesForSubCategoryPaginate(Request $request,$categoryId){
+              try{
                  $subCategories=$this->categoryRepo->getSubCategoriesForSubCategoryPaginate($this->subCategory,$request,$categoryId);
-          if(is_numeric($subCategories)){
-             if($subCategories==400){
-                          return response()->json([
-             'status'=>false,
-             'code' => 400,
-             'message' => 'this category_id is main category , so cannt get this sub categry from main category , only , can get it from sub category',
-             'data'=> null
-         ]);
-                
-             }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategories],200);
+
         
-         }else{
-              return response()->json([
-             'status'=>true,
-             'code' => 200,
-             'message' => 'sub categories has been getten successfully',
-             'data'=> $subCategories
-         ]);
-         }
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
          
          
      }
      
      public function getSecondSubCategories(Request $request)
 {
+    try{
                      $subCategories=$this->categoryRepo->getSecondSubCategoriesPaginate($this->subCategory,$request);
 
-    return response()->json([
-             'status'=>true,
-             'code' => 200,
-             'message' => 'sub categories has been getten successfully',
-             'data'=> $subCategories
-         ]);
+           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategories],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 }     
 }

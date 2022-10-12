@@ -11,6 +11,7 @@
 |
 */
 
-Route::prefix('payment')->group(function() {
+Route::prefix('payments')->group(function() {
     Route::get('/', 'PaymentController@index');
+    Route::get('/get-visa-form', 'PaymentController@getVisaForm');
 });

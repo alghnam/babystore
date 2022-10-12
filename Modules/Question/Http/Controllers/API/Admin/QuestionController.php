@@ -3,7 +3,6 @@
 namespace Modules\Question\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Question\Entities\Question;
@@ -35,15 +34,15 @@ class QuestionController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, Question $question,QuestionRepository $questionRepo)
     {
-        // $this->middleware(['permission:questions_read'])->only('index');
-        // $this->middleware(['permission:questions_trash'])->only('trash');
-        // $this->middleware(['permission:questions_restore'])->only('restore');
-        // $this->middleware(['permission:questions_restore-all'])->only('restore-all');
-        // $this->middleware(['permission:questions_show'])->only('show');
-        // $this->middleware(['permission:questions_store'])->only('store');
-        // $this->middleware(['permission:questions_update'])->only('update');
-        // $this->middleware(['permission:questions_destroy'])->only('destroy');
-        // $this->middleware(['permission:questions_destroy-force'])->only('destroy-force');
+        $this->middleware(['permission:questions_read'])->only('index');
+        $this->middleware(['permission:questions_trash'])->only('trash');
+        $this->middleware(['permission:questions_restore'])->only('restore');
+        $this->middleware(['permission:questions_restore-all'])->only('restore-all');
+        $this->middleware(['permission:questions_show'])->only('show');
+        $this->middleware(['permission:questions_store'])->only('store');
+        $this->middleware(['permission:questions_update'])->only('update');
+        $this->middleware(['permission:questions_destroy'])->only('destroy');
+        $this->middleware(['permission:questions_destroy-force'])->only('destroy-force');
         $this->baseRepo = $baseRepo;
         $this->question = $question;
         $this->questionRepo = $questionRepo;
@@ -54,30 +53,26 @@ class QuestionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(){
-        // try{
+        try{
         $questions=$this->questionRepo->all($this->question);
                   return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$questions],200);
 
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-
-
-        
-        // }catch(\Exception $ex){
-            // return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        // }
+        }
     }
         public function getAllPaginates(Request $request){
         
-        //  try{
+         try{
         $questions=$this->questionRepo->getAllPaginates($this->question,$request);
                   return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$questions],200);
 
                
-        // }catch(\Exception $ex){
-            // return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
        
 
@@ -94,7 +89,7 @@ class QuestionController extends Controller
 
         
        }catch(\Exception $ex){
-            // return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
        } 
     }
@@ -108,7 +103,7 @@ class QuestionController extends Controller
      */
     public function store(StoreQuestionRequest $request)
     {
-        // try{
+        try{
        $question= $this->questionRepo->store($request,$this->question);
        if(is_string($question)){
             return response()->json(['status'=>false,'message'=>$question],404);
@@ -116,10 +111,10 @@ class QuestionController extends Controller
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$question],200);
 
         
-    //   }catch(\Exception $ex){
-            // return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+      }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-    //   } 
+      } 
     }
 
     /**
@@ -157,7 +152,7 @@ class QuestionController extends Controller
     {
           try{
        $question= $this->questionRepo->update($request,$id,$this->question);
-                                 if(is_string($question)){
+            if(is_string($question)){
             return response()->json(['status'=>false,'message'=>$question],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$question],200);
@@ -174,7 +169,7 @@ class QuestionController extends Controller
         
           try{
         $question =  $this->questionRepo->restore($id,$this->question);
-                                  if(is_string($question)){
+               if(is_string($question)){
             return response()->json(['status'=>false,'message'=>$question],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$question],200);
@@ -187,18 +182,18 @@ class QuestionController extends Controller
 
     }
     public function restoreAll(){
-        //   try{
+          try{
         $questions =  $this->questionRepo->restoreAll($this->question);
-                                  if(is_string($questions)){
+               if(is_string($questions)){
             return response()->json(['status'=>false,'message'=>$questions],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$questions],200);
 
         
-        // }catch(\Exception $ex){
-            // return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // }
+        }
         
     }
    
@@ -229,7 +224,7 @@ class QuestionController extends Controller
           try{
         //to make force destroy for a Question must be this Question  not found in Questions table  , must be found in trash Questions
         $question=$this->questionRepo->forceDelete($id,$this->question);
-                          if(is_string($question)){
+          if(is_string($question)){
             return response()->json(['status'=>false,'message'=>$question],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success')],200);

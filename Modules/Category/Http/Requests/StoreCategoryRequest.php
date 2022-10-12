@@ -49,13 +49,11 @@ class StoreCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required','max:255',Rule::unique('categories')],
-            'description' => ['max:255'],
+            'name' => ['required','max:255'],
             'parent_id' => ['numeric','exists:categories,id','nullable'],
             'image'=>['nullable'],
             'image.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf'],
-            'status' => ['required', 'in:1,0'],
-            'featured' => ['sometimes', 'in:1,0']
+            'status' => ['required', 'in:0,1']
         ];
     }
 
@@ -77,6 +75,6 @@ class StoreCategoryRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this category'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

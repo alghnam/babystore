@@ -10,6 +10,7 @@ use Modules\Auth\Entities\User;
 class Search extends Model
 {
         use SoftDeletes;
+        protected $appends = ['original_status'];
 
  /**
      * The attributes that are mass assignable.
@@ -23,17 +24,18 @@ class Search extends Model
         'status'
     ];
       
-     public function getStatusAttribute($value){
+  public function getStatusAttribute(){
+        return  $this->attributes['status'];
+        
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'InActive';
-        }elseif ($value==1) {
+        }elseif($value==1) {
             return 'Active';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
     } 
-    
         public function user(){
         return $this->belongsTo(User::class);
     }

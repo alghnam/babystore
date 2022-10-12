@@ -2,21 +2,13 @@
 
 namespace Modules\Product\Http\Controllers\API\Admin;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Routing\Controller;
 
 use Modules\Product\Http\Requests\StoreProductRequest;
 use Modules\Product\Http\Requests\UpdateProductRequest;
 use Modules\Product\Http\Requests\DeleteProductRequest;
-use Modules\Auth\Repositories\Role\RoleRepository;
-use Modules\Auth\Repositories\Permission\PermissionRepository;
-use Modules\Geocode\Repositories\Country\CountryRepository;
-use Modules\Geocode\Repositories\City\CityRepository;
-use Modules\Geocode\Repositories\Town\TownRepository;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
-use Modules\Auth\Entities\User;
-use Illuminate\Support\Facades\Storage;
 use Modules\Product\Entities\Product;
 use Modules\Product\Repositories\Admin\ProductRepository;
 use  Modules\ProductAttribute\Entities\ProductArrayAttribute;
@@ -43,7 +35,7 @@ class ProductController extends Controller
       */
      public function __construct(BaseRepository $baseRepo, Product $product,ProductArrayAttribute $productArrayAttribute,ProductRepository $productRepo)
      {
-         $this->middleware(['permission:products_read'])->only(['index','getAllPaginates']);
+         $this->middleware(['permission:products_read'])->only(['index','getAllPaginates','getProductsForCategory','getProductsForSubCategoryTable','searchForSimilars']);
          $this->middleware(['permission:products_trash'])->only('trash');
          $this->middleware(['permission:products_restore'])->only('restore');
          $this->middleware(['permission:products_restore-all'])->only('restore-all');
@@ -57,6 +49,7 @@ class ProductController extends Controller
          $this->productArrayAttribute = $productArrayAttribute;
          $this->productRepo = $productRepo;
      }
+     
      /**
       * Display a listing of the resource.
       *
@@ -75,24 +68,23 @@ class ProductController extends Controller
         } 
         
      }
-      public function search($word){
-                  $products=$this->productRepo->search($this->product,$word);
-         return response()->json([
-             'status'=>true,
-             'code' => 200,
-             'message' => 'Products has been getten successfully',
-             'data'=> $products
-         ]);
+          public function countData(){
+        $countData=$this->productRepo->countData($this->product);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countData],200);
+          
      }
-    //  public function someProducts(){
-    //               $products=$this->productRepo->someProducts($this->product);
-    //      return response()->json([
-    //          'status'=>true,
-    //          'code' => 200,
-    //          'message' => 'Products has been getten successfully',
-    //          'data'=> $products
-    //      ]);
-    //  }
+      public function search($word){
+          try{
+                  $products=$this->productRepo->search($this->product,$word);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$products],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        }
+      }
+
          public function getAllPaginates(Request $request){
          
            try{
@@ -133,15 +125,6 @@ class ProductController extends Controller
         
     }
 
-    // public function similarsProduct($id){
-    //     $similarsProduct=$this->productRepo->similarsProduct($this->product,$id);
-    //     return response()->json([
-    //         'status'=>true,
-    //         'code' => 200,
-    //         'message' => 'similarsProduct  has been getten successfully',
-    //         'data'=> $similarsProduct
-    //     ]);
-    // }
 
 
      public function searchForSimilars($word){
@@ -182,6 +165,9 @@ class ProductController extends Controller
      {
         //   try{
          $product=$this->productRepo->store($request,$this->product);
+                  if(is_string($product)){
+            return response()->json(['status'=>false,'message'=>$product],400);
+        }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$product],200);
 
         
@@ -199,18 +185,18 @@ class ProductController extends Controller
       */
      public function show($id)
      {
-          try{
+        //   try{
          $product=$this->productRepo->find($id,$this->product);
                                   if(is_string($product)){
             return response()->json(['status'=>false,'message'=>$product],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$product],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$product->load(['category','category.mainCategory','subCategory'])],200);
 
         
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        } 
+        // } 
             
          
      }
@@ -299,7 +285,7 @@ class ProductController extends Controller
           try{
         $product= $this->productRepo->update($request,$id,$this->product);
          if(is_string($product)){
-            return response()->json(['status'=>false,'message'=>$product],404);
+            return response()->json(['status'=>false,'message'=>$product],400);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$product],200);
 

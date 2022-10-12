@@ -51,7 +51,7 @@ class StoreRoleRequest extends FormRequest
             'name' => 'required|unique:roles|max:255',
             'display_name' => ['required', 'max:100'],
             'decription'=>['max:1000'],
-            'permissions' => ['sometimes', 'array'],
+            'permissions' => ['required', 'array'],
             'permissions.*'=>['exists:permissions,id'],
             'status' => ['required', 'in:1,0']
 

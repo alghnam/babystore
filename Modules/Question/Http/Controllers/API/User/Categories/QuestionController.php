@@ -38,15 +38,15 @@ class QuestionController extends Controller
   
         public function getAllPaginates(Request $request){
         
-        //  try{
+         try{
         $questions=$this->questionCategoryRepo->getAllPaginates($this->questionCategory,$request);
                   return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$questions],200);
 
                
-        // }catch(\Exception $ex){
-            // return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
     
    

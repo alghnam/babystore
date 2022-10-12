@@ -15,7 +15,7 @@ class ViewRepository extends EloquentRepository implements ViewRepositoryInterfa
        public  function trash($model,$request){
        $modelData=$this->findAllItemsOnlyTrashed($model);
         if(is_string($modelData)){
-                            // return trans('messages.there is not found any items in trash');
+
                             return 'لا يوجد اي عنصر في سلة المحذوفات';
 
         }

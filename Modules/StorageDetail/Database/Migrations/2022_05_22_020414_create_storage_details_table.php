@@ -13,7 +13,7 @@ class CreateStorageDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('storageDetails', function (Blueprint $table) {
+        Schema::create('storage_details', function (Blueprint $table) {
             $table->bigIncrements('id');
 			$table->string('locale')->default(config('app.locale'));
             $table->unsignedBigInteger('product_id');
@@ -32,6 +32,6 @@ class CreateStorageDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('storageDetails');
+        Schema::dropIfExists('storage_details');
     }
 }

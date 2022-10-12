@@ -3,7 +3,6 @@
 namespace Modules\Reward\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Reward\Entities\Reward;
@@ -54,25 +53,23 @@ class RewardController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $rewards=$this->rewardRepo->all($this->reward);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Rewards has been getten successfully',
-        'data'=> $rewards
-    ]);
+        try{
+            $rewards=$this->rewardRepo->all($this->reward);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$rewards],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllPaginates(Request $request){
-    
+    try{
     $rewards=$this->rewardRepo->getAllPaginates($this->reward,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Rewards has been getten successfully(pagination)',
-        'data'=> $rewards
-    ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$rewards],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -80,14 +77,13 @@ class RewardController extends Controller
 
     // methods for trash
     public function trash(Request $request){
+        try{
     $rewards=$this->rewardRepo->trash($this->reward,$request);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$rewards],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Rewards has been getten successfully (in trash)',
-        'data'=> $rewards
-    ]);
+        } 
     }
 
 
@@ -99,13 +95,13 @@ class RewardController extends Controller
     */
     public function store(StoreRewardRequest $request)
     {
-    $reward=$this->rewardRepo->store($request,$this->reward);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Reward has been stored successfully',
-        'data'=> $reward
-    ]);
+        try{
+            $reward=$this->rewardRepo->store($request,$this->reward);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$reward],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
 
@@ -117,19 +113,18 @@ class RewardController extends Controller
     */
     public function show($id)
     {
+        try{
     $reward=$this->rewardRepo->find($id,$this->reward);
     
         if(is_string($reward)){
             return response()->json(['status'=>false,'message'=>$reward],404);
         }
    
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'Reward has been getten successfully',
-            'data'=> $reward
-        ]);
-    
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$reward],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -143,65 +138,46 @@ class RewardController extends Controller
     */
     public function update(UpdateRewardRequest $request,$id)
     {
+        try{
     $reward= $this->rewardRepo->update($request,$id,$this->reward);
     if(is_string($reward)){
             return response()->json(['status'=>false,'message'=>$reward],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Reward has been updated successfully',
-        'data'=> $reward
-    ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$reward],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
 
-    public function inventory(){
-    $rewardsInInventory= $this->rewardRepo->rewardsInInventory($this->reward);
-    if(empty($rewardsInInventory)){
-    if(is_string($reward)){
-            return response()->json(['status'=>false,'message'=>$reward],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'RewardsInInventory getting successfully',
-        'data'=> $rewardsInInventory
-    ]);
-     
-    }
-    }
 
     //methods for restoring
     public function restore($id){
-    
-    $reward =  $this->rewardRepo->restore($id,$this->reward);
-     if(is_string($reward)){
-            return response()->json(['status'=>false,'message'=>$reward],404);
-        }
-    
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'Reward has been restored',
-                'data'=> $reward
-            ]);
-        
+        try{
+            $reward =  $this->rewardRepo->restore($id,$this->reward);
+             if(is_string($reward)){
+                    return response()->json(['status'=>false,'message'=>$reward],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$reward],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
     public function restoreAll(){
-    $rewards =  $this->rewardRepo->restoreAll($this->reward);
-     if(is_string($rewards)){
-            return response()->json(['status'=>false,'message'=>$rewards],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $rewards
-        ]);
-    
+        try{
+            $rewards =  $this->rewardRepo->restoreAll($this->reward);
+             if(is_string($rewards)){
+                    return response()->json(['status'=>false,'message'=>$rewards],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$rewards],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
 
@@ -213,33 +189,32 @@ class RewardController extends Controller
     */
     public function destroy(DeleteRewardRequest $request,$id)
     {
-    $reward= $this->rewardRepo->destroy($id,$this->reward);
-     if(is_string($reward)){
-            return response()->json(['status'=>false,'message'=>$reward],404);
-        }
+        try{
+            $reward= $this->rewardRepo->destroy($id,$this->reward);
+             if(is_string($reward)){
+                    return response()->json(['status'=>false,'message'=>$reward],404);
+                }
   
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $reward
-    ]); 
-    
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$reward],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     public function forceDelete(DeleteRewardRequest $request,$id)
     {
-    //to make force destroy for a Reward must be this Reward  not found in Rewards table  , must be found in trash Rewards
-    $reward=$this->rewardRepo->forceDelete($id,$this->reward);
-     if(is_string($reward)){
-            return response()->json(['status'=>false,'message'=>$reward],404);
-        }
+        try{
+            //to make force destroy for a Reward must be this Reward  not found in Rewards table  , must be found in trash Rewards
+            $reward=$this->rewardRepo->forceDelete($id,$this->reward);
+             if(is_string($reward)){
+                    return response()->json(['status'=>false,'message'=>$reward],404);
+                }
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$reward],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     

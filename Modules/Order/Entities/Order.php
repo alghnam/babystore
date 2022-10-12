@@ -16,6 +16,7 @@ use Modules\Order\Entities\ReviewOrder;
 class Order extends Model
 {    
     use SoftDeletes;
+        protected $appends = ['original_status'];
 
         /**
      * The attributes that are mass assignable.
@@ -23,7 +24,7 @@ class Order extends Model
      * @var string[]
      */
     protected $fillable = [
-        // 'id',
+        'id',
         'order_num',
         'address_id',
         'user_id',
@@ -46,7 +47,11 @@ class Order extends Model
     //    return  $this->attributes['delivery'];
     // }
     
-    public function getStatusAttribute($value){
+    public function getStatusAttribute(){
+        return  $this->attributes['status'];
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==1){//قيد التجهيز 
             return 'Being processed';
         }elseif ($value==2) {// قيد الشحن 
@@ -59,9 +64,6 @@ class Order extends Model
             return 'canceled';
         }
     }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
-    }
     
     // public function cart(){
     //     return $this->belongsTo(Cart::class);
@@ -73,12 +75,10 @@ class Order extends Model
     public function user(){
         return $this->belongsTo(User::class);
     } 
-    // public function products(){
-    //     return $this->belongsToMany(Product::class,'product_order','order_id','product_id');
-    // }
-    //         public function productArrayAttributes(){
-    //     return $this->belongsToMany(ProductArrayAttribute::class,'product_order','order_id','product_array_attribute_id');
-    // }
+
+            public function productArrayAttributes(){
+        return $this->belongsToMany(ProductArrayAttribute::class,'product_array_attribute_order','order_id','product_array_attribute_id')->withPivot('quantity');
+    }
     // public function addresses(){
     //     return $this->belongsToMany('Modules\Order\Entities\Address','address_order','order_id','address_id');
     // }

@@ -21,20 +21,10 @@ use SoftDeletes;
         'id',
         'user_id',
         'product_id',
-        'view_at',
-        'status'
+        'view_at'
     ];    
     
-     public function getStatusAttribute($value){
-        if($value==0){
-            return 'InActive';
-        }elseif ($value==1) {
-            return 'Active';
-        }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
-    } 
+
     
     
     public function product(){

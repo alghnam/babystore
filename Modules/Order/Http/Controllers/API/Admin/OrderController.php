@@ -3,13 +3,8 @@
 namespace Modules\Order\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Storage;
-use Modules\Cart\Entities\Cart;
-use Modules\Coupon\Entities\Coupon;
-// use Modules\Coupon\Repositories\Admin\CouponRepository;
 use Modules\Order\Entities\Order;
 use Modules\Order\Http\Requests\DeleteOrderRequest;
 use Modules\Order\Http\Requests\StoreOrderRequest;
@@ -21,11 +16,7 @@ use Modules\Order\Http\Requests\UpdateAddressRequest;
 use Modules\Order\Http\Requests\AddReviewOrderRequest;
 use Modules\Order\Entities\Address;
 use Modules\Order\Http\Requests\FinishingOrderRequest;
-use App\Http\Requests\Auth\CheckCodeRequest;
 use Modules\Order\Entities\AddressCodeNum;
-use Modules\Order\Entities\ReviewOrder;
-use Modules\Movement\Entities\Movement;
-use Modules\Wallet\Entities\Wallet;
 class OrderController extends Controller
 {
     
@@ -39,68 +30,39 @@ class OrderController extends Controller
     protected $orderRepo;
 
         /**
-     * @var CouponRepository
-     */
-    protected $couponRepo;
-        /**
      * @var Order
      */
     protected $order;
-            /**
-     * @var ReviewOrder
-     */
-    protected $reviewOrder;
-            /**
-     * @var Cart
-     */
-    protected $cart;
-                /**
-     * @var Coupon
-     */
-    protected $coupon;
+
+
+
    
            /**
      * @var Address
      */
     protected $address;
-    
-       
-           /**
-     * @var Wallet
-     */
-    protected $wallet;
-    
-       
-           /**
-     * @var Movement
-     */
-    protected $movement;
+
 
     /**
      * OrdersController constructor.
      *
      * @param OrderRepository $orders
      */
-    public function __construct(BaseRepository $baseRepo, Order $order,Cart $cart, Address $address,OrderRepository $orderRepo,Coupon $coupon,AddressCodeNum $addressCodeNum,ReviewOrder $reviewOrder,Movement $movement,Wallet $wallet)
+    public function __construct(BaseRepository $baseRepo, Order $order, Address $address,OrderRepository $orderRepo,AddressCodeNum $addressCodeNum)
     {
-        // $this->middleware(['permission:orders_read'])->only(['index','getAllPaginates']);
-        // $this->middleware(['permission:orders_trash'])->only('trash');
-        // $this->middleware(['permission:orders_restore'])->only('restore');
-        // $this->middleware(['permission:orders_restore-all'])->only('restore-all');
-        // $this->middleware(['permission:orders_show'])->only('show');
-        // $this->middleware(['permission:orders_store'])->only('store');
-        // $this->middleware(['permission:orders_update'])->only('update');
-        // $this->middleware(['permission:orders_destroy'])->only('destroy');
-        // $this->middleware(['permission:orders_destroy-force'])->only('destroy-force');
+        $this->middleware(['permission:orders_read'])->only(['index','getAllPaginates']);
+        $this->middleware(['permission:orders_trash'])->only('trash');
+        $this->middleware(['permission:orders_restore'])->only('restore');
+        $this->middleware(['permission:orders_restore-all'])->only('restore-all');
+        $this->middleware(['permission:orders_show'])->only('show');
+        $this->middleware(['permission:orders_store'])->only('store');
+        $this->middleware(['permission:orders_update'])->only('update');
+        $this->middleware(['permission:orders_destroy'])->only('destroy');
+        $this->middleware(['permission:orders_destroy-force'])->only('destroy-force');
         $this->baseRepo = $baseRepo;
         $this->order = $order;
         $this->addressCodeNum = $addressCodeNum;
-        $this->cart = $cart;
-        $this->coupon = $coupon;
         $this->address = $address;
-        $this->wallet = $wallet;
-        $this->movement = $movement;
-        $this->reviewOrder = $reviewOrder;
         $this->orderRepo = $orderRepo;
 
     }
@@ -110,49 +72,52 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(){
-        
-        $orders=$this->orderRepo->all($this->order);
-        
+        try{
+            $orders=$this->orderRepo->all($this->order);
+            
+    
+            if(is_string($orders)){
+                return response()->json(['status'=>false,'message'=>$orders],400);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$orders],200);
 
-        if(is_string($orders)){
-            return response()->json(['status'=>false,'message'=>$orders],400);
-        }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'تم ايجاد البيانات بنجاح',
-            'data'=> $orders
-        ]);
-    }
-        public function getAllPaginates(Request $request){
-            try{
-                
-                $orders=$this->orderRepo->getAllPaginates($this->order,$request);
-             if(is_string($orders)){
-                    return response()->json(['status'=>false,'message'=>$orders],400);
-                }
-            return response()->json([
-                'status'=>true,
-                'message' => 'تم ايجاد البيانات بنجاح',
-                'data'=> $orders
-            ],200);
-                    
+        
         }catch(\Exception $ex){
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
         } 
     }
+     public function countData(){
+        $countData=$this->orderRepo->countData($this->order);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countData],200);
+          
+     }
+        public function getAllPaginates(Request $request){
+            // try{
+                
+                $orders=$this->orderRepo->getAllPaginates($this->order,$request);
+             if(is_string($orders)){
+                    return response()->json(['status'=>false,'message'=>$orders],400);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$orders],200);
 
-   public function getOrdersForCategory($categoryId){
-       $getOrdersForCategory=$this->orderRepo->getOrdersForCategory($this->order,$categoryId);
-if(is_string($orders)){
-            return response()->json(['status'=>false,'message'=>$orders],400);
-        }
-    return response()->json([
-        'status'=>true,
-        'message' => 'تم ايجاد البيانات بنجاح',
-        'data'=> $orders
-    ],200);
+        
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
+    }
+
+   public function getLatestOrders(){
+       try{
+           $getLatestOrders=$this->orderRepo->getLatestOrders($this->order);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$getLatestOrders],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
    }
 
 
@@ -160,16 +125,18 @@ if(is_string($orders)){
 
     // methods for trash
     public function trash(Request $request){
-        $orders=$this->orderRepo->trash($this->order,$request);
-if(is_string($orders)){
-            return response()->json(['status'=>false,'message'=>$orders],400);
-        }
+        try{
+            $orders=$this->orderRepo->trash($this->order,$request);
+            if(is_string($orders)){
+                return response()->json(['status'=>false,'message'=>$orders],400);
+            }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$orders],200);
 
-    return response()->json([
-        'status'=>true,
-        'message' => 'تم ايجاد البيانات بنجاح',
-        'data'=> $orders
-    ],200);
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -181,15 +148,18 @@ if(is_string($orders)){
      */
     public function store(StoreOrderRequest $request)
     {
-        $order=$this->orderRepo->store($request,$this->order);
-if(is_string($orders)){
-            return response()->json(['status'=>false,'message'=>$orders],400);
-        }
-    return response()->json([
-        'status'=>true,
-        'message' => 'تم التخزين بنجاح',
-        'data'=> $order
-    ],200);
+        try{
+            $order=$this->orderRepo->store($request,$this->order);
+            if(is_string($order)){
+                return response()->json(['status'=>false,'message'=>$order],400);
+            }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$order],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     /**
@@ -200,17 +170,19 @@ if(is_string($orders)){
      */
     public function show($id)
     {
+        try{
         $order=$this->orderRepo->find($id,$this->order);
         if(is_string($order)){
             return response()->json(['status'=>false,'message'=>$order],404);
         }
    
-        return response()->json([
-            'status'=>true,
-            'message' => 'تم ايجاد البيانات بنجاح',
-            'data'=> $order
-        ],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$order],200);
+
         
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
  
@@ -224,18 +196,18 @@ if(is_string($orders)){
      */
     public function update(UpdateOrderRequest $request,$id)
     {
-       $order= $this->orderRepo->update($request,$id,$this->order);
+        try{
+           $order= $this->orderRepo->update($request,$id,$this->order);
+            if(is_string($order)){
+                    return response()->json(['status'=>false,'message'=>$order],404);
+                }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$order],200);
 
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-
-    if(is_string($order)){
-            return response()->json(['status'=>false,'message'=>$order],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'message' => 'تم التعديل بنجاح',
-        'data'=> $order
-    ],200);
+        } 
     
 
        
@@ -245,29 +217,33 @@ if(is_string($orders)){
 
     //methods for restoring
     public function restore($id){
-        
-        $order =  $this->orderRepo->restore($id,$this->order);
+        try{
+            $order =  $this->orderRepo->restore($id,$this->order);
     
-     if(is_string($order)){
+            if(is_string($order)){
             return response()->json(['status'=>false,'message'=>$order],404);
-        }
-    
-            return response()->json([
-                'status'=>true,
-                'message' => 'تمت الاستعادة بنجاح',
-                'data'=> $order
-            ],200);
+            }
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$order],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     public function restoreAll(){
         $orders =  $this->orderRepo->restoreAll($this->order);
-     if(is_string($orders)){
-            return response()->json(['status'=>false,'message'=>$orders],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'message' => 'تم استعادة الكل بنجاح',
-            'data'=> $orders
-        ],200);
+        try{
+            if(is_string($orders)){
+                return response()->json(['status'=>false,'message'=>$orders],404);
+            }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$orders],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
         
 
     }
@@ -280,33 +256,42 @@ if(is_string($orders)){
      */
     public function destroy(DeleteOrderRequest $request,$id)
     {
-       $order= $this->orderRepo->destroy($id,$this->order);
-                                  if(is_string($order)){
-            return response()->json(['status'=>false,'message'=>$order],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'message' => 'تم الحذف بنجاح',
-            'data'=> $order
-        ]); 
+        try{
+            $order= $this->orderRepo->destroy($id,$this->order);
+            if(is_string($order)){
+                return response()->json(['status'=>false,'message'=>$order],404);
+            }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$order],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
        
     }
     public function forceDelete(DeleteOrderRequest $request,$id)
     {
+        try{
         //to make force destroy for a Order must be this Order  not found in Orders table  , must be found in trash Orders
         $order=$this->orderRepo->forceDelete($id,$this->order);
      if(is_string($order)){
             return response()->json(['status'=>false,'message'=>$order],404);
         }
 
-        return response()->json([
-            'status'=>true,
-            'message' => 'تم الحذف بنجاح',
-            'data'=> null
-        ],200); 
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$order],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+    }
+        
     
 
-    }
     
+    
+
 
 }

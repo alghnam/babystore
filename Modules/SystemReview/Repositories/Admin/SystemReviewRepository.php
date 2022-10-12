@@ -13,13 +13,13 @@ class SystemReviewRepository extends EloquentRepository implements SystemReviewR
         $modelData=$model->with(['systemReviewType','user'])->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
           return  $modelData;
     }
-       public  function trash($model,$request){
+   public  function trash($model,$request){
        $modelData=$this->findAllItemsOnlyTrashed($model);
+    //   dd($modelData);
         if(is_string($modelData)){
-                            return trans('messages.there is not found any items in trash');
-
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
         }
-       $modelData=$this->findAllItemsOnlyTrashed($model)->with(['systemReviewType','user'])->where('locale',config('app.locale'))->paginate($request->total);
+       $modelData=$this->findAllItemsOnlyTrashed($model)->with(['systemReviewType','user'])->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
         return $modelData;
     }
     

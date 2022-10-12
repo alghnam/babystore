@@ -53,8 +53,8 @@ class StoreUserRequest extends FormRequest
             // 'phone_no' => ['required','max:255'],
             'first_name' => ['required','max:255'],
             'last_name' => ['required','max:255'],
-            'image'=>['nullable'],
-            'status' => ['required''mimes:jpeg,bmp,png,gif,svg,pdf'],
+            'image'=>['nullable','mimes:jpeg,bmp,png,gif,svg,pdf'],
+            'status' => ['required'],
             'status' => ['sometimes', 'in:0,1,-1'],
             'roles' => ['required'],
             'roles.*'=>['exists:roles,id']
@@ -80,6 +80,6 @@ class StoreUserRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator can Store this user, and prevent update on superadmin'));
+        throw new AuthorizationException(__('Only the superadministrator  can make this action'));
     }
 }

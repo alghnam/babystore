@@ -51,8 +51,8 @@ class UpdateServiceRequest extends FormRequest
  
               
             return [
-               'value' => ['required','max:255'],
                'period' => ['required','max:255'],
+               'value' => ['required','max:255','numeric'],
             'status' => ['sometimes', 'in:1,0'],
 
             ];
@@ -78,6 +78,6 @@ class UpdateServiceRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Cart'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

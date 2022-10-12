@@ -34,9 +34,6 @@ class ViewController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, View $view,ViewRepository $viewRepo)
     {
-
-
-
         $this->baseRepo = $baseRepo;
         $this->view = $view;
         $this->viewRepo = $viewRepo;
@@ -45,32 +42,32 @@ class ViewController extends Controller
     
     ////////////////
     public function myViews(){
-    $myViews=$this->viewRepo->myViews($this->view);
-                            if(is_string($myViews)){
-            return response()->json(['status'=>false,'message'=>$myViews],404);
-        }
-     return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'views has been getten successfully',
-            'data'=> $myViews
-        ]);
+        // try{
+            $myViews=$this->viewRepo->myViews($this->view);
+            if(is_string($myViews)){
+                return response()->json(['status'=>false,'message'=>$myViews],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$myViews],200);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
 }
 
-public function AddToView(AddToViewRequest $request){
-    $view=$this->viewRepo->AddToView($this->view,$request);
-                                if(is_string($view)){
-            return response()->json(['status'=>false,'message'=>$view],400);
-        }
-
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'view has been added successfully',
-            'data'=> $view->load(['product','user'])
-        ]);
+    public function AddToView(AddToViewRequest $request){
+        try{
+            $view=$this->viewRepo->AddToView($this->view,$request);
+            if(is_string($view)){
+                return response()->json(['status'=>false,'message'=>$view],400);
+            }
+    
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$view],200);
+        }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+    
+        } 
     
        
-}
+    }
 
 }

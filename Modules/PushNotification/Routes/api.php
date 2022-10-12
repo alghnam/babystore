@@ -22,3 +22,9 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
         Route::get('force-delete/{id}', [PushNotificationControllerAdmin::class,'forceDelete'])->name('api.admin.pushnotifications.force-delete');
     });
 });
+
+ Route::prefix('pushnotifications')->group(function(){
+        Route::get('/get-notifications-for-user', [PushNotificationControllerUser::class,'getNotificationsForUser'])->name('api.pushnotifications.get-notifications-for-user');    
+        Route::get('/get-latest-notification-for-user', [PushNotificationControllerUser::class,'getLatestNotificationForUser'])->name('api.pushnotifications.get-latest-notification-for-user');
+
+    });

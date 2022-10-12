@@ -3,7 +3,6 @@
 namespace Modules\Chat\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Chat\Http\Requests\DeleteChatRequest;
@@ -37,15 +36,15 @@ class ChatController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, ChatMessage $chat,ChatRepository $chatRepo)
     {
-        // $this->middleware(['permission:chats_read'])->only(['index','getAllPaginates']);
-        // $this->middleware(['permission:chats_trash'])->only('trash');
-        // $this->middleware(['permission:chats_restore'])->only('restore');
-        // $this->middleware(['permission:chats_restore-all'])->only('restore-all');
-        // $this->middleware(['permission:chats_show'])->only('show');
-        // $this->middleware(['permission:chats_store'])->only('store');
-        // $this->middleware(['permission:chats_update'])->only('update');
-        // $this->middleware(['permission:chats_destroy'])->only('destroy');
-        // $this->middleware(['permission:chats_destroy-force'])->only('destroy-force');
+        $this->middleware(['permission:chats_read'])->only(['index','getAllPaginates']);
+        $this->middleware(['permission:chats_trash'])->only('trash');
+        $this->middleware(['permission:chats_restore'])->only('restore');
+        $this->middleware(['permission:chats_restore-all'])->only('restore-all');
+        $this->middleware(['permission:chats_show'])->only('show');
+        $this->middleware(['permission:chats_store'])->only('store');
+        $this->middleware(['permission:chats_update'])->only('update');
+        $this->middleware(['permission:chats_destroy'])->only('destroy');
+        $this->middleware(['permission:chats_destroy-force'])->only('destroy-force');
         $this->baseRepo = $baseRepo;
         $this->chat = $chat;
         $this->chatRepo = $chatRepo;
@@ -67,39 +66,27 @@ class ChatController extends Controller
 
         } 
     }
-        public function getAllPaginates(Request $request){
+        public function getAllChatsRecivedPaginates(Request $request){
         
-        //  try{
-        $chats=$this->chatRepo->getAllPaginates($this->chat,$request);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
+         try{
+            $chats=$this->chatRepo->getAllChatsRecivedPaginates($this->chat,$request);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
 
-        //         }catch(\Exception $ex){
-        //     return response()->json([
-        //         'status'=>500,
-        //         'message'=>'There is something wrong, please try again'
-        //     ]);  
-        // } 
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
-            public function getAllChatsSendedPaginate(Request $request){
+    public function getAllChatsSendedPaginates(Request $request){
         
-        //  try{
-        $chats=$this->chatRepo->getAllChatsSendedPaginate($this->chat,$request);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
+         try{
+            $chats=$this->chatRepo->getAllChatsSendedPaginates($this->chat,$request);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
 
-        //         }catch(\Exception $ex){
-        //     return response()->json([
-        //         'status'=>500,
-        //         'message'=>'There is something wrong, please try again'
-        //     ]);  
-        // } 
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
       
 
@@ -108,27 +95,33 @@ class ChatController extends Controller
 
     // methods for trash
     public function trashAllChatsSended(Request $request){
-//   try{
+  try{
         $chats=$this->chatRepo->trashAllChatsSended($this->chat,$request);
+        if(is_string($chats)){
+            return response()->json(['status'=>false,'message'=>$chats],404);
+        }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
-public function trashAllChatsRecieved(Request $request){
-//   try{
-        $chats=$this->chatRepo->trashAllChatsRecieved($this->chat,$request);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
+    public function trashAllChatsRecieved(Request $request){
+        try{
+            $chats=$this->chatRepo->trashAllChatsRecieved($this->chat,$request);
+             if(is_string($chats)){
+            return response()->json(['status'=>false,'message'=>$chats],404);
+            }
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
 
@@ -140,17 +133,17 @@ public function trashAllChatsRecieved(Request $request){
      */
     public function store(StoreChatRequest $request)
     {
-        //  try{
-       $chat= $this->chatRepo->store($request,$this->chat);
-               broadcast(new NewChatMessage($chat))->toOthers();
+         try{
+            $chat= $this->chatRepo->store($request,$this->chat);
+             broadcast(new NewChatMessage($chat))->toOthers();
 
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
     /**
@@ -161,11 +154,11 @@ public function trashAllChatsRecieved(Request $request){
      */
     public function show($id)
     {
-              try{
-        $chat=$this->chatRepo->find($id,$this->chat);
-                          if(is_string($chat)){
-            return response()->json(['status'=>false,'message'=>$chat],404);
-        }
+        try{
+            $chat=$this->chatRepo->find($id,$this->chat);
+            if(is_string($chat)){
+                return response()->json(['status'=>false,'message'=>$chat],404);
+            }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
 
         
@@ -188,11 +181,11 @@ public function trashAllChatsRecieved(Request $request){
     {
 
           try{
-       $chat= $this->chatRepo->update($request,$id,$this->chat);
-                                 if(is_string($chat)){
-            return response()->json(['status'=>false,'message'=>$chat],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
+            $chat= $this->chatRepo->update($request,$id,$this->chat);
+            if(is_string($chat)){
+                return response()->json(['status'=>false,'message'=>$chat],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
 
         
         }catch(\Exception $ex){
@@ -204,11 +197,11 @@ public function trashAllChatsRecieved(Request $request){
     //methods for restoring
     public function restore($id){
         
-          try{
-        $chat =  $this->chatRepo->restore($id,$this->chat);
-                                  if(is_string($chat)){
-            return response()->json(['status'=>false,'message'=>$chat],404);
-        }
+         try{
+            $chat =  $this->chatRepo->restore($id,$this->chat);
+            if(is_string($chat)){
+                return response()->json(['status'=>false,'message'=>$chat],404);
+            }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
 
         
@@ -219,12 +212,12 @@ public function trashAllChatsRecieved(Request $request){
 
     }
     public function restoreAllChatsRecieved(){
-          try{
-        $chats =  $this->chatRepo->restoreAllChatsRecieved($this->chat);
-                                  if(is_string($chats)){
-            return response()->json(['status'=>false,'message'=>$chats],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
+        try{
+            $chats =  $this->chatRepo->restoreAllChatsRecieved($this->chat);
+            if(is_string($chats)){
+                return response()->json(['status'=>false,'message'=>$chats],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
 
         
         }catch(\Exception $ex){
@@ -234,12 +227,12 @@ public function trashAllChatsRecieved(Request $request){
         
     }
         public function restoreAllChatsSended(){
-          try{
-        $chats =  $this->chatRepo->restoreAllChatsSended($this->chat);
-                                  if(is_string($chats)){
-            return response()->json(['status'=>false,'message'=>$chats],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
+            try{
+                $chats =  $this->chatRepo->restoreAllChatsSended($this->chat);
+                if(is_string($chats)){
+                    return response()->json(['status'=>false,'message'=>$chats],404);
+                }
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chats],200);
 
         
         }catch(\Exception $ex){
@@ -258,11 +251,11 @@ public function trashAllChatsRecieved(Request $request){
     public function destroy(DeleteChatRequest $request,$id)
     {
           try{
-       $chat= $this->chatRepo->destroy($id,$this->chat);
-                          if(is_string($chat)){
-            return response()->json(['status'=>false,'message'=>$chat],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
+            $chat= $this->chatRepo->destroy($id,$this->chat);
+            if(is_string($chat)){
+                return response()->json(['status'=>false,'message'=>$chat],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
 
         
         }catch(\Exception $ex){
@@ -274,12 +267,12 @@ public function trashAllChatsRecieved(Request $request){
     public function forceDelete(DeleteChatRequest $request,$id)
     {
           try{
-        //to make force destroy for a Chat must be this Chat  not found in Chats table  , must be found in trash Chats
-        $chat=$this->chatRepo->forceDelete($id,$this->chat);
-                          if(is_string($chat)){
-            return response()->json(['status'=>false,'message'=>$chat],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
+            //to make force destroy for a Chat must be this Chat  not found in Chats table  , must be found in trash Chats
+            $chat=$this->chatRepo->forceDelete($id,$this->chat);
+            if(is_string($chat)){
+                return response()->json(['status'=>false,'message'=>$chat],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
 
         
         }catch(\Exception $ex){

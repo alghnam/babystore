@@ -18,6 +18,7 @@ use Modules\Favorite\Entities\Favorite;
 class Product extends Model
 {
     use SoftDeletes;
+        protected $appends = ['original_status','original_is_offers'];
 
        /**
      * The attributes that are mass assignable.
@@ -32,16 +33,12 @@ class Product extends Model
         'sub_category_id',
         'name',
         'description',
-        'image',
         'status',
         'quantity',
-        'counter_discount',
         'original_price',
-        'price_after_discount',
         'price_discount_ends',
-        'the_more_sale',
-        'modern',
-        'offers',
+        'is_offers',
+        'status'
     ];
     
 
@@ -51,17 +48,30 @@ class Product extends Model
     //         ->withPivot('attribute_value_id');
     //         // ->using('App\ProductAttributes');
     // }
+   public function getStatusAttribute(){
+        return  $this->attributes['status'];
         
-    
-     public function getStatusAttribute($value){
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'InActive';
-        }elseif ($value==1) {
+        }elseif($value==1) {
             return 'Active';
         }
+    } 
+    
+     public function getIsOffersAttribute(){
+        return  $this->attributes['is_offers'];
+        
     }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
+    public function getOriginalIsOffersAttribute(){
+        $value=$this->attributes['is_offers'];
+        if($value==0){
+            return 'No';
+        }elseif($value==1) {
+            return 'Yes';
+        }
     } 
     
     
@@ -97,7 +107,7 @@ class Product extends Model
         return $this->hasMany("Modules\SimilarProduct\Entities\SimilarProduct",'product_id');
     }
         public function upsellsProduct(){
-        return $this->hasMany("Modules\UpSell\Entities\UpSell",'product_id');
+        return $this->hasMany("Modules\UpSell\Entities\UpSell",'upsells');
     }
     
 

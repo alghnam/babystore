@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Banner extends Model
 {
     use SoftDeletes;
+        protected $appends = ['original_status'];
 
     
         /**
@@ -23,17 +24,20 @@ class Banner extends Model
         'product_id',
         'title',
         'description',
-        'url'
+        'url',
+        'status'
     ];
-          public function getStatusAttribute($value){
+            public function getStatusAttribute(){
+        return  $this->attributes['status'];
+        
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'InActive';
-        }elseif ($value==1) {
+        }elseif($value==1) {
             return 'Active';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
     } 
     
         public function image(){

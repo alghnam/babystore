@@ -34,7 +34,7 @@ class UpdateBuyingSystemMountRequest extends FormRequest
      */
     public function authorize()
     {
-        //update Cart for only superadministrator  and admins
+        //update Cart for only superadministrator
         $authorizeRes= $this->baseRepo->authorize();
         if($authorizeRes==true){  
                 return true;
@@ -79,7 +79,7 @@ class UpdateBuyingSystemMountRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Cart'));
+        throw new AuthorizationException(__('Only the superadministrator can make this action'));
     }
     
 }

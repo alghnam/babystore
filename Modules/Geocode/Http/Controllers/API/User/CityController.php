@@ -50,23 +50,17 @@ class CityController extends Controller
 
         public function getAllCitiesCountry($id){
         
-        //  try{
+         try{
         $cities=$this->cityRepo->citiesCountry($this->country,$id);
            if(is_string($cities)){
             return response()->json(['status'=>false,'message'=>$cities],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cities],200);
 
-        //         }catch(\Exception $ex){
-        //     return response()->json([
-        //         'status'=>500,
-        //         'message'=>'There is something wrong, please try again'
-        //     ]);  
-        // } 
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
        
 

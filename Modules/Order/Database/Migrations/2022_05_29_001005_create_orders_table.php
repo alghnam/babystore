@@ -16,22 +16,17 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_num');
-            // $table->unsignedBigInteger('cart_id');
-            // $table->foreign('cart_id')
-            //     ->references('id')
-            //     ->on('carts')
-            //     ->onDelete('cascade');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
+            $table->unsignedBigInteger('address_id');
+                $table->foreign('address_id')
+                    ->references('id')
+                    ->on('addresses')
+                    ->onDelete('cascade');
             $table->string('shipping')->nullable();
-                        $table->unsignedBigInteger('address_id');
-            $table->foreign('address_id')
-                ->references('id')
-                ->on('addresses')
-                ->onDelete('cascade');
             $table->unsignedBigInteger('payment_id')->nullable();
             $table->foreign('payment_id')
                 ->references('id')
@@ -43,7 +38,8 @@ class CreateOrdersTable extends Migration
                     ->on('services')
                     ->onDelete('cascade');
 
-                $table->unsignedBigInteger('price');
+                $table->float('price')->default(0);
+                $table->unsignedBigInteger('products_count')->default(0);
             $table->tinyInteger('status')->default(1);
             $table->date('deleted_at')->nullable();
 

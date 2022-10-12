@@ -23,12 +23,15 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
 
 Route::prefix('wallets')->middleware(['auth:api'])->group(function(){
 
+    Route::post('make-replacing-points/{points}', [WalletControllerUser::class,'makeReplacingPoints'])->name('api.admin.wallets.make-replacing-points');
+    Route::get('points-wallet', [WalletControllerUser::class,'pointsWallet'])->name('api.admin.wallets.points-wallet');
+
+    Route::get('count-data', [WalletControllerUser::class,'countData'])->name('api.admin.wallets.count-data');
+
     Route::get('balance-wallet', [WalletControllerUser::class,'balanceWallet'])->name('api.admin.wallets.balance-wallet');
     Route::post('add-to-wallet', [WalletControllerUser::class,'addTowallet'])->name('api.admin.wallets.add-to-wallet');
     
-          Route::post('get-payment-status/{id}', [WalletControllerUser::class,'getPaymentStatus'])->name('api.admin.wallets.get-payment-status');
 
-    Route::get('finishing-payment', [WalletControllerUser::class,'finishingPayment'])->name('api.admin.wallets.finishing-payment');
 
     
 });

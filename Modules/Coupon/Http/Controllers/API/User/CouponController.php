@@ -46,53 +46,71 @@ class CouponController extends Controller
     //for user
             public function getEndedCoupons(Request $request)
     {
-    $coupons=$this->couponRepo->getEndedCoupons($this->coupon,$request);
+        try{
+            $coupons=$this->couponRepo->getEndedCoupons($this->coupon,$request);
 
-        return response()->json([
-            'status'=>true,
-            'message' => 'Coupons has been getten  successfully',
-            'data'=> $coupons
-        ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupons],200);
+            
+                
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
         public function getCoupons($status,Request $request)
     {
+        try{
     $coupons=$this->couponRepo->getCoupons($status,$this->coupon,$request);
-        return response()->json([
-            'status'=>true,
-            'message' => 'Coupons has been getten  successfully',
-            'data'=> $coupons
-        ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupons],200);
+            
+                
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+    
     
 }
     public function storeCouponOrder(AddCouponRequest $request)
     {
-    $coupon=$this->couponRepo->storeCouponOrder($request,$this->coupon);
-                if(is_string($coupon)){
-            return response()->json(['status'=>false,'message'=>$coupon],400);
-        }
-        return response()->json([
-            'status'=>true,
-            'message' => 'Coupon has been stored for this order successfully',
-            'data'=> $coupon
-        ]);
+        // try{
+            $coupon=$this->couponRepo->storeCouponOrder($request,$this->coupon);
+            if(is_string($coupon)){
+                return response()->json(['status'=>false,'message'=>$coupon],400);
+            }
+            $location = geoip(request()->ip());
+            $currencyCountry=$location->currency;
+            $coupon->currency_country=$currencyCountry;
+            
+          
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupon],200);
+            
+                
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
+    
  
 
     
 }
     public function deleteCouponOrder($couponId)
     {
+        // try{
     $coupon=$this->couponRepo->deleteCouponOrder($this->coupon,$couponId);
                 if(is_string($coupon)){
             return response()->json(['status'=>false,'message'=>$coupon],400);
         }
     
-          return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Coupon has been deleted for this order successfully',
-        'data'=> null
-    ]);  
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupon],200);
+            
+                
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
     
     
     

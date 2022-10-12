@@ -3,7 +3,6 @@
 namespace Modules\PushNotification\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\PushNotification\Http\Requests\DeletePushNotificationRequest;
@@ -36,15 +35,15 @@ class PushNotificationController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, PushNotification $pushNotification,PushNotificationRepository $pushNotificationRepo)
     {
-        // $this->middleware(['permission:push_notifications_read'])->only(['index','getAllPaginates','getAllUsersPushNotificationPaginates']);
-        // $this->middleware(['permission:push_notifications_trash'])->only('trash');
-        // $this->middleware(['permission:push_notifications_restore'])->only('restore');
-        // $this->middleware(['permission:push_notifications_restore-all'])->only('restore-all');
-        // $this->middleware(['permission:push_notifications_show'])->only('show');
-        // $this->middleware(['permission:push_notifications_store'])->only('store');
-        // $this->middleware(['permission:push_notifications_update'])->only('update');
-        // $this->middleware(['permission:push_notifications_destroy'])->only('destroy');
-        // $this->middleware(['permission:push_notifications_destroy-force'])->only('destroy-force');
+        $this->middleware(['permission:push_notifications_read'])->only(['index','getAllPaginates','getAllUsersPushNotificationPaginates']);
+        $this->middleware(['permission:push_notifications_trash'])->only('trash');
+        $this->middleware(['permission:push_notifications_restore'])->only('restore');
+        $this->middleware(['permission:push_notifications_restore-all'])->only('restore-all');
+        $this->middleware(['permission:push_notifications_show'])->only('show');
+        $this->middleware(['permission:push_notifications_store'])->only('store');
+        $this->middleware(['permission:push_notifications_update'])->only('update');
+        $this->middleware(['permission:push_notifications_destroy'])->only('destroy');
+        $this->middleware(['permission:push_notifications_destroy-force'])->only('destroy-force');
         $this->baseRepo = $baseRepo;
         $this->pushNotification = $pushNotification;
         $this->pushNotificationRepo = $pushNotificationRepo;
@@ -68,37 +67,26 @@ class PushNotificationController extends Controller
     }
         public function getAllPaginates(Request $request){
         
-        //  try{
+         try{
         $pushNotifications=$this->pushNotificationRepo->getAllPaginates($this->pushNotification,$request);
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pushNotifications],200);
 
-        //         }catch(\Exception $ex){
-        //     return response()->json([
-        //         'status'=>500,
-        //         'message'=>'There is something wrong, please try again'
-        //     ]);  
-        // } 
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
     
     public function getAllUsersPushNotificationPaginates(Request $request,$id){
-                //  try{
+                 try{
         $usersPushNotification=$this->pushNotificationRepo->getAllUsersPushNotificationPaginates($this->pushNotification,$request,$id);
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$usersPushNotification],200);
 
-        //         }catch(\Exception $ex){
-        //     return response()->json([
-        //         'status'=>500,
-        //         'message'=>'There is something wrong, please try again'
-        //     ]);  
-        // } 
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+       
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
         public function getPushNotificationsProduct(Request $request,$productId){
         
@@ -118,15 +106,18 @@ class PushNotificationController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-//   try{
-        $pushNotifications=$this->pushNotificationRepo->trash($this->pushNotification,$request);
+        try{
+            $pushNotifications=$this->pushNotificationRepo->trash($this->pushNotification,$request);
+              if(is_string($pushNotifications)){
+                return response()->json(['status'=>false,'message'=>$pushNotifications],404);
+            }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pushNotifications],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
 
@@ -140,6 +131,9 @@ class PushNotificationController extends Controller
     {
         //  try{
        $pushNotification= $this->pushNotificationRepo->store($request,$this->pushNotification);
+                     if(is_string($pushNotification)){
+                return response()->json(['status'=>false,'message'=>$pushNotification],500);
+            }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pushNotification->load('users')],200);
 
         
@@ -185,8 +179,8 @@ class PushNotificationController extends Controller
 
           try{
        $pushNotification= $this->pushNotificationRepo->update($request,$id,$this->pushNotification);
-                                 if(is_string($pushNotification)){
-            return response()->json(['status'=>false,'message'=>$pushNotification],404);
+          if(is_string($pushNotification)){
+            return response()->json(['status'=>false,'message'=>$pushNotification],500);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pushNotification],200);
 
@@ -202,7 +196,7 @@ class PushNotificationController extends Controller
         
           try{
         $pushNotification =  $this->pushNotificationRepo->restore($id,$this->pushNotification);
-                                  if(is_string($pushNotification)){
+            if(is_string($pushNotification)){
             return response()->json(['status'=>false,'message'=>$pushNotification],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pushNotification],200);
@@ -217,7 +211,7 @@ class PushNotificationController extends Controller
     public function restoreAll(){
           try{
         $pushNotifications =  $this->pushNotificationRepo->restoreAll($this->pushNotification);
-                                  if(is_string($pushNotifications)){
+                if(is_string($pushNotifications)){
             return response()->json(['status'=>false,'message'=>$pushNotifications],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pushNotifications],200);
@@ -240,7 +234,7 @@ class PushNotificationController extends Controller
     {
           try{
        $pushNotification= $this->pushNotificationRepo->destroy($id,$this->pushNotification);
-                          if(is_string($pushNotification)){
+           if(is_string($pushNotification)){
             return response()->json(['status'=>false,'message'=>$pushNotification],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pushNotification],200);
@@ -257,7 +251,7 @@ class PushNotificationController extends Controller
           try{
         //to make force destroy for a PushNotification must be this PushNotification  not found in PushNotifications table  , must be found in trash PushNotifications
         $pushNotification=$this->pushNotificationRepo->forceDelete($id,$this->pushNotification);
-                          if(is_string($pushNotification)){
+            if(is_string($pushNotification)){
             return response()->json(['status'=>false,'message'=>$pushNotification],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pushNotification],200);

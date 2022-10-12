@@ -34,9 +34,7 @@ class ReFinishingOrderRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        //update Order for only superadministrator  and admins
-        $authorizeRes= $this->baseRepo->authorize();
+        $authorizeRes= $this->baseRepo->authorizeUser();
         if($authorizeRes==true){  
                 return true;
             
@@ -54,9 +52,9 @@ class ReFinishingOrderRequest extends FormRequest
     {
 
             return [
-                'payment_id'=>['required','exists:payments,id'],
-            'products' => ['required'],
-            'products.*'=>['exists:product_array_attributes,id']
+                'payment_id'=>['required','exists:payments,id','in:1,2,3,4'],
+            'product_array_attributes' => ['required'],
+            'product_array_attributes.*'=>['exists:product_array_attributes,id']
 
                 
             ];
@@ -82,7 +80,7 @@ class ReFinishingOrderRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Order'));
+        throw new AuthorizationException(__('Only user can make this action'));
     }
     
 }

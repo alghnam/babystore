@@ -48,12 +48,17 @@ class UpdateCountryRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'name' => ['required','max:225',Rule::unique('countries')->ignore($this->id)],
-            'code' => ['required', 'max:100'],
-            'status' => ['required', 'in:1,0']
-
-        ];
+        if($this->id=="1"){
+                
+                return $this->failedAction();
+            }else{
+                return [
+                    'name' => ['required','max:225',Rule::unique('countries')->ignore($this->id)],
+                    'code' => ['required', 'max:100'],
+                    'status' => ['required', 'in:1,0']
+        
+                ];
+            }
     }
 
     /**
@@ -63,6 +68,11 @@ class UpdateCountryRequest extends FormRequest
     {
         return [        
         ];
+    }
+            protected function failedAction()
+    {
+        // throw new AuthorizationException(__('Cannt make any action here'));
+        throw new AuthorizationException('لا تستطيع فعل هذا الامر هنا');
     }
     /**
      * Handle a failed authorization attempt.

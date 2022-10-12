@@ -53,12 +53,10 @@ class UpdateQuestionRequest extends FormRequest
 
             return [
             
-               'question' => ['required','max:255'],
+                'question' => ['required'],
                 'question_category_id' => ['required','max:255','exists:question_categories,id'],
-
-
-               'answer' => ['required','max:255'],
-            'status' => ['sometimes', 'in:1,0'],
+                'answer' => ['required'],
+                'status' => ['sometimes', 'in:1,0'],
 
 
             ];

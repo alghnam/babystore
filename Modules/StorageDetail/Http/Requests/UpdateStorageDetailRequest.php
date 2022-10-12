@@ -8,7 +8,6 @@ use App\Repositories\BaseRepository;
 use Illuminate\Validation\Rule;
 use Modules\Profile\Entities\Profile;
 use Illuminate\Validation\Rules;
-use Modules\StorageDetail\Entities\StorageDetail;
 /**
  * Class UpdateStorageDetailRequest.
  */
@@ -52,19 +51,13 @@ class UpdateStorageDetailRequest extends FormRequest
     public function rules()
     {
         
-        $StorageDetail= StorageDetail::where('id',$this->id)->first();
-        if($StorageDetail!==null){
+
             return [
-            'sku' => ['required','max:255'],
-            'barcode' => ['max:255',Rule::unique('storage_details')->ignore($this->id)],
-            'wight' => ['max:255']
+            'sku' => ['nullable','max:255'],
+            'barcode' => ['nullable','max:255',Rule::unique('storage_details')->ignore($this->id)],
+            'wight' => ['nullable','max:255']
             ];
 
-        }else{
-            return [
-
-            ];
-        }
     }
 
     /**
@@ -85,7 +78,7 @@ class UpdateStorageDetailRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this StorageDetail'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
     
 }

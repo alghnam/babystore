@@ -59,7 +59,7 @@ class AddToCartRequest extends FormRequest
     public function messages()
     {
         return [
-
+            'quantity.numeric'=>'يجب ان تكون الكمية رقم'
         ];
     }
     /**

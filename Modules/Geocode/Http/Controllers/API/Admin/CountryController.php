@@ -3,7 +3,6 @@
 namespace Modules\Geocode\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Geocode\Http\Requests\Country\DeleteCountryRequest;
@@ -101,15 +100,18 @@ class CountryController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-//   try{
+        try{
         $countries=$this->countryRepo->trash($this->country,$request);
+             if(is_string($countries)){
+                return response()->json(['status'=>false,'message'=>$countries],404);
+            }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countries],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
 
@@ -250,22 +252,6 @@ class CountryController extends Controller
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
         } 
-    }
-        public function deleteImage($id){
-          try{
-        $country= $this->countryRepo->deleteImage($id,$this->product);
-         if(is_string($country)){
-            return response()->json(['status'=>false,'message'=>$country],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$country],200);
-
-        
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
-        
-        
     }
 
 

@@ -52,6 +52,8 @@ class StoreQuestionRequest extends FormRequest
               
             return [
                'name' => ['required','max:255',Rule::unique('question_categories')],
+               'image'=>['nullable'],
+            'image.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg'],
             'status' => ['sometimes', 'in:1,0'],
 
             ];
@@ -77,6 +79,6 @@ class StoreQuestionRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Cart'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

@@ -57,10 +57,10 @@ class UpdateDetailsUpSellRequest extends FormRequest
               
             return [
                           'name' => ['required','max:255'],
-            'description' => ['required','max:255'],
+            'description' => ['required'],
             'footer' => ['max:255'],
-
-            'status' => ['sometimes', 'in:1,0'],
+            'upsells' => ['sometimes','array'],
+            'upsells.*'=>['exists:products,id']
             ];
 
     }
@@ -83,7 +83,7 @@ class UpdateDetailsUpSellRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this category'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
     
 }

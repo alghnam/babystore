@@ -3,13 +3,11 @@
 namespace Modules\Service\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Service\Entities\Service;
 use Modules\Service\Http\Requests\StoreServiceRequest;
 use Modules\Service\Http\Requests\UpdateServiceRequest;
-// use Modules\Service\Http\Requests\UpdateServiceRequest;
 use Modules\Service\Http\Requests\DeleteServiceRequest;
 use Modules\Service\Repositories\Admin\ServiceRepository;
 
@@ -36,15 +34,15 @@ class ServiceController extends Controller
     */
     public function __construct(BaseRepository $baseRepo, Service $service,ServiceRepository $serviceRepo)
     {
-    // $this->middleware(['permission:services_read'])->only(['index','getAllPaginates']);
-    // $this->middleware(['permission:services_trash'])->only('trash');
-    // $this->middleware(['permission:services_restore'])->only('restore');
-    // $this->middleware(['permission:services_restore-all'])->only('restore-all');
-    // $this->middleware(['permission:services_show'])->only('show');
-    // $this->middleware(['permission:services_store'])->only('store');
-    // $this->middleware(['permission:services_update'])->only('update');
-    // $this->middleware(['permission:services_destroy'])->only('destroy');
-    // $this->middleware(['permission:services_destroy-force'])->only('destroy-force');
+    $this->middleware(['permission:services_read'])->only(['index','getAllPaginates']);
+    $this->middleware(['permission:services_trash'])->only('trash');
+    $this->middleware(['permission:services_restore'])->only('restore');
+    $this->middleware(['permission:services_restore-all'])->only('restore-all');
+    $this->middleware(['permission:services_show'])->only('show');
+    $this->middleware(['permission:services_store'])->only('store');
+    $this->middleware(['permission:services_update'])->only('update');
+    $this->middleware(['permission:services_destroy'])->only('destroy');
+    $this->middleware(['permission:services_destroy-force'])->only('destroy-force');
     $this->baseRepo = $baseRepo;
     $this->service = $service;
     $this->serviceRepo = $serviceRepo;
@@ -55,25 +53,24 @@ class ServiceController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
+        try{
     
-    $services=$this->serviceRepo->all($this->service);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Services has been getten successfully',
-        'data'=> $services
-    ]);
+            $services=$this->serviceRepo->all($this->service);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$services],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllPaginates(Request $request){
-    
-    $services=$this->serviceRepo->getAllPaginates($this->service,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Services has been getten successfully(pagination)',
-        'data'=> $services
-    ]);
+        try{
+            $services=$this->serviceRepo->getAllPaginates($this->service,$request);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$services],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -81,14 +78,19 @@ class ServiceController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-    $services=$this->serviceRepo->trash($this->service,$request);
+        try{
+            $services=$this->serviceRepo->trash($this->service,$request);
+    
+            if(is_string($services)){
+                return response()->json(['status'=>false,'message'=>$services],404);
+            }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$services],200);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Services has been getten successfully (in trash)',
-        'data'=> $services
-    ]);
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -100,13 +102,15 @@ class ServiceController extends Controller
     */
     public function store(StoreServiceRequest $request)
     {
+        try{
     $service=$this->serviceRepo->store($request,$this->service);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Service has been stored successfully',
-        'data'=> $service
-    ]);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$service],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
 
@@ -118,19 +122,20 @@ class ServiceController extends Controller
     */
     public function show($id)
     {
+        try{
     $service=$this->serviceRepo->find($id,$this->service);
     
         if(is_string($service)){
             return response()->json(['status'=>false,'message'=>$service],404);
         }
    
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'Service has been getten successfully',
-            'data'=> $service
-        ]);
-    
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$service],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -144,65 +149,56 @@ class ServiceController extends Controller
     */
     public function update(UpdateServiceRequest $request,$id)
     {
+        try{
     $service= $this->serviceRepo->update($request,$id,$this->service);
     if(is_string($service)){
             return response()->json(['status'=>false,'message'=>$service],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Service has been updated successfully',
-        'data'=> $service
-    ]);
+   
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$service],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
 
-    public function inventory(){
-    $servicesInInventory= $this->serviceRepo->servicesInInventory($this->service);
-    if(empty($servicesInInventory)){
-    if(is_string($service)){
-            return response()->json(['status'=>false,'message'=>$service],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'ServicesInInventory getting successfully',
-        'data'=> $servicesInInventory
-    ]);
-     
-    }
-    }
 
     //methods for restoring
     public function restore($id){
+        try{
+            $service =  $this->serviceRepo->restore($id,$this->service);
+             if(is_string($service)){
+                    return response()->json(['status'=>false,'message'=>$service],404);
+                }
     
-    $service =  $this->serviceRepo->restore($id,$this->service);
-     if(is_string($service)){
-            return response()->json(['status'=>false,'message'=>$service],404);
-        }
-    
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'Service has been restored',
-                'data'=> $service
-            ]);
+   
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$service],200);
+
         
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
     public function restoreAll(){
-    $services =  $this->serviceRepo->restoreAll($this->service);
-     if(is_string($services)){
-            return response()->json(['status'=>false,'message'=>$services],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $services
-        ]);
-    
+        try{
+            $services =  $this->serviceRepo->restoreAll($this->service);
+             if(is_string($services)){
+                    return response()->json(['status'=>false,'message'=>$services],404);
+                }
+           
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$services],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
 
@@ -214,34 +210,34 @@ class ServiceController extends Controller
     */
     public function destroy(DeleteServiceRequest $request,$id)
     {
-    $service= $this->serviceRepo->destroy($id,$this->service);
-     if(is_string($service)){
-            return response()->json(['status'=>false,'message'=>$service],404);
-        }
-  
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $service
-    ]); 
-    
+        try{
+            $service= $this->serviceRepo->destroy($id,$this->service);
+             if(is_string($service)){
+                    return response()->json(['status'=>false,'message'=>$service],404);
+                }
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$service],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     public function forceDelete(DeleteServiceRequest $request,$id)
     {
-    //to make force destroy for a Service must be this Service  not found in Services table  , must be found in trash Services
-    $service=$this->serviceRepo->forceDelete($id,$this->service);
-     if(is_string($service)){
-            return response()->json(['status'=>false,'message'=>$service],404);
-        }
+        try{
+            //to make force destroy for a Service must be this Service  not found in Services table  , must be found in trash Services
+            $service=$this->serviceRepo->forceDelete($id,$this->service);
+             if(is_string($service)){
+                    return response()->json(['status'=>false,'message'=>$service],404);
+                }
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$service],200);
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
-    
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
     

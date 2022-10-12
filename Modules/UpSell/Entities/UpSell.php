@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class UpSell extends Model
 {
     use SoftDeletes;
- protected $table='up_sells';
+
+ protected $table='up_sellss';
        /**
      * The attributes that are mass assignable.
      *
@@ -22,25 +23,20 @@ class UpSell extends Model
         'product_id',
         'upsells',
         'description',
-        'footer',
-        'status'
+        'footer'
     ];    
-    
-     public function getStatusAttribute($value){
-        if($value==0){
-            return 'InActive';
-        }elseif ($value==1) {
-            return 'Active';
-        }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
-    } 
+         protected $casts=[
+        "upsells"=>"json"
+        ];
+
     
     
    
-    public function product(){
-        return $this->belongsTo("Modules\UpSell\Entities\UpSell",'upsells');
+    // public function upsell(){
+    //     return $this->belongsTo("Modules\Product\Entities\Product",'upsells');
+    // }
+        public function product(){
+        return $this->belongsTo("Modules\Product\Entities\Product");
     }
     
 }

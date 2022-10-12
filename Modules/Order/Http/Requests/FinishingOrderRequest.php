@@ -34,9 +34,7 @@ class FinishingOrderRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        //update Order for only superadministrator  and admins
-        $authorizeRes= $this->baseRepo->authorize();
+        $authorizeRes= $this->baseRepo->authorizeUser();
         if($authorizeRes==true){  
                 return true;
             
@@ -57,9 +55,8 @@ class FinishingOrderRequest extends FormRequest
                 'order_id' => ['required','numeric','exists:orders,id'],
                 'service_id' => ['required','numeric','exists:services,id'],
                 'address_id' => ['required','numeric','exists:addresses,id'],
-                'payment_id' => ['required','numeric','exists:payments,id'],
+                'payment_id' => ['required','numeric','exists:payments,id','in:1,2,3,4'],//1: wallet,2: upon ,3: payment method
                 'coupon_id' => ['numeric','exists:coupons,id'],
-                            // 'buying_method' => ['required','sometimes', 'in:1,2,3,4'],
 
                 
             ];
@@ -85,7 +82,7 @@ class FinishingOrderRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Order'));
+        throw new AuthorizationException(__('Only user can make this action'));
     }
     
 }

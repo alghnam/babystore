@@ -76,6 +76,6 @@ class StoreSimilarProductRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Product'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

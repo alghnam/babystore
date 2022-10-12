@@ -24,10 +24,31 @@ class CouponRepository extends EloquentRepository implements CouponRepositoryInt
        return  $modelData;
    
     }
-
-           public  function trash($model,$request){
+   public  function trash($model,$request){
+       $modelData=$this->findAllItemsOnlyTrashed($model);
+        if(is_string($modelData)){
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
+        }
        $modelData=$this->findAllItemsOnlyTrashed($model)->withoutGlobalScope(ActiveScope::class)->with(['order'])->paginate($request->total);
         return $modelData;
+    }
+        public function store($request,$model){
+            $data=$request->validated();
+            $data['locale']=config('app.locale');
+            $data['is_used']=0;
+            $coupon= $model->create($data);
+            return $coupon;
+    }
+        public function update($request,$id,$model){
+
+            $coupon=$this->find($id,$model);
+
+            $data=$request->validated();
+            $data['locale']=config('app.locale');
+            $data['is_used']=0;
+            $coupon->update($data);
+            return $coupon;
+
     }
 
 }

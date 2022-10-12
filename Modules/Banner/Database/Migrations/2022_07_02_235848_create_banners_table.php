@@ -21,7 +21,7 @@ class CreateBannersTable extends Migration
                 ->on('products')
                 ->onDelete('cascade');
                         $table->string('title')->nullable();
-            $table->string('description')->nullable();
+            $table->longText('description')->nullable();
             $table->string('url')->nullable();
                         $table->tinyInteger('status')->default(1);
             $table->date('deleted_at')->nullable();

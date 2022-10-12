@@ -50,14 +50,12 @@ class StoreCouponRequest extends FormRequest
     public function rules()
     {
         return [
-                           'name' => ['max:225',Rule::unique('coupons')],
-                'order_id' => ['required','numeric','exists:orders,id'],
-                'value' => ['required','max:225'],
-                'status' => ['sometimes', 'in:1,0'],
-                // 'is_used' => ['sometimes', 'in:1,0'],
-                // 'end_date'=>['required','date']
-
-        ];'status' => ['required'
+                'name' => ['max:225',Rule::unique('coupons')],
+                'value' => ['required','max:225','numeric'],
+                 'end_date'=>['required','date'],
+                'is_used' => ['in:1,0'],
+                'status' => ['required', 'in:1,0']
+        ];
     }
 
     /**
@@ -79,6 +77,6 @@ class StoreCouponRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Coupon'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can store this Coupon'));
     }
 }

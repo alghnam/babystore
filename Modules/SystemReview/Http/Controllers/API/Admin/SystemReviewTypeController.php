@@ -35,15 +35,15 @@ class SystemReviewTypeController extends Controller
     */
     public function __construct(BaseRepository $baseRepo, SystemReviewType $systemReviewType,SystemReviewTypeRepository $systemReviewTypeRepo)
     {
-    $this->middleware(['permission:system_review_types_read'])->only(['index','getAllPaginates']);
-$this->middleware(['permission:system_review_types_trash'])->only('trash');
-    $this->middleware(['permission:system_review_types_restore'])->only('restore');
-    $this->middleware(['permission:system_review_types_restore-all'])->only('restore-all');
-    $this->middleware(['permission:system_review_types_show'])->only('show');
-    $this->middleware(['permission:system_review_types_store'])->only('store');
-    $this->middleware(['permission:system_review_types_update'])->only('update');
-    $this->middleware(['permission:system_review_types_destroy'])->only('destroy');
-    $this->middleware(['permission:system_review_types_destroy-force'])->only('destroy-force');
+//     $this->middleware(['permission:system_review_types_read'])->only(['index','getAllPaginates']);
+// $this->middleware(['permission:system_review_types_trash'])->only('trash');
+//     $this->middleware(['permission:system_review_types_restore'])->only('restore');
+//     $this->middleware(['permission:system_review_types_restore-all'])->only('restore-all');
+//     $this->middleware(['permission:system_review_types_show'])->only('show');
+//     $this->middleware(['permission:system_review_types_store'])->only('store');
+//     $this->middleware(['permission:system_review_types_update'])->only('update');
+//     $this->middleware(['permission:system_review_types_destroy'])->only('destroy');
+//     $this->middleware(['permission:system_review_types_destroy-force'])->only('destroy-force');
     $this->baseRepo = $baseRepo;
     $this->systemReviewType = $systemReviewType;
     $this->systemReviewTypeRepo = $systemReviewTypeRepo;
@@ -56,23 +56,15 @@ $this->middleware(['permission:system_review_types_trash'])->only('trash');
     public function index(){
     
     $systemReviewTypes=$this->systemReviewTypeRepo->all($this->systemReviewType);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReviews has been getten successfully',
-        'data'=> $systemReviewTypes
-    ]);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewTypes],200);
+
     }
 
     public function getAllPaginates(Request $request){
     
     $systemReviewTypes=$this->systemReviewTypeRepo->getAllPaginates($this->systemReviewType,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReviews has been getten successfully(pagination)',
-        'data'=> $systemReviewTypes
-    ]);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewTypes],200);
+
     }
 
 
@@ -82,12 +74,8 @@ $this->middleware(['permission:system_review_types_trash'])->only('trash');
     public function trash(Request $request){
     $systemReviewTypes=$this->systemReviewTypeRepo->trash($this->systemReviewType,$request);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReviews has been getten successfully (in trash)',
-        'data'=> $systemReviewTypes
-    ]);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewTypes],200);
+
     }
 
 
@@ -100,12 +88,8 @@ $this->middleware(['permission:system_review_types_trash'])->only('trash');
     public function store(StoreSystemReviewTypeRequest $request)
     {
     $systemReviewType=$this->systemReviewTypeRepo->store($request,$this->systemReviewType);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReview has been stored successfully',
-        'data'=> $systemReviewType
-    ]);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewType],200);
+
     }
     
 
@@ -123,13 +107,8 @@ $this->middleware(['permission:system_review_types_trash'])->only('trash');
             return response()->json(['status'=>false,'message'=>$systemReviewType],404);
         }
    
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'SystemReview has been getten successfully',
-            'data'=> $systemReviewType
-        ]);
-    
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewType],200);
+
     }
 
 
@@ -147,31 +126,13 @@ $this->middleware(['permission:system_review_types_trash'])->only('trash');
     if(is_string($systemReviewType)){
             return response()->json(['status'=>false,'message'=>$systemReviewType],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReview has been updated successfully',
-        'data'=> $systemReviewType
-    ]);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewType],200);
+
     
 
     }
 
-    public function inventory(){
-    $systemReviewTypesInInventory= $this->systemReviewTypeRepo->systemReviewTypesInInventory($this->systemReviewType);
-    if(empty($systemReviewTypesInInventory)){
-    if(is_string($systemReviewType)){
-            return response()->json(['status'=>false,'message'=>$systemReviewType],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'SystemReviewsInInventory getting successfully',
-        'data'=> $systemReviewTypesInInventory
-    ]);
-     
-    }
-    }
+   
 
     //methods for restoring
     public function restore($id){
@@ -181,12 +142,8 @@ $this->middleware(['permission:system_review_types_trash'])->only('trash');
             return response()->json(['status'=>false,'message'=>$systemReviewType],404);
         }
     
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'SystemReview has been restored',
-                'data'=> $systemReviewType
-            ]);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewType],200);
+
         
 
     }
@@ -195,12 +152,8 @@ $this->middleware(['permission:system_review_types_trash'])->only('trash');
      if(is_string($systemReviewTypes)){
             return response()->json(['status'=>false,'message'=>$systemReviewTypes],404);
         }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $systemReviewTypes
-        ]);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewType],200);
+
     
 
     }
@@ -218,12 +171,8 @@ $this->middleware(['permission:system_review_types_trash'])->only('trash');
             return response()->json(['status'=>false,'message'=>$systemReviewType],404);
         }
   
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $systemReviewType
-    ]); 
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewType],200);
+
     
     }
     public function forceDelete(DeleteSystemReviewTypeRequest $request,$id)
@@ -233,13 +182,8 @@ $this->middleware(['permission:system_review_types_trash'])->only('trash');
      if(is_string($systemReviewType)){
             return response()->json(['status'=>false,'message'=>$systemReviewType],404);
         }
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$systemReviewTypes],200);
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
     
     }
     

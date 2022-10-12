@@ -18,23 +18,29 @@ class ChatRepository extends EloquentRepository implements ChatRepositoryInterfa
 {
 
  
-    public function getAllPaginates($model,$request){
+    public function getAllChatsRecivedPaginates($model,$request){
         $modelData=$model->where('user_id','!=',1)->with(['user','client'])->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
           return  $modelData;
     }
     
-        public function getAllChatsSendedPaginate($model,$request){
+        public function getAllChatsSendedPaginates($model,$request){
         $modelData=$model->where(['user_id'=>1])->with(['user','client'])->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
           return  $modelData;
     }
     
     public  function trashAllChatsRecieved($model,$request){
-      $modelData=$this->findAllItemsOnlyTrashed($model)->where('user_id','!=',1)->with(['user','client'])->paginate($request->total);
-        return $modelData;
+      $modelData=$this->findAllItemsOnlyTrashed($model);
+        if(is_string($modelData)){
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
+        }
+        return $modelData->where('user_id','!=',1)->with(['user','client'])->paginate($request->total);
     }
         public  function trashAllChatsSended($model,$request){
-      $modelData=$this->findAllItemsOnlyTrashed($model)->where(['user_id'=>1])->with(['user','client'])->paginate($request->total);
-        return $modelData;
+      $modelData=$this->findAllItemsOnlyTrashed($model);
+              if(is_string($modelData)){
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
+        }
+        return $modelData->where(['user_id'=>1])->with(['user','client'])->paginate($request->total);
     }
 
 
@@ -69,7 +75,6 @@ public function restoreAllChatsRecieved($model){
                 $items = $items->restore();//restore all items from trash into items table
                 return $items;
                 return 'تمت الاستعادة بنجاح';
-                // return trans('messages.items has been restored successfully');
             }
         }
         
@@ -86,7 +91,6 @@ public function restoreAllChatsRecieved($model){
                 $items = $items->restore();//restore all items from trash into items table
                 return $items;
                 return 'تمت الاستعادة بنجاح';
-                // return trans('messages.items has been restored successfully');
             }
         }
         

@@ -6,9 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Repositories\BaseRepository;
 use Illuminate\Validation\Rule;
-use Modules\Profile\Entities\Profile;
 use Illuminate\Validation\Rules;
-use Modules\Search\Entities\SearchSearch;
 /**
  * Class UpdateMovementRequest.
  */
@@ -35,7 +33,7 @@ class UpdateMovementRequest extends FormRequest
     public function authorize()
     {
         //update Cart for only superadministrator  and admins
-        $authorizeRes= $this->baseRepo->authorize();
+        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
         if($authorizeRes==true){  
                 return true;
             
@@ -78,7 +76,7 @@ class UpdateMovementRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Cart'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
     
 }

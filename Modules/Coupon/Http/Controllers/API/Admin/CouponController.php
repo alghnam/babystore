@@ -4,7 +4,6 @@ namespace Modules\Coupon\Http\Controllers\API\Admin;
 
 use Modules\Coupon\Entities\Coupon;
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Coupon\Http\Requests\StoreCouponRequest;
@@ -55,34 +54,31 @@ class CouponController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $coupons=$this->couponRepo->all($this->coupon);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Coupons has been getten successfully',
-        'data'=> $coupons
-    ]);
+        try{
+            $coupons=$this->couponRepo->all($this->coupon);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupons],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     public function getAllPaginates(Request $request){
-    
-    $coupons=$this->couponRepo->getAllPaginates($this->coupon,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Coupons has been getten successfully(pagination)',
-        'data'=> $coupons
-    ]);
+        try{
+            $coupons=$this->couponRepo->getAllPaginates($this->coupon,$request);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupons],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getCouponsForCategory($categoryId){
-    $getCouponsForCategory=$this->couponRepo->getCouponsForCategory($this->coupon,$categoryId);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'CouponsForCategory  has been getten successfully',
-        'data'=> $getCouponsForCategory
-    ]);
+        try{
+            $getCouponsForCategory=$this->couponRepo->getCouponsForCategory($this->coupon,$categoryId);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupons],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        } 
     }
 
 
@@ -90,14 +86,16 @@ class CouponController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-    $coupons=$this->couponRepo->trash($this->coupon,$request);
+        try{
+            $coupons=$this->couponRepo->trash($this->coupon,$request);
+            if(is_string($coupons)){
+                return response()->json(['status'=>false,'message'=>$coupons],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupons],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Coupons has been getten successfully (in trash)',
-        'data'=> $coupons
-    ]);
+        } 
     }
 
 
@@ -109,13 +107,13 @@ class CouponController extends Controller
     */
     public function store(StoreCouponRequest $request)
     {
-    $coupon=$this->couponRepo->store($request,$this->coupon);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Coupon has been stored successfully',
-        'data'=> $coupon
-    ]);
+        // try{
+            $coupon=$this->couponRepo->store($request,$this->coupon);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupon],200);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
     }
 
     /**
@@ -126,22 +124,13 @@ class CouponController extends Controller
     */
     public function show($id)
     {
-    $coupon=$this->couponRepo->find($id,$this->coupon);
-    if(empty($coupon)){
-        return response()->json([
-            'status'=>false,
-            'code' => 404,
-            'message' => 'there is not exit this Coupon',
-            'data'=> null
-        ]);
-    }else{
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'Coupon has been getten successfully',
-            'data'=> $coupon
-        ]);
-    }
+        try{
+            $coupon=$this->couponRepo->find($id,$this->coupon);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupon],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -155,63 +144,45 @@ class CouponController extends Controller
     */
     public function update(UpdateCouponRequest $request,$id)
     {
-    $coupon= $this->couponRepo->update($request,$id,$this->coupon);
-              if(is_string($coupon)){
+        try{
+            $coupon= $this->couponRepo->update($request,$id,$this->coupon);
+            if(is_string($coupon)){
             return response()->json(['status'=>false,'message'=>$coupon],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Coupon has been updated successfully',
-        'data'=> $coupon
-    ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupon],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
-    }
-
-    public function inventory(){
-    $couponsInInventory= $this->couponRepo->couponsInInventory($this->coupon);
-                  if(is_string($couponsInInventory)){
-            return response()->json(['status'=>false,'message'=>$couponsInInventory],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'CouponsInInventory getting successfully',
-        'data'=> $couponsInInventory
-    ]);
-    
     }
 
     //methods for restoring
     public function restore($id){
-    
-    $coupon =  $this->couponRepo->restore($id,$this->coupon);
-                  if(is_string($coupon)){
-            return response()->json(['status'=>false,'message'=>$coupon],404);
-        }
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'Coupon has been restored',
-                'data'=> $coupon
-            ]);
-        
+        try{
+            $coupon =  $this->couponRepo->restore($id,$this->coupon);
+            if(is_string($coupon)){
+                return response()->json(['status'=>false,'message'=>$coupon],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupon],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
     public function restoreAll(){
-    $coupons =  $this->couponRepo->restoreAll($this->coupon);
-                  if(is_string($coupons)){
-            return response()->json(['status'=>false,'message'=>$coupons],404);
-        }
-        
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $coupons
-        ]);
-    
+        try{
+            $coupons =  $this->couponRepo->restoreAll($this->coupon);
+            if(is_string($coupons)){
+                return response()->json(['status'=>false,'message'=>$coupons],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupons],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
 
@@ -223,31 +194,31 @@ class CouponController extends Controller
     */
     public function destroy(DeleteCouponRequest $request,$id)
     {
-    $coupon= $this->couponRepo->destroy($id,$this->coupon);
-                  if(is_string($coupon)){
-            return response()->json(['status'=>false,'message'=>$coupon],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $coupon
-    ]); 
+        // try{
+            $coupon= $this->couponRepo->destroy($id,$this->coupon);
+            if(is_string($coupon)){
+                return response()->json(['status'=>false,'message'=>$coupon],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupon],200);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
     
     }
     public function forceDelete(DeleteCouponRequest $request,$id)
     {
-    //to make force destroy for a Coupon must be this Coupon  not found in Coupons table  , must be found in trash Coupons
-    $coupon=$this->couponRepo->forceDelete($id,$this->coupon);
-                  if(is_string($coupon)){
-            return response()->json(['status'=>false,'message'=>$coupon],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> $coupon
-        ]); 
+        try{
+            //to make force destroy for a Coupon must be this Coupon  not found in Coupons table  , must be found in trash Coupons
+            $coupon=$this->couponRepo->forceDelete($id,$this->coupon);
+            if(is_string($coupon)){
+                return response()->json(['status'=>false,'message'=>$coupon],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupons],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
 

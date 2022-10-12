@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUpSellsTable extends Migration
+class CreateUpSellssTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,18 @@ class CreateUpSellsTable extends Migration
      */
     public function up()
     {
-        Schema::create('up_sells', function (Blueprint $table) {
+        Schema::create('up_sellss', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->unsignedBigInteger('upsell');
-            $table->foreign('upsell')->references('id')->on('products')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->text('description');
+            $table->longText('upsells');
+
+            $table->longText('description');
             $table->string('footer');
-            $table->tinyInteger('status')->default(1);            
+            $table->tinyInteger('status')->default(1);      
+                                    $table->date('deleted_at')->nullable();
+
             $table->timestamps();
         });
     }
@@ -34,6 +36,6 @@ class CreateUpSellsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('up_sells');
+        Schema::dropIfExists('up_sellss');
     }
 }

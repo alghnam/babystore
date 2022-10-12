@@ -3,7 +3,6 @@
 namespace Modules\BuyingSystemMount\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\BuyingSystemMount\Entities\BuyingSystemMount;
@@ -52,25 +51,26 @@ class BuyingSystemMountController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
+        try{
+            $buyingSystemMounts=$this->buyingSystemMountRepo->all($this->buyingSystemMount);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$buyingSystemMounts],200);
     
-    $buyingSystemMounts=$this->buyingSystemMountRepo->all($this->buyingSystemMount);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'buyingSystemMounts has been getten successfully',
-        'data'=> $buyingSystemMounts
-    ]);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllPaginates(Request $request){
-    
-    $buyingSystemMounts=$this->buyingSystemMountRepo->getAllPaginates($this->buyingSystemMount,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'BuyingSystemMounts has been getten successfully(pagination)',
-        'data'=> $buyingSystemMounts
-    ]);
+        try{
+            
+            $buyingSystemMounts=$this->buyingSystemMountRepo->getAllPaginates($this->buyingSystemMount,$request);
+        return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$buyingSystemMounts],200);
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -85,16 +85,16 @@ class BuyingSystemMountController extends Controller
     */
     public function update(UpdateBuyingSystemMountRequest $request,$id)
     {
-    $buyingSystemMount= $this->buyingSystemMountRepo->update($request,$id,$this->buyingSystemMount);
-    if(is_string($buyingSystemMount)){
-            return response()->json(['status'=>false,'message'=>$buyingSystemMount],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'buyingSystemMount has been updated successfully',
-        'data'=> $buyingSystemMount
-    ]);
+        // try{
+            $buyingSystemMount= $this->buyingSystemMountRepo->update($request,$id,$this->buyingSystemMount);
+            if(is_string($buyingSystemMount)){
+                    return response()->json(['status'=>false,'message'=>$buyingSystemMount],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$buyingSystemMount],200);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
     
 
     }

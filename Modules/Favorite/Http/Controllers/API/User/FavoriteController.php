@@ -3,7 +3,6 @@
 namespace Modules\Favorite\Http\Controllers\API\User;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Favorite\Http\Requests\DeleteFavoriteRequest;
@@ -45,46 +44,52 @@ class FavoriteController extends Controller
     }
     ///////////
 public function myFavorites(){
+    try{
     $myFavorites=$this->favoriteRepo->myFavorites($this->favorite);
                 if(is_string($myFavorites)){
             return response()->json(['status'=>false,'message'=>$myFavorites],404);
         }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$myFavorites],200);
+            
+                
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-     return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'favorite has been getten successfully',
-            'data'=> $myFavorites
-        ]);
+        } 
+    
  
 }
 
 public function AddToFavorite($id){
+    try{
     $favorite=$this->favoriteRepo->AddToFavorite($this->favorite,$id);
                 if(is_string($favorite)){
             return response()->json(['status'=>false,'message'=>$favorite],400);
         }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'favorite has been added successfully',
-            'data'=> $favorite->load(['product','user'])
-        ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$favorite],200);
+            
+                
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
        
 }
 
 public function removeFromFavorite($id){
+    try{
     $favorite=$this->favoriteRepo->removeFromFavorite($this->favorite,$id);
                 if(is_string($favorite)){
             return response()->json(['status'=>false,'message'=>$favorite],404);
         }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'favorite has been removed successfully',
-            'data'=> null
-        ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$favorite],200);
+            
+                
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
         
     }
        

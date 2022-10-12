@@ -2,20 +2,13 @@
 
 namespace Modules\Category\Http\Controllers\API\Admin;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Routing\Controller;
 use Modules\Category\Http\Requests\SubCategory\StoreCategoryRequest;
 use Modules\Category\Http\Requests\SubCategory\UpdateCategoryRequest;
 use Modules\Category\Http\Requests\SubCategory\DeleteCategoryRequest;
-use Modules\Auth\Repositories\Role\RoleRepository;
-use Modules\Auth\Repositories\Permission\PermissionRepository;
-use Modules\Geocode\Repositories\Country\CountryRepository;
-use Modules\Geocode\Repositories\City\CityRepository;
-use Modules\Geocode\Repositories\Town\TownRepository;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Modules\Auth\Entities\User;
-use Illuminate\Support\Facades\Storage;
 use Modules\Category\Entities\SubCategory;
 use Modules\Category\Repositories\Admin\SubCategory\CategoryRepository;
 
@@ -30,9 +23,9 @@ class SubCategoryController extends Controller
       */
      protected $categoryRepo;
          /**
-      * @var Category
+      * @var SubCategory
       */
-     protected $category;
+     protected $subCategory;
     
  
      /**
@@ -69,7 +62,18 @@ class SubCategoryController extends Controller
      }
  
  
- 
+  public function getSecondSubCategoriesForSub($categoryId){
+        // try{
+        $getSecondSubCategoriesForSub=$this->subCategoryRepo->getSecondSubCategoriesForSub($this->subCategory,$categoryId);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$getSecondSubCategoriesForSub],200);
+
+        
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
+    
+    }
  
      /**
       * Display the specified resource.
@@ -98,8 +102,11 @@ class SubCategoryController extends Controller
     
     // methods for trash
     public function trash(Request $request){
-  try{
+        try{
         $subCategories=$this->subCategoryRepo->trash($this->subCategory,$request);
+        if(is_string($subCategories)){
+            return response()->json(['status'=>false,'message'=>$subCategories],404);
+        }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategories],200);
 
         
@@ -120,7 +127,8 @@ class SubCategoryController extends Controller
     {
         //  try{
        $subCategory= $this->subCategoryRepo->store($request,$this->subCategory);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory],200);
+    //   dd($subCategory);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory->load(['category','category.mainCategory','image'])],200);
 
         
         // }catch(\Exception $ex){
@@ -129,27 +137,7 @@ class SubCategoryController extends Controller
         // } 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    // public function show($id)
-    // {
-    //           try{
-    //     $subCategory=$this->subCategoryRepo->find($id,$this->subCategory);
-    //                       if(is_string($subCategory)){
-    //         return response()->json(['status'=>false,'message'=>$subCategory],404);
-    //     }
-    //       return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory],200);
 
-        
-    //     }catch(\Exception $ex){
-    //         return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-    //     } 
-    // }
 
  
 
@@ -161,30 +149,30 @@ class SubCategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateCategoryRequest $request,$id)
-    {
-        //   try{
-       $subCategory= $this->subCategoryRepo->update($request,$id,$this->subCategory);
-                                 if(is_string($subCategory)){
-            return response()->json(['status'=>false,'message'=>$subCategory],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory],200);
+     {
+        try{
+            $subCategory= $this->subCategoryRepo->update($request,$id,$this->subCategory);
+            if(is_string($subCategory)){
+                return response()->json(['status'=>false,'message'=>$subCategory],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory->load(['category','category.mainCategory','image'])],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
     //methods for restoring
     public function restore($id){
         
-          try{
-        $subCategory =  $this->subCategoryRepo->restore($id,$this->subCategory);
-                                  if(is_string($subCategory)){
-            return response()->json(['status'=>false,'message'=>$subCategory],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory],200);
+        try{
+            $subCategory =  $this->subCategoryRepo->restore($id,$this->subCategory);
+            if(is_string($subCategory)){
+                return response()->json(['status'=>false,'message'=>$subCategory],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory->load(['category','category.mainCategory','image'])],200);
 
         
         }catch(\Exception $ex){
@@ -194,11 +182,11 @@ class SubCategoryController extends Controller
 
     }
     public function restoreAll(){
-          try{
-        $subCategories =  $this->subCategoryRepo->restoreAll($this->subCategory);
-                                  if(is_string($subCategories)){
-            return response()->json(['status'=>false,'message'=>$subCategories],404);
-        }
+        try{
+            $subCategories =  $this->subCategoryRepo->restoreAll($this->subCategory);
+            if(is_string($subCategories)){
+                return response()->json(['status'=>false,'message'=>$subCategories],404);
+            }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategories],200);
 
         
@@ -219,10 +207,10 @@ class SubCategoryController extends Controller
     {
           try{
        $subCategory= $this->subCategoryRepo->destroy($id,$this->subCategory);
-                          if(is_string($subCategory)){
+        if(is_string($subCategory)){
             return response()->json(['status'=>false,'message'=>$subCategory],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory->load(['category','category.mainCategory','image'])],200);
 
         
         }catch(\Exception $ex){
@@ -236,7 +224,7 @@ class SubCategoryController extends Controller
           try{
         //to make force destroy for a SubCategory must be this SubCategory  not found in SubCategorys table  , must be found in trash SubCategorys
         $subCategory=$this->subCategoryRepo->forceDelete($id,$this->subCategory);
-                          if(is_string($subCategory)){
+         if(is_string($subCategory)){
             return response()->json(['status'=>false,'message'=>$subCategory],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategory],200);

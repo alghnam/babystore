@@ -10,6 +10,7 @@ class Reward extends Model
 {
 
         use SoftDeletes;
+        protected $appends = ['original_status'];
 
     /**
   * The attributes that are mass assignable.
@@ -22,7 +23,11 @@ class Reward extends Model
      'code',
      'status'
  ];
-     public function getStatusAttribute($value){
+     public function getStatusAttribute(){
+       return  $this->attributes['status'];
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'Not Used';
         }elseif ($value==1) {
@@ -30,8 +35,5 @@ class Reward extends Model
         }elseif ($value==-1) {
             return 'Expired';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-       return  $this->attributes['status'];
     }
 }

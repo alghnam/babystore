@@ -23,7 +23,7 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
 });
 
 
-Route::prefix('search')->namespace('API')->group(function(){
+Route::prefix('search')->group(function(){
 
 Route::get('latest-results-search',[SearchControllerUser::class,'latestResultsSearch']);
 Route::get('delete-result-search/{id}', [SearchControllerUser::class,'deleteResultSearchUser']);

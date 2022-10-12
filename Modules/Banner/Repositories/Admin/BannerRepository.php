@@ -2,7 +2,6 @@
 namespace Modules\Banner\Repositories\Admin;
 
 use App\GeneralClasses\MediaClass;
-use App\Models\Image as ModelsImage;
 use App\Repositories\EloquentRepository;
 use Image;
 use Illuminate\Support\Arr;
@@ -22,14 +21,18 @@ class BannerRepository extends EloquentRepository implements BannerRepositoryInt
         $modelData=$model->withoutGlobalScope(ActiveScope::class)->with('product','image')->paginate($request->total);
           return  $modelData;
     }
-    // public  function trash($model,$request){
-    //   $modelData=$this->findAllItemsOnlyTrashed($model)->with('product')->paginate($request->total);
-    //     return $modelData;
-    // }
+   public  function trash($model,$request){
+       $modelData=$this->findAllItemsOnlyTrashed($model);
+        if(is_string($modelData)){
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
+        }
+       $modelData=$this->findAllItemsOnlyTrashed($model)->withoutGlobalScope(ActiveScope::class)->with('product','image')->paginate($request->total);
+        return $modelData;
+    }
     // methods overrides
     public function store($request,$model){
-        $data=$request->all();
-        $data['locale']=Session::get('applocale');
+        $data=$request->validated();
+        $data['locale']=config('app.locale');
 
         
         $enteredData=  Arr::except($data ,['image']);
@@ -88,35 +91,7 @@ class BannerRepository extends EloquentRepository implements BannerRepositoryInt
         return $Banner;
     }
 
-//     public function forceDelete($id,$model){
-//         //to make force destroy for an item must be this item  not found in items table  , must be found in trash items
-//         $itemInTableitems = $this->find($id,$model);//find this item from  table items
-//         if(empty($itemInTableitems)){//this item not found in items table
-//             $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
-//             if(empty($itemInTrash)){//this item not found in trash items
-//  //   return __('this item  found in system so you cannt   delete it by forcely , you can delete it Temporarily after that delete it by forcely');
-            
-//             return 'هذا العنصر  غير موجود بسلة المحذوفات لذلك يمكنك حذفه من النظام بالبداية وبعد ذلك حذفه من سلة المحذوفات  ';
-            
-                
-//             }else{
-//                  MediaClass::delete($itemInTrash->image);
-               
-//                 $itemInTrash->forceDelete();
-                
-//                 return $itemInTrash;
-//             }
-//         }else{
 
-//             // return __('not found');
-//             return 'غير موجود بالنظام ';
-                  
-//                           }
-                          
-
-
-//     }
-    
         public function deleteImage($idImage){
         
        $image= ProductImage::find($idImage);
@@ -124,7 +99,6 @@ class BannerRepository extends EloquentRepository implements BannerRepositoryInt
        $image->delete();
        }else{
            
-                        // return __('not found');
             return 'غير موجود بالنظام ';
                 
        }

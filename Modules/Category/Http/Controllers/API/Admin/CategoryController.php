@@ -2,20 +2,12 @@
 
 namespace Modules\Category\Http\Controllers\API\Admin;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Routing\Controller;
 use Modules\Category\Http\Requests\StoreCategoryRequest;
 use Modules\Category\Http\Requests\UpdateCategoryRequest;
 use Modules\Category\Http\Requests\DeleteCategoryRequest;
-use Modules\Auth\Repositories\Role\RoleRepository;
-use Modules\Auth\Repositories\Permission\PermissionRepository;
-use Modules\Geocode\Repositories\Country\CountryRepository;
-use Modules\Geocode\Repositories\City\CityRepository;
-use Modules\Geocode\Repositories\Town\TownRepository;
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
-use Modules\Auth\Entities\User;
-use Illuminate\Support\Facades\Storage;
 use Modules\Category\Entities\Category;
 use Modules\Category\Repositories\Admin\CategoryRepository;
 class CategoryController extends Controller
@@ -141,40 +133,29 @@ class CategoryController extends Controller
     }
 
 
- 
- 
- 
- 
-     /**
-      * Display the specified resource.
-      *
-      * @param  int  $id
-      * @return \Illuminate\Http\Response
-      */
-     public function show($id)
-     {
-             try{
-         $category=$this->categoryRepo->find($id,$this->category);
-          if(is_string($category)){
-            return response()->json(['status'=>false,'message'=>$category],404);
+
+    // methods for trash
+    public function trash(Request $request){
+  try{
+        $Categories=$this->categoryRepo->trash($this->category,$request);
+          if(is_string($Categories)){
+            return response()->json(['status'=>false,'message'=>$Categories],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$category],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Categories],200);
 
         
         }catch(\Exception $ex){
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
         } 
-            
-         
-     }
- 
-  
-
-    // methods for trash
-    public function trash(Request $request){
+    }
+    
+        public function trashSub(Request $request){
   try{
-        $Categories=$this->categoryRepo->trash($this->category,$request);
+        $Categories=$this->categoryRepo->trashSub($this->category,$request);
+          if(is_string($Categories)){
+            return response()->json(['status'=>false,'message'=>$Categories],404);
+        }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Categories],200);
 
         
@@ -195,7 +176,7 @@ class CategoryController extends Controller
     {
         //  try{
        $Category= $this->categoryRepo->store($request,$this->category);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category->load(['mainCategory','image'])],200);
 
         
         // }catch(\Exception $ex){
@@ -210,21 +191,21 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function show($id)
-    // {
-    //           try{
-    //     $Category=$this->categoryRepo->find($id,$this->category);
-    //                       if(is_string($Category)){
-    //         return response()->json(['status'=>false,'message'=>$Category],404);
-    //     }
-    //       return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category],200);
+    public function show($id)
+    {
+        try{
+            $Category=$this->categoryRepo->find($id,$this->category);
+           if(is_string($Category)){
+            return response()->json(['status'=>false,'message'=>$Category],404);
+        }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category->load(['mainCategory','image'])],200);
 
         
-    //     }catch(\Exception $ex){
-    //         return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-    //     } 
-    // }
+        } 
+    }
 
  
 
@@ -237,31 +218,29 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request,$id)
     {
-        //   try{
-       $Category= $this->categoryRepo->update($request,$id,$this->category);
-                                 if(is_string($Category)){
-            return response()->json(['status'=>false,'message'=>$Category],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category],200);
+        try{
+           $Category= $this->categoryRepo->update($request,$id,$this->category);
+                if(is_string($Category)){
+                return response()->json(['status'=>false,'message'=>$Category],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category->load(['mainCategory','image'])],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
     //methods for restoring
     public function restore($id){
         
-          try{
-        $Category =  $this->categoryRepo->restore($id,$this->category);
-                                  if(is_string($Category)){
+         try{
+            $Category =  $this->categoryRepo->restore($id,$this->category);
+            if(is_string($Category)){
             return response()->json(['status'=>false,'message'=>$Category],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category],200);
-
-        
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category->load(['mainCategory','image'])],200);
         }catch(\Exception $ex){
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
@@ -269,11 +248,11 @@ class CategoryController extends Controller
 
     }
     public function restoreAll(){
-          try{
-        $Categories =  $this->categoryRepo->restoreAll($this->category);
-                                  if(is_string($Categories)){
+        try{
+            $Categories =  $this->categoryRepo->restoreAll($this->category);
+           if(is_string($Categories)){
             return response()->json(['status'=>false,'message'=>$Categories],404);
-        }
+            }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Categories],200);
 
         
@@ -292,12 +271,12 @@ class CategoryController extends Controller
      */
     public function destroy(DeleteCategoryRequest $request,$id)
     {
-          try{
-       $Category= $this->categoryRepo->destroy($id,$this->category);
-                          if(is_string($Category)){
-            return response()->json(['status'=>false,'message'=>$Category],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category],200);
+        try{
+            $Category= $this->categoryRepo->destroy($id,$this->category);
+            if(is_string($Category)){
+                return response()->json(['status'=>false,'message'=>$Category],404);
+            }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category->load(['mainCategory','image'])],200);
 
         
         }catch(\Exception $ex){
@@ -308,19 +287,19 @@ class CategoryController extends Controller
     }
     public function forceDelete(DeleteCategoryRequest $request,$id)
     {
-        //   try{
-        //to make force destroy for a Category must be this Category  not found in Categorys table  , must be found in trash Categorys
-        $Category=$this->categoryRepo->forceDelete($id,$this->category);
-                          if(is_string($Category)){
-            return response()->json(['status'=>false,'message'=>$Category],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category],200);
+          try{
+            //to make force destroy for a Category must be this Category  not found in Categorys table  , must be found in trash Categorys
+            $Category=$this->categoryRepo->forceDelete($id,$this->category);
+            if(is_string($Category)){
+                return response()->json(['status'=>false,'message'=>$Category],404);
+            }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category->load(['mainCategory','image'])],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     } 
      
  

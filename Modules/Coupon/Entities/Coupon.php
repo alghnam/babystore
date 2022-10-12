@@ -10,6 +10,7 @@ use Modules\Order\Entities\Order;
 class Coupon extends Model
 {
     use SoftDeletes;
+        protected $appends = ['original_status','original_is_used'];
            /**
      * The attributes that are mass assignable.
      *
@@ -31,27 +32,29 @@ class Coupon extends Model
     public function order(){
         return $this->belongsTo(Order::class);
     }
-      public function getStatusAttribute($value){
+       public function getStatusAttribute(){
+        return  $this->attributes['status'];
+        
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'InActive';
-        }elseif ($value==1) {
+        }elseif($value==1) {
             return 'Active';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
     } 
     
-    
-          public function getIsUsedAttribute($value){
+    public function getIsUsedAttribute(){
+        return  $this->attributes['is_used'];
+    }
+    public function getOriginalIsUsedAttribute(){
+        $value=$this->attributes['is_used'];
         if($value==0){
             return 'Not Use';
         }elseif ($value==1) {
             return 'Used';
         }
-    }
-    public function getOriginalIsUsedAttribute($value){
-        return  $this->attributes['is_used'];
     } 
 
     // public function getDiscountAttribute($value){

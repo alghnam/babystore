@@ -42,6 +42,8 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
         Route::prefix('sub')->group(function(){
             Route::get('/', [SubCategoryControllerAdmin::class,'index'])->name('api.admin.categories.sub.get-sub-categories-paginate');
             Route::get('/get-all-paginates', [SubCategoryControllerAdmin::class,'getAllPaginates'])->name('api.admin.categories.sub.get-all-categories-paginate');
+                   Route::get('/get-second-sub-categories-for-sub/{id}', [SubCategoryControllerAdmin::class,'getSecondSubCategoriesForSub'])->name('api.admin.categories.get-sub-categories-for-sub');        
+
             Route::get('trash', [SubCategoryControllerAdmin::class,'trash'])->name('api.admin.categories.sub.trash');
             Route::get('restore-all', [SubCategoryControllerAdmin::class,'restoreAll'])->name('api.admin.categories.sub.restore-all');
             Route::get('restore/{id}', [SubCategoryControllerAdmin::class,'restore'])->name('api.admin.categories.sub.restore');

@@ -21,7 +21,7 @@ class PushNotificationRepository extends EloquentRepository implements PushNotif
 
  
     public function getAllPaginates($model,$request){
-        $modelData=$model->with('users')->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
+        $modelData=$model->with('users')->paginate($request->total);
           return  $modelData;
     }
 
@@ -30,36 +30,31 @@ class PushNotificationRepository extends EloquentRepository implements PushNotif
         return $getAllUsersPushNotificationPaginates->users()->paginate($request->total);
 
     }
+
     // methods overrides
     public function store($request,$model){
          $dataa=$request->validated();
-        // $data['locale']=Session::get('applocale');
+         
+         $dataa['users']=array_unique($dataa['users']);
 
          $PushNotification= $model->create($dataa);
         if(!empty($dataa['users'])){
-            // foreach($dataa['users'] as $user){
-            //     // dd($user);
-            //                                   $PushNotificationCount=DB::table('push_notification_user')->where(['user_id'=>$user,'push_notification_id'=>$PushNotification->id])->count();
-            //                                 //   dd($PushNotificationCount);
-            //         if($PushNotificationCount!==0){
-            //             return 'لا يمكنك اضافة نفس المستخدم اكثر من مرة';
-            //         }
-                
-            // }
-            $PushNotification->users()->attach($dataa['users']);//to create roles for a user
+            $PushNotification->users()->attach($dataa['users']);//to create notifications for a user
         }
             //send this notification for users by using push notification
         $url = 'https://fcm.googleapis.com/fcm/send';
-        $FcmToken = User::whereNotNull('device_key')->pluck('device_key')->all();
+        $FcmToken = User::whereIn('id',$dataa['users'])->whereNotNull('fcm_token')->pluck('fcm_token')->all();
           
-        $serverKey = 'BLbQW9sCjVXsC2ixViBwiyh1K45GMsbYYpL5bWdD1KKnx41ub7dxmf2FDlC_PVO3AsdjZiYcMAG9jSHQNHuqQAE';
+        $serverKey = 'AAAAaj6h_wU:APA91bG8lot8HO2vMMlXIVGHxswDn9gwbmebfXfh5VbVEuJq52GMYErQZkXWueLHE1Bb3ECIER2m8LcG7rGPnEZigGnGpL6Tt4pQ1VpQYiO1xIXw4y1Gfw66MlE83AsRd_xzhE4Oyfnq';
   
         $data = [
-            // "registration_ids" => $FcmToken,
-            "registration_ids" => $dataa['users'],
+            "registration_ids" => $FcmToken,
+            // "registration_ids" => $dataa['users'],
             "notification" => [
                 "title" => $request->title,
-                "body" => $request->body,  
+                "body" => $request->body, 
+                "sound" => "default",
+                "click_action"=>"Message"
             ]
         ];
         $encodedData = json_encode($data);
@@ -79,17 +74,17 @@ class PushNotificationRepository extends EloquentRepository implements PushNotif
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         // Disabling SSL Certificate support temporarly
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);        
-      //  curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         // Execute post
         $result = curl_exec($ch);
         if ($result === FALSE) {
-            die('Curl failed: ' . curl_error($ch));
+            return 'حدث خطا ما اثناء الارسال من خلال الفايبربيس';
+            // die('Curl failed: ' . curl_error($ch));
         }        
         // Close connection
         curl_close($ch);
         // FCM response
-         dd($result);        
-    
+
             
             return $PushNotification;
     }

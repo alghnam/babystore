@@ -7,6 +7,8 @@ use Modules\UpSell\Http\Controllers\API\User\UpSellController as UpSellControlle
 Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(function(){
     Route::prefix('upsells')->group(function(){
         Route::get('/', [UpSellControllerAdmin::class,'index'])->name('api.admin.upsells.index');    
+                Route::get('/count', [UpSellControllerAdmin::class,'countData'])->name('api.admin.upsells.count-data');    
+
         Route::get('/get-all-paginates', [UpSellControllerAdmin::class,'getAllPaginates'])->name('api.admin.upsells.get-all-upsells-paginate');
             
         Route::get('trash', [UpSellControllerAdmin::class,'trash'])->name('api.admin.upsells.trash');
@@ -15,10 +17,10 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
         Route::post('store', [UpSellControllerAdmin::class,'store'])->name('api.admin.upsells.store');
         Route::get('show/{id}', [UpSellControllerAdmin::class,'show'])->name('api.admin.upsells.show');
         Route::post('update/{id}', [UpSellControllerAdmin::class,'update'])->name('api.admin.upsells.update');
-        Route::post('update-sells-product/{id}', [UpSellControllerAdmin::class,'updateUpsellsProduct'])->name('api.admin.upsells.update-sells-product');
+        Route::post('update-sells-product/{product_id}', [UpSellControllerAdmin::class,'updateUpsellsProduct'])->name('api.admin.upsells.update-sells-product');
         
         
-        Route::post('update/{id}', [UpSellControllerAdmin::class,'update'])->name('api.admin.upsells.update');
+        Route::post('update/{id}/{productId}', [UpSellControllerAdmin::class,'update'])->name('api.admin.upsells.update');
         
         Route::get('upsells-product/{productid}', [UpSellControllerAdmin::class,'upsellsProduct'])->name('api.admin.upsells.upsells-product');        
         Route::get('delete-upsell-product/{productid}/{upsell}', [UpSellControllerAdmin::class,'deleteUpsellProduct'])->name('api.admin.upsells.delete-upsell-product');        

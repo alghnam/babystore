@@ -32,11 +32,21 @@ class CartRepository extends EloquentRepository implements CartRepositoryInterfa
        return  $modelData;
     }
     public function getAllProductArrayAttributesCartPaginates($model,$request,$id){
-               $cart= Cart::where(['id'=>$id])->first();
+               $cart= $model->find($id);
+               if(empty($cart)){
+                   return 'هذه السلة غير موجودة بالنظام او ربما تكون غير مفعلة';
+               }
+               if(empty($cart->productArrayAttributes())){
+                   return 'لا يوجد منتجات في هذه السلة';
+               }
         return $cart->productArrayAttributes()->with(['product'])->paginate($request->total);
     }
-           public  function trash($model,$request){
-       $modelData=$this->findAllItemsOnlyTrashed($model)->withoutGlobalScope(ActiveScope::class)->with(['user','productArrayAttributes.product'])->paginate($request->total);
+   public  function trash($model,$request){
+       $modelData=$this->findAllItemsOnlyTrashed($model);
+        if(is_string($modelData)){
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
+        }
+       $modelData=$this->findAllItemsOnlyTrashed($model)->withoutGlobalScope(ActiveScope::class)->with(['productArrayAttributes.product','user'])->paginate($request->total);
         return $modelData;
     }
   

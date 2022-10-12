@@ -11,6 +11,7 @@ use Modules\Wallet\Entities\Wallet;
 class Movement extends Model
 {
     use SoftDeletes;    
+        protected $appends = ['original_status','original_type'];
     /**
      * The attributes that are mass assignable.
      *
@@ -19,7 +20,8 @@ class Movement extends Model
     protected $fillable = [
         'wallet_id',
         'name',
-        'value'
+        'value',
+        'status'
     ];
 
     public function wallet(){
@@ -28,7 +30,11 @@ class Movement extends Model
     public function payment(){
         return $this->belongsTo(Payment::class);
     }
-        public function getTypeAttribute($value){
+        public function getTypeAttribute(){
+       return  $this->attributes['type'];
+    }
+    public function getOriginalTypeAttribute(){
+        $value=$this->attributes['type'];
         if($value==0){
             return 'Acquired';//مكتسبة
         }elseif ($value==1) {
@@ -39,17 +45,15 @@ class Movement extends Model
             return 'Buying';// شراء
         }
     }
-    public function getOriginalTypeAttribute($value){
-       return  $this->attributes['type'];
+        public function getStatusAttribute(){
+       return  $this->attributes['status'];
     }
-        public function getStatusAttribute($value){
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){//
             return 'Pending';
         }elseif ($value==1) {//اي تم عمل هده الحركة 
             return 'finished';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-       return  $this->attributes['status'];
     }
 }

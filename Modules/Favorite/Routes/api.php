@@ -13,7 +13,7 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
         Route::get('/get-favorites-product/{productId}', [FavoriteControllerAdmin::class,'getfavoritesProduct'])->name('api.admin.get-favorites-product');
         Route::get('trash', [FavoriteControllerAdmin::class,'trash'])->name('api.admin.favorites.trash');
         Route::get('restore-all', [FavoriteControllerAdmin::class,'restoreAll'])->name('api.admin.favorites.restore-all');
-        Route::get('restore/{id}', [FavoriteControllerAdminFavoriteControllerAdmin::class,'restore'])->name('api.admin.favorites.restore');
+        Route::get('restore/{id}', [FavoriteControllerAdmin::class,'restore'])->name('api.admin.favorites.restore');
         Route::post('store', [FavoriteControllerAdmin::class,'store'])->name('api.admin.favorites.store');
         Route::get('show/{id}', [FavoriteControllerAdmin::class,'show'])->name('api.admin.favorites.show');
         Route::post('update/{id}', [FavoriteControllerAdmin::class,'update'])->name('api.admin.favorites.update');

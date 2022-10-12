@@ -35,39 +35,40 @@ class UpSellController extends Controller
     */
     public function __construct(BaseRepository $baseRepo, UpSell $upsell,UpSellRepository $upsellRepo)
     {
+        $this->middleware(['permission:up_sells_get'])->only('upsellsProduct','productAttrs');
 
-    $this->baseRepo = $baseRepo;
-    $this->upsell = $upsell;
-    $this->upsellRepo = $upsellRepo;
+        $this->baseRepo = $baseRepo;
+        $this->upsell = $upsell;
+        $this->upsellRepo = $upsellRepo;
     }
 
 
 
 
     public function upsellsProduct($productId){
+        try{
            $upsellsProduct=$this->upsellRepo->getUpsellsProduct($productId);
               if(is_string($upsellsProduct)){
             return response()->json(['status'=>false,'message'=>$upsellsProduct],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSells product has been getten successfully',
-        'data'=> $upsellsProduct
-    ]); 
+        return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsellsProduct],200);
+    }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
         public function productAttrs($productId){
+            try{
            $productAttrs=$this->upsellRepo->productAttrs($productId);
               if(is_string($productAttrs)){
             return response()->json(['status'=>false,'message'=>$productAttrs],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'productAttrs  has been getten successfully',
-        'data'=> $productAttrs
-    ]); 
+        return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$productAttrs],200);
+    }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
   
     

@@ -3,7 +3,6 @@
 namespace Modules\SimilarProduct\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\SimilarProduct\Http\Requests\DeleteSimilarProductRequest;
@@ -44,8 +43,11 @@ class SimilarProductController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, SimilarProduct $similarProduct,Product $product,SimilarProductRepository $similarProductRepo,ProductRepository $productRepo)
     {
-        // $this->middleware(['permission:similarProducts_store'])->only('store');
-        // $this->middleware(['permission:similarProducts_destroy'])->only('destroy');
+        $this->middleware(['permission:similar_products_read'])->only('similarsProduct');
+        $this->middleware(['permission:similar_products_show'])->only('show');
+        $this->middleware(['permission:similar_products_store'])->only('store');
+        $this->middleware(['permission:similar_products_update'])->only('update');
+        $this->middleware(['permission:similar_products_destroy'])->only('destroy');
         $this->baseRepo = $baseRepo;
         $this->similarProduct = $similarProduct;
         $this->product = $product;
@@ -63,16 +65,18 @@ class SimilarProductController extends Controller
      */
     public function store($productId,$similarId)
     {
-       $similarProduct= $this->similarProductRepo->storeSimilar($this->similarProduct,$productId,$similarId);
-       if(is_string($similarProduct)){
-            return response()->json(['status'=>false,'message'=>$similarProduct],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'similar Product has been stored successfully',
-            'data'=> $similarProduct
-        ]);
+        try{
+           $similarProduct= $this->similarProductRepo->storeSimilar($this->similarProduct,$productId,$similarId);
+           if(is_string($similarProduct)){
+                return response()->json(['status'=>false,'message'=>$similarProduct],404);
+            }
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$similarProduct],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
         /**
@@ -83,16 +87,18 @@ class SimilarProductController extends Controller
      */
     public function update(Request $request,$productId)
     {
+        try{
        $similarProduct= $this->similarProductRepo->updateSimilar($request,$this->similarProduct,$productId);
        if(is_string($similarProduct)){
             return response()->json(['status'=>false,'message'=>$similarProduct],404);
         }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'similar Product has been stored successfully',
-            'data'=> $similarProduct
-        ]);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$similarProduct],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     /**
@@ -103,35 +109,38 @@ class SimilarProductController extends Controller
       */
      public function show($id)
      {
+         try{
          $similarProduct=$this->baseRepo->find($id,$this->product);
                  if(is_string($similarProduct)){
             return response()->json(['status'=>false,'message'=>$similarProduct],404);
         }
       
-             return response()->json([
-                 'status'=>true,
-                 'code' => 200,
-                 'message' => 'Product has been getten successfully',
-                 'data'=> $product
-             ]);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$similarProduct],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
          
      }
 
 
      public function similarsProduct($productId)
      {
+        //  try{
          $similarProduct=$this->similarProductRepo->similarsProduct($productId,$this->similarProduct);
                           if(is_string($similarProduct)){
             return response()->json(['status'=>false,'message'=>$similarProduct],404);
         }
         
-             return response()->json([
-                 'status'=>true,
-                 'code' => 200,
-                 'message' => 'Product has been getten successfully',
-                 'data'=> $similarProduct
-             ]);
-         
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$similarProduct],200);
+
+        
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
      }
          
     /**
@@ -142,18 +151,19 @@ class SimilarProductController extends Controller
      */
     public function destroy(DeleteSimilarProductRequest $request,$productId,$similarId)
     {
-       $similarProduct= $this->similarProductRepo->destroySimilar($this->similarProduct,$productId,$similarId);
-       if(is_string($similarProduct)){
-            return response()->json(['status'=>false,'message'=>$similarProduct],404);
-        }
-       
-     
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed  successfully',
-            'data'=> null
-        ]); 
+        try{
+           $similarProduct= $this->similarProductRepo->destroySimilar($this->similarProduct,$productId,$similarId);
+           if(is_string($similarProduct)){
+                return response()->json(['status'=>false,'message'=>$similarProduct],404);
+            }
+           
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$similarProduct],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
        
     }
 

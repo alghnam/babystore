@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Town extends Model 
 {
     use SoftDeletes;
+        protected $appends = ['original_status'];
 
         /**
      * The attributes that are mass assignable.
@@ -20,15 +21,17 @@ class Town extends Model
         'city_id',
         'status'
     ];
-         public function getStatusAttribute($value){
+      public function getStatusAttribute(){
+        return  $this->attributes['status'];
+        
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'InActive';
-        }elseif ($value==1) {
+        }elseif($value==1) {
             return 'Active';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
     } 
     public $guarded = [];
     public function city(){

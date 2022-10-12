@@ -7,8 +7,8 @@ use Modules\Chat\Http\Controllers\API\User\ChatController as ChatControllerUser;
 /**************************Routes Admin***************************** */
 Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(function(){
     Route::prefix('chats')->group(function(){
-        Route::get('/get-all-paginates', [ChatControllerAdmin::class,'getAllPaginates'])->name('api.admin.chats.get-all');
-        Route::get('/get-all-chats-sended-paginate', [ChatControllerAdmin::class,'getAllChatsSendedPaginate'])->name('api.admin.chats.get-all-chats-sended');
+        Route::get('/get-all-chats-recived-paginates', [ChatControllerAdmin::class,'getAllChatsRecivedPaginates'])->name('api.admin.chats.get-all');
+        Route::get('/get-all-chats-sended-paginates', [ChatControllerAdmin::class,'getAllChatsSendedPaginates'])->name('api.admin.chats.get-all-chats-sended');
         Route::get('trash-sended', [ChatControllerAdmin::class,'trashAllChatsSended'])->name('api.admin.chats.trash-sended');
         Route::get('trash-recieved', [ChatControllerAdmin::class,'trashAllChatsRecieved'])->name('api.admin.chats.trash-recieved');
         Route::get('restore-all-sended', [ChatControllerAdmin::class,'restoreAllChatsSended'])->name('api.admin.chats.restore-all-s');

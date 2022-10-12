@@ -20,7 +20,6 @@ use Modules\ProductAttribute\Entities\ProductArrayAttribute;
 use DB;
 use Stevebauman\Location\Facades\Location;
 
-// use Adrianorosa\GeoLocation\GeoLocation;
 
 use MakiDizajnerica\GeoLocation\Facades\GeoLocation;
 use AmrShawky\LaravelCurrency\Facade\Currency;
@@ -39,11 +38,6 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
          return $modelData;
       }
             public function getProductsForSubCategoryTable($model,$subCategoryId){
-            //               $category=  Category::where('id',$subCategoryId)->first();
-            //               if($category->parnet_id==null){
-            //               dd($category->parnet_id);
-            //       return 400; //this category_id is main category , so cannt get this sub categrories from main category , only , can get it from sub category
-            //   }
                     if(auth()->guard('api')->user()==null){
 
         $modelData=$model->where('sub_category_id',$subCategoryId)->with(['subCategory','productImages'])->get();
@@ -59,31 +53,6 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
     $modelData=$model->where(function ($query) use ($words) {
               $query->where('name', 'like', '%' . $words . '%');
          })->get();
-    //         $user=auth()->guard('api')->user();
-    //             if($user==null){
-    //                 //generate session id
-    //                 $session_id=Storage::get('session_id');
-    //                 if(empty($session_id)){
-    //                     $session_id= Str::random(30);
-    //                     Storage::put('session_id',$session_id);
-    //                     Search::insert(['word'=>$words,'session_id'=>$session_id]);
-
-    //                 }else{
-    //                   Search::insert(['word'=>$words,'session_id'=>$session_id]);
-    //                     $modelData=$model->where(function ($query) use ($words) {
-    //           $query->where('name', 'like', '%' . $words . '%');
-    //      })->with(['productImages'])->get();
-                        
-    //                 }
-    //             }else{
-    //                 Search::insert(['word'=>$words,'user_id'=>$user->id]);
-    // $modelData=$model->where(function ($query) use ($words) {
-    //           $query->where('name', 'like', '%' . $words . '%');
-    //      })->with(['productImages','favorites'=> function ($hasMany) {
-    //     $hasMany->where('user_id', auth()->guard('api')->user()->id);
-    // }])->get();
-                // }
-
        return  $modelData;
    
     }
@@ -95,7 +64,6 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
             $item=$model->findOrFail($id);
         }else{
             
-            // return __('not found');
             return 'غير موجود';
         }
         return $item->category;
@@ -105,7 +73,6 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         if(!empty($item)){
             $item=$model->findOrFail($id);
         }else{
-            // return __('not found');
             return 'غير موجود';
         }
         return $item->productAttributes;
@@ -117,19 +84,11 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         return $item;
     }
     
-    // public function similarsProduct($model,$id){
-    //     $product=$model->find($id);
-    //   return $product->similarProducts;
-        
-        
-    // }
     public function find($id,$model){
       $item=  $model->find($id);
       if($item){
-       $item->load(['category.mainCategory','category','productAttributes','productArrayAttributes','productImages']);
-      // $item->load(['category.mainCategory','category','productAttributes','productArrayAttributes','productImages','similarProducts']);
-     // $item->load(['category.mainCategory','category','productAttributes','productArrayAttributes.image','productImages'])->whereNot('id',$id);
-          
+       $item->load(['category.mainCategory','category','subCategory','productAttributes','productArrayAttributes','productImages']);
+     
       }else{
             // return __('not found');
             return 'غير موجود';
@@ -143,14 +102,12 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
             return $item->productImages;
         }else{
             
-            // return __('not found');
             return 'غير موجود';
         }
         return $item;
     }
 
     public function getAllPaginates($model,$request){
-        //$modelData=$model->where('locale',config('app.locale'))->with('category.mainCategory')->paginate($request->total);
         $modelData=$model->with('category.mainCategory')->paginate($request->total);
        return  $modelData;
    
@@ -161,26 +118,28 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
     // methods overrides
     public function store($request,$model){
         $data=$request->validated();
-        $data['locale']=Session::get('applocale');
-
+              if($data['original_price']==0){
+            return 'يجب ان يتجاوز السعر الاصلي  : الصفر';
+        }
+                    if($data['price_discount_ends']==0){
+            return 'يجب ان يتجاوز السعر النهائي بعد الخصم :  الصفر';
+        }
+        if($data['original_price']<$data['price_discount_ends']){
+            return 'يجب ان يكون السعر النهائي بعد الخصم اقل من السعر الاصلي للمنتج';
+        }
         
         $enteredData=  Arr::except($data ,['product_images']);
 
         $product= $model->create($enteredData);
         if($request->hasFile('product_images')){
-            // dd($data['product_images']);
             $filesProduct=[];
             $files= $request->file('product_images'); //upload file 
-            // dd($files);
             foreach($files as $file){
                 $file_path_original= MediaClass::store($file,'product-images');//store product images
                 $data['product_images']=$file_path_original;
-                dd($data['product_images']);
                 $file_path_original= str_replace("public/","",$file_path_original);
                 array_push($filesProduct,['filename'=>$file_path_original]);
             }
-        //    dd($filesProduct);
-        
 
             $product->productImages()->createMany($filesProduct);
         }
@@ -193,35 +152,22 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         if(!empty($product)){
             
             $data= $request->validated();
-    
+              if($data['original_price']==0){
+            return 'يجب ان يتجاوز السعر الاصلي  : الصفر';
+        }
+                    if($data['price_discount_ends']==0){
+            return 'يجب ان يتجاوز السعر النهائي بعد الخصم :  الصفر';
+        }
+        if($data['original_price']<$data['price_discount_ends']){
+            return 'يجب ان يكون السعر النهائي بعد الخصم اقل من السعر الاصلي للمنتج';
+        }
             $enteredData=  Arr::except($data ,['image']);
-            dd($enteredData);
             $product->update($enteredData);
             
     
-    
-        //  if(!empty($data['image'])){
-        //        if($request->hasFile('image')){
-        //            $file_path_original= MediaClass::store($request->file('image'),'Product-images');//store Product image
-        //            $data['image']=$file_path_original;
-    
-        //        }else{
-        //            $data['image']=$product->image;
-        //        }
-        //      if($product->image){
-        //         //   dd($data['image']);
-        //          $product->image()->update(['url'=>$data['image'],'imageable_id'=>$product->id,'imageable_type'=>'Modules\Auth\Entities\Product']);
-       
-        //      }else{
-       
-        //          $product->image()->create(['url'=>$data['image'],'imageable_id'=>$product->id,'imageable_type'=>'Modules\Auth\Entities\Product']);
-        //      }
-        //  }
         if($request->hasFile('product_images')){
-        // dd($data['product_images']);
 
             $files= $request->file('product_images'); //upload file 
-            // dd($files);
             $filesProduct=[];
             foreach($files as $file){ 
 
@@ -229,13 +175,7 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
                                     $file_path_original= str_replace("public/","",$file_path_original);
 
               array_push($filesProduct,['filename'=>$file_path_original]);
-            //   if($product->productImages->count()!==0){
-            //         foreach($product->productImages as $productImage){
-            //             if($productImage->filename!==$file_path_original){
-            //                 $product->productImages()->delete();
-            //             }
-            //         }   
-            //     }
+
             }
 
 

@@ -32,8 +32,7 @@ class AddReviewRequest extends FormRequest
     public function authorize()
     {
         return true;
-        //store Review for only superadministrator , admins 
-        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
+        $authorizeRes= $this->baseRepo->authorizeUser();
         if($authorizeRes==true){
                 return true;
             
@@ -53,7 +52,7 @@ class AddReviewRequest extends FormRequest
             'first_name'=>['max:255','required'],
             'last_name'=>['max:255'],
             // 'user_id' => ['numeric','exists:users,id','required'],
-            'description'=>['max:255'],
+            'description'=>['max:2000'],
             'rating'=>['numeric','required'],
             'status' => ['required', 'in:1,0']
 
@@ -67,7 +66,12 @@ class AddReviewRequest extends FormRequest
     public function messages()
     {
         return [
-
+            'first_name.required'=>'يجب عليك كتابة الاسم الاول ',
+            'first_name.max:255'=>'يجب الا يكون الاسم الاول اكثر من 225حرف',
+            'last_name.max:255'=>'يجب الا يكون الاسم الاخير اكثر من 225حرف',
+            'description.max:2000'=>'يجب الا يكون الوصف اكثر من 2000حرف',
+            'rating.required'=>'يجب عليك كتابة التقييم ',
+            'rating.numeric'=>'يجب عليك ادخال التقييم كرقم '
         ];
     }
         /**
@@ -79,6 +83,6 @@ class AddReviewRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Review'));
+        throw new AuthorizationException(__('Only user can make this action'));
     }
 }

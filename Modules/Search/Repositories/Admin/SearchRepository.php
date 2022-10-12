@@ -14,5 +14,13 @@ class SearchRepository extends EloquentRepository implements SearchRepositoryInt
             
     }
   
+ public  function trash($model,$request){
+       $modelData=$this->findAllItemsOnlyTrashed($model);
+        if(is_string($modelData)){
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
 
+        }
+       $modelData=$this->findAllItemsOnlyTrashed($model)->withoutGlobalScope(ActiveScope::class)->with(['user'])->paginate($request->total);
+        return $modelData;
+    }
 }

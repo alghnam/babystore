@@ -31,19 +31,8 @@ class UpdatePasswordRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->userId==1){
-            //show user for only superadministrator     
-            //this user superadmin   
-            $authorizeRes= $this->baseRepo->authorize();
-            if($authorizeRes==true){
                 return true;
-            }else{//this user not superadmin
-                return $this->failedAuthorization();
-            }
-
-        }else{
-            return true;
-        }
+          
     }
 
     /**

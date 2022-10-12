@@ -25,17 +25,19 @@ class Favorite extends Model
     ];
         
     
-     public function getStatusAttribute($value){
+    
+     public function getStatusAttribute(){
+        return  $this->attributes['status'];
+        
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'InActive';
-        }elseif ($value==1) {
+        }elseif($value==1) {
             return 'Active';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
     } 
-    
     
     public function product(){
         return $this->belongsTo(Product::class,'product_id','id');

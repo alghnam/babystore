@@ -3,7 +3,6 @@
 namespace Modules\View\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\View\Entities\View;
@@ -54,25 +53,27 @@ class ViewController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $views=$this->viewRepo->all($this->view);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Views has been getten successfully',
-        'data'=> $views
-    ]);
+        try{
+            $views=$this->viewRepo->all($this->view);
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$views],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllPaginates(Request $request){
-    
+        try{
     $views=$this->viewRepo->getAllPaginates($this->view,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Views has been getten successfully(pagination)',
-        'data'=> $views
-    ]);
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$views],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -80,14 +81,18 @@ class ViewController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-    $views=$this->viewRepo->trash($this->view,$request);
+        try{
+             $views=$this->viewRepo->trash($this->view,$request);
+        if(is_string($views)){
+            return response()->json(['status'=>false,'message'=>$views],404);
+        }
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$views],200);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Views has been getten successfully (in trash)',
-        'data'=> $views
-    ]);
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -99,13 +104,15 @@ class ViewController extends Controller
     */
     public function store(StoreViewRequest $request)
     {
-    $view=$this->viewRepo->store($request,$this->view);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'View has been stored successfully',
-        'data'=> $view
-    ]);
+        try{
+        $view=$this->viewRepo->store($request,$this->view);
+         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$view],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
 
@@ -117,18 +124,20 @@ class ViewController extends Controller
     */
     public function show($id)
     {
-    $view=$this->viewRepo->find($id,$this->view);
+        try{
+            $view=$this->viewRepo->find($id,$this->view);
     
         if(is_string($view)){
             return response()->json(['status'=>false,'message'=>$view],404);
         }
    
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'View has been getten successfully',
-            'data'=> $view
-        ]);
+         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$view],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
 
@@ -143,64 +152,58 @@ class ViewController extends Controller
     */
     public function update(UpdateViewRequest $request,$id)
     {
+        try{
     $view= $this->viewRepo->update($request,$id,$this->view);
     if(is_string($view)){
             return response()->json(['status'=>false,'message'=>$view],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'View has been updated successfully',
-        'data'=> $view
-    ]);
+   
+         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$view],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
 
-    public function inventory(){
-    $viewsInInventory= $this->viewRepo->viewsInInventory($this->view);
-    if(empty($viewsInInventory)){
-    if(is_string($view)){
-            return response()->json(['status'=>false,'message'=>$view],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'ViewsInInventory getting successfully',
-        'data'=> $viewsInInventory
-    ]);
-     
-    }
-    }
+  
 
     //methods for restoring
     public function restore($id){
-    
-    $view =  $this->viewRepo->restore($id,$this->view);
-     if(is_string($view)){
-            return response()->json(['status'=>false,'message'=>$view],404);
-        }
-    
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'View has been restored',
-                'data'=> $view
-            ]);
+        try{
+            $view =  $this->viewRepo->restore($id,$this->view);
+             if(is_string($view)){
+                    return response()->json(['status'=>false,'message'=>$view],404);
+                }
+   
+         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$view],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
         
 
     }
     public function restoreAll(){
+        try{
     $views =  $this->viewRepo->restoreAll($this->view);
      if(is_string($views)){
             return response()->json(['status'=>false,'message'=>$views],404);
         }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $views
-        ]);
+        
+          
+         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$views],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
@@ -213,33 +216,37 @@ class ViewController extends Controller
     */
     public function destroy(DeleteViewRequest $request,$id)
     {
+        try{
     $view= $this->viewRepo->destroy($id,$this->view);
      if(is_string($view)){
             return response()->json(['status'=>false,'message'=>$view],404);
         }
-  
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $view
-    ]); 
-    
+          
+         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$view],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     public function forceDelete(DeleteViewRequest $request,$id)
     {
+        try{
     //to make force destroy for a View must be this View  not found in Views table  , must be found in trash Views
     $view=$this->viewRepo->forceDelete($id,$this->view);
      if(is_string($view)){
             return response()->json(['status'=>false,'message'=>$view],404);
         }
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
+          
+         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$view],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     

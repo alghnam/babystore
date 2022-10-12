@@ -19,19 +19,40 @@ use Illuminate\Http\Request;
 use Modules\Cart\Entities\Cart;
 use Modules\Coupon\Entities\Coupon;
 use Modules\Service\Entities\Service;
+use AmrShawky\LaravelCurrency\Facade\Currency;
 
 class ServiceRepository extends EloquentRepository implements ServiceRepositoryInterface
 {
 
       public function getServices(){
         $services = Service::get();
+        
+         $userIp = request()->ip();
+            $location = geoip($userIp);
+    
+           
+    //convert this price that in dinar into currency user
+        $location = geoip(request()->ip());
+        $currencySystem='KWD';
+        $services->currency_country=$currencyCountry;
+
+        if($location->currency!==$currencySystem){
+        foreach($services as $service){
+         $convertingCurrenciesValue=  Currency::convert()
+            ->from($currencySystem)
+            ->to($currencyCountry)
+            ->amount($service->value)
+            ->get();
+            $service->value=round($convertingCurrenciesValue, 2);
+            
+        }
         return $services;
       }
-
+        }
       public function showService($model,$id){
         $service = $model->where('id',$id)->first();
+
         if(empty($service)){
-            // return __('not found in system');
             return 'غير موجود بالنظام';
         }
         return $service;

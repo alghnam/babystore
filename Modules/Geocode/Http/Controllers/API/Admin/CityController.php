@@ -3,7 +3,6 @@
 namespace Modules\Geocode\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Geocode\Http\Requests\City\DeleteCityRequest;
@@ -68,20 +67,14 @@ class CityController extends Controller
     }
         public function getAllPaginates(Request $request){
         
-        //  try{
+         try{
         $cities=$this->cityRepo->getAllPaginates($this->city,$request);
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cities],200);
 
-        //         }catch(\Exception $ex){
-        //     return response()->json([
-        //         'status'=>500,
-        //         'message'=>'There is something wrong, please try again'
-        //     ]);  
-        // } 
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
         public function getCountriesProduct(Request $request,$productId){
         
@@ -101,15 +94,15 @@ class CityController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-//   try{
+        try{
         $cities=$this->cityRepo->trash($this->city,$request);
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cities],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
 
@@ -121,15 +114,15 @@ class CityController extends Controller
      */
     public function store(StoreCityRequest $request)
     {
-        //  try{
+         try{
        $city= $this->cityRepo->store($request,$this->city);
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$city],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
     /**
@@ -140,12 +133,12 @@ class CityController extends Controller
      */
     public function show($id)
     {
-              try{
-        $city=$this->cityRepo->find($id,$this->city);
-                          if(is_string($city)){
-            return response()->json(['status'=>false,'message'=>$city],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$city],200);
+        try{
+            $city=$this->cityRepo->find($id,$this->city);
+            if(is_string($city)){
+                return response()->json(['status'=>false,'message'=>$city],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$city],200);
 
         
         }catch(\Exception $ex){
@@ -167,8 +160,8 @@ class CityController extends Controller
     {
 
           try{
-       $city= $this->cityRepo->update($request,$id,$this->city);
-                                 if(is_string($city)){
+            $city= $this->cityRepo->update($request,$id,$this->city);
+             if(is_string($city)){
             return response()->json(['status'=>false,'message'=>$city],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$city],200);
@@ -199,10 +192,10 @@ class CityController extends Controller
     }
     public function restoreAll(){
           try{
-        $cities =  $this->cityRepo->restoreAll($this->city);
-                                  if(is_string($cities)){
-            return response()->json(['status'=>false,'message'=>$cities],404);
-        }
+            $cities =  $this->cityRepo->restoreAll($this->city);
+            if(is_string($cities)){
+                return response()->json(['status'=>false,'message'=>$cities],404);
+            }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cities],200);
 
         
@@ -222,10 +215,10 @@ class CityController extends Controller
     public function destroy(DeleteCityRequest $request,$id)
     {
           try{
-       $city= $this->cityRepo->destroy($id,$this->city);
-                          if(is_string($city)){
-            return response()->json(['status'=>false,'message'=>$city],404);
-        }
+            $city= $this->cityRepo->destroy($id,$this->city);
+               if(is_string($city)){
+                    return response()->json(['status'=>false,'message'=>$city],404);
+                }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$city],200);
 
         
@@ -238,9 +231,9 @@ class CityController extends Controller
     public function forceDelete(DeleteCityRequest $request,$id)
     {
           try{
-        //to make force destroy for a City must be this City  not found in Countries table  , must be found in trash Countries
-        $city=$this->cityRepo->forceDelete($id,$this->city);
-                          if(is_string($city)){
+            //to make force destroy for a City must be this City  not found in Countries table  , must be found in trash Countries
+            $city=$this->cityRepo->forceDelete($id,$this->city);
+             if(is_string($city)){
             return response()->json(['status'=>false,'message'=>$city],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$city],200);
@@ -251,23 +244,6 @@ class CityController extends Controller
 
         } 
     }
-        public function deleteImage($id){
-          try{
-        $city= $this->cityRepo->deleteImage($id,$this->product);
-         if(is_string($city)){
-            return response()->json(['status'=>false,'message'=>$city],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$city],200);
-
-        
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
-        
-        
-    }
-
 
 
  

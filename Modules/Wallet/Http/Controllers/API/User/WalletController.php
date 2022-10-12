@@ -3,15 +3,14 @@
 namespace Modules\Wallet\Http\Controllers\API\User;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Wallet\Entities\Wallet;
 use Modules\Movement\Entities\Movement;
+use Modules\Coupon\Entities\Coupon;
 use Modules\Wallet\Http\Requests\AddToWalletRequest;
 use Modules\Wallet\Repositories\User\WalletRepository;
 // use Modules\Movement\Repositories\MovementRepository;
-use Modules\Wallet\Http\Requests\FinishingPaymentRequest;
 class WalletController extends Controller
 {
   /**
@@ -26,11 +25,7 @@ class WalletController extends Controller
      * @var Wallet
      */
     protected $wallet;
-    
-    //     /**
-    //  * @var MovementRepository
-    //  */
-    // protected $movementRepo;
+   
     /**
      * @var Movement
      */
@@ -44,9 +39,8 @@ class WalletController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, Wallet $wallet,WalletRepository $walletRepo, Movement $movement)
     {
-                            //  $this->middleware(['permission:wallets_add'])->only('addToWallet');
-                            //  $this->middleware(['permission:wallets_finish'])->only('finishingPayment');
-                            //  $this->middleware(['permission:wallets_balance'])->only('balanceWallet');
+     $this->middleware(['permission:wallets_add'])->only('addToWallet');
+     $this->middleware(['permission:wallets_balance'])->only('balanceWallet');
 
         
         $this->baseRepo = $baseRepo;
@@ -57,89 +51,134 @@ class WalletController extends Controller
 
     ///for user
     public function addToWallet(AddToWalletRequest $request){
-        $movementWallet=$this->walletRepo->AddToWallet($this->wallet,$this->movement,$request);
-     //   dd($movementWallet);
-       if(is_string($movementWallet)){
-                    return response()->json(['status'=>false,'message'=>$movementWallet],400);
-                }
-                // dd($movementWallet);
-            $data=[
-                'movementWallet'=>$movementWallet['movementWallet'],
-                'resPayment'=>$movementWallet['resPayment']
-                ];
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                // 'message' => 'amount has been added successfully',
-                'data'=>  $data
-            ]);
+        // try{
+            $movementWallet=$this->walletRepo->AddToWallet($this->wallet,$this->movement,$request);
+            if(is_string($movementWallet)){
+                return response()->json(['status'=>false,'message'=>$movementWallet],400);
+            }
+    
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movementWallet],200);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
         
     }
-        //لازم يكون مدخل بالانبوتس عشان تطلعلي نتيجة بالايدي 
-    //فتاع التطبيق بس عليه بالاول يختاروسيلة الدفع ويضغط ع انهاء الطلب بيوديه اللي هو هلا صار متخزن ايدي تاع الوسيلة اللي حيتحمل هنا ع هاددا الراوت اللي حيستدعى من الكارد اللي حتظهرله بعد م يضعط ع انهاء الطلب 
-    //حيعبي اللي فيها ويضغط ع دفع الان ليشوف النتيجة 
-    
-    public function getPaymentStatus($id){
-            // 	 Storage::put('paymentStatusId',null);
+    public function makeReplacingPoints($points){
+        try{
+            $makeReplacingPoints=$this->walletRepo->makeReplacingPoints($this->wallet,$this->movement,$points);
+           if(is_string($makeReplacingPoints)){
+                return response()->json(['status'=>false,'message'=>$makeReplacingPoints],400);
+            }
 
-        $url = "https://eu-test.oppwa.com/v1/checkouts/".$id."/payment";
-        $url .= "?entityId=8a8294174b7ecb28014b9699220015ca";
-        
-        	$ch = curl_init();
-        	curl_setopt($ch, CURLOPT_URL, $url);
-        	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                           'Authorization:Bearer OGE4Mjk0MTc0YjdlY2IyODAxNGI5Njk5MjIwMDE1Y2N8c3k2S0pzVDg='));
-        	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
-        	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        	$responseData = curl_exec($ch);
-        	if(curl_errno($ch)) {
-        		return curl_error($ch);
-        	}
-        	curl_close($ch);
-    	$paymentStatus= json_decode($responseData,true);
-    	return $paymentStatus;
-    	  //store id in db from $paymentStatus 
-      //$order->this order that click on it to finishing itfrom method finishingOrder
-    //             $orderIdFinished=  Storage::get('orderIdFinished');
-    //     $order=Order::where(['id'=>$orderIdFinished])->first();
-    //   $order->bank_transaction_id=$paymentStatus['id'];
-    //   $order->save();
-    	 if(isset($paymentStatus['id'])){//payment success
-    	 Storage::put('paymentStatusId',$paymentStatus['id']);
-            return true;
-            
-        }else{
-            return false;
-        }
-    	
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$makeReplacingPoints],200);
+        }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
     
+        } 
+    }
+        public function pointsWallet(){
+          try{
+                $pointsWallet=$this->walletRepo->pointsWallet($this->wallet);
        
+                $data=[
+                    'count'=>$pointsWallet
+                    ];
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
+            }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+            
+            } 
     }
-    public function finishingPayment(){
-         $movementWallet=$this->walletRepo->finishingPayment($this->wallet,$this->movement);
-                                         if(is_string($movementWallet)){
-                    return response()->json(['status'=>false,'message'=>$movementWallet],400);
+    public function countData(){
+         try{
+            $user=auth()->guard('api')->user();
+            $wallet=Wallet::where(['user_id'=>$user->id])->first();
+            $couponsCount=Coupon::where(['is_used'=>0])->count();
+            $location = geoip(request()->ip());
+            $currencyCountry=$location->currency;
+            $data=[
+                    'points_wallet'=>$wallet->points,
+                    'amount_wallet'=>$wallet->amount,
+                    'coupons_count'=>$couponsCount,
+                    'currency_country'=>$currencyCountry
+                    
+                ];
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
+         }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+            
+        } 
+    }
+ 
+    public function paymentCallbackWallet(Request $request,$amount,$userId,$paymentId){
+        // try{
+            $result=$this->walletRepo->paymentCallbackWallet($request);
+            if($result&&isset($result->errors)){
+                return response()->json(['status'=>false,'message'=>$result],400);
+            }
+            // $cardName=null;
+            if($result->status=="CAPTURED"){
+                // if(isset($paymentProcess->card)){
+                //     $cardName='فيزا';
+                // }else{
+                //     $cardName='كي نت';
+                // }
+
+                $wallet=Wallet::where('user_id',$userId)->first();
+                if(empty($wallet)){// 
+                    $wallet=new $this->wallet;
+                    $wallet->user_id=$userId;
+                    $wallet->save();
+                }        
+                    //increase this value into wallet this user
+                    $wallet->amount=$wallet->amount+$amount;
+                    $wallet->save();
+                    $movementName=null;
+                    if($paymentId==3){
+                        $movementName='ايداع بالمحفظة من خلال وسيلة دفع الكي نت';
+                        
+                    }
+                    if($paymentId==4){
+                        
+                        $movementName='ايداع بالمحفظة من خلال وسيلة دفع الفيزا';
+                    }
+                    $movementWallet=new $this->movement;
+                
+                    $movementWallet->payment_id=$paymentId;
+                    $movementWallet->remaining_wallet_points=$wallet->amount-$amount;
+                    $movementWallet->wallet_id=$wallet->id; 
+                    $movementWallet->status=1;
+                    $movementWallet->name=$movementName;
+                    $movementWallet->value=$amount;
+                    $movementWallet->type=2; 
+                    $movementWallet->save();  
+                    return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$result],200);
+                }else{
+                   
+                    return response()->json(['status'=>false,'message'=>'فشلت العملية'],400);
+
                 }
 
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'your payment has been finished',
-                'data'=>  $movementWallet
-            ]);   
+            
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
+        
     }
+
     public function balanceWallet(){
-                $wallet=$this->walletRepo->balanceWallet($this->wallet);
+        try{
+            $wallet=$this->walletRepo->balanceWallet($this->wallet);
             $data=[
                 'amount'=>$wallet->amount
                 ];
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'balance wallet  has been getten successfully',
-                'data'=>  $data
-            ]);
+                    return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
 }

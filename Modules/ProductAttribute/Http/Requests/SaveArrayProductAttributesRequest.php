@@ -51,7 +51,7 @@ class SaveArrayProductAttributesRequest extends FormRequest
             return [
 
                             'product_id' => ['numeric','exists:products,id'],
-                                            'attributes'=>['max:100000']
+                                            'attributes'=>['required']
     
             ];
 
@@ -75,7 +75,7 @@ class SaveArrayProductAttributesRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this ProductAttribute'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
     
 }

@@ -6,9 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Repositories\BaseRepository;
 use Illuminate\Validation\Rule;
-use Modules\Profile\Entities\Profile;
 use Illuminate\Validation\Rules;
-use Modules\Order\Entities\Order;
 /**
  * Class UpdateOrderRequest.
  */
@@ -34,8 +32,7 @@ class UpdateOrderRequest extends FormRequest
      */
     public function authorize()
     {
-        //update Order for only superadministrator  and admins
-        $authorizeRes= $this->baseRepo->authorize();
+        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
         if($authorizeRes==true){  
                 return true;
             
@@ -54,15 +51,6 @@ class UpdateOrderRequest extends FormRequest
         
       
             return [
-               //'order_num' => ['numeric',Rule::unique('orders')],
-             
-            // 'reviews' => ['sometimes','array'],
-            // 'reviews.*'=>['exists:reviews,id'],
-            
-            // 'service_id' => ['required','numeric','exists:services,id'],
-            // 'payment_id' => ['required','numeric','exists:payments,id'],
-            // 'address_id' => ['required','numeric','exists: addresses,id'],
-           
             'status' => ['sometimes', 'in:0,1,2,3,-1'],
             ];
 
@@ -87,7 +75,7 @@ class UpdateOrderRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Order'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
     
 }

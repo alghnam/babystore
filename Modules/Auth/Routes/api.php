@@ -22,6 +22,7 @@ use Modules\Auth\Http\Controllers\API\UserController;
 Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(function(){
     Route::prefix('users')->group(function(){
         Route::get('/', [UserController::class,'index'])->name('api.admin.users.index');    
+        Route::get('/count', [UserController::class,'countData'])->name('api.admin.users.count-data');    
                 Route::get('search/{word}', [UserController::class,'search'])->name('api.admin.users.search');    
 
         Route::get('/get-all-paginates', [UserController::class,'getAllPaginates'])->name('api.admin.users.get-all-users-paginate');

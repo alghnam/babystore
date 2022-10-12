@@ -58,12 +58,10 @@ class UpdateRoleRequest extends FormRequest
             'name' => ['required', 'max:255',  Rule::unique('roles')->ignore($this->id)],
             'display_name' => ['required', 'max:100'],
             'decription'=>['max:1000'],
-            'permissions' => ['sometimes', 'array'],
+            'permissions' => ['required', 'array'],
             'permissions.*'=>['exists:permissions,id'],
             'status' => ['sometimes', 'in:1,0']
-'status' => ['required'
         ];
-
     }
 
     /**

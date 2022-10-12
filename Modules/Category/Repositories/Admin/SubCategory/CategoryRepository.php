@@ -20,33 +20,44 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
 
  
     public function getAllPaginates($model,$request){
-        $modelData=$model->with('category')->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
+        $modelData=$model->with(['category','category.mainCategory','image'])->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
           return  $modelData;
     }
-    public  function trash($model,$request){
-       $modelData=$this->findAllItemsOnlyTrashed($model)->with('subCategory')->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
+
+       public  function trash($model,$request){
+       $modelData=$this->findAllItemsOnlyTrashed($model);
+        if(is_string($modelData)){
+                            return 'لا يوجد اي فئات في سلة المحذوفات الى الان';
+
+        }
+       $modelData=$this->findAllItemsOnlyTrashed($model)->with(['category','category.mainCategory','image'])->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
         return $modelData;
+    }
+        public function getSecondSubCategoriesForSub($model,$categoryId){
+        $modelData=$model->withoutGlobalScope(ActiveScope::class)->where('category_id',$categoryId)->with(['category','category.mainCategory','image'])->get();
+        
+          return  $modelData;
     }
     // methods overrides
     public function store($request,$model){
-        $data=$request->all();
+        $data=$request->validated();
         $data['locale']=config('app.locale');
 
         
         $enteredData=  Arr::except($data ,['image']);
 
         $category= $model->create($enteredData);
-
-
+// dd($category);
 
             if(!empty($data['image'])){
                 if($request->hasFile('image')){
-                    $file_path_original_image_Category= MediaClass::store($request->file('image'),'category-images');//store category image
+                    $file_path_original_image_Category= MediaClass::store($request->file('image'),'second-sub-categories-images');//store category image
                     $data['image']=$file_path_original_image_Category;
                 }else{
                     $data['image']=$category->image;
                 }
-                $category->image()->create(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Auth\Entities\Category']);
+                $category->image()->create(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Category\Entities\SubCategory']);
+            
             }
             return $category;
     }
@@ -62,57 +73,59 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
             $category->update($enteredData);
             
     
-    
+
          if(!empty($data['image'])){
                if($request->hasFile('image')){
-                   $file_path_original= MediaClass::store($request->file('image'),'category-images');//store category image
+                   $file_path_original= MediaClass::store($request->file('image'),'second-sub-categories-images');//store category image
                    $data['image']=$file_path_original;
     
                }else{
                    $data['image']=$category->image;
                }
              if($category->image){
+                 $category->image()->update(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Category\Entities\SubCategory']);
                 //   dd($data['image']);
-                 $category->image()->update(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Auth\Entities\Category']);
        
              }else{
        
-                 $category->image()->create(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Auth\Entities\Category']);
+                 $category->image()->create(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Category\Entities\SubCategory']);
              }
+             
          }
 
-        }    
+        }  
+
 
         return $category;
     }
 
-    public function forceDelete($id,$model){
-        //to make force destroy for an item must be this item  not found in items table  , must be found in trash items
-        $itemInTableitems = $this->find($id,$model);//find this item from  table items
-        if(empty($itemInTableitems)){//this item not found in items table
-            $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
-            if(empty($itemInTrash)){//this item not found in trash items
- //   return __('this item  found in system so you cannt   delete it by forcely , you can delete it Temporarily after that delete it by forcely');
+//     public function forceDelete($id,$model){
+//         //to make force destroy for an item must be this item  not found in items table  , must be found in trash items
+//         $itemInTableitems = $this->find($id,$model);//find this item from  table items
+//         if(empty($itemInTableitems)){//this item not found in items table
+//             $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
+//             if(empty($itemInTrash)){//this item not found in trash items
+//  //   return __('this item  found in system so you cannt   delete it by forcely , you can delete it Temporarily after that delete it by forcely');
             
-            return 'هذا العنصر  غير موجود بسلة المحذوفات لذلك يمكنك حذفه من النظام بالبداية وبعد ذلك حذفه من سلة المحذوفات  ';
+//             return 'هذا العنصر  غير موجود بسلة المحذوفات لذلك يمكنك حذفه من النظام بالبداية وبعد ذلك حذفه من سلة المحذوفات  ';
             
                 
-            }else{
-                 MediaClass::delete($itemInTrash->image);
+//             }else{
+//                  MediaClass::delete($itemInTrash->image);
                
-                $itemInTrash->forceDelete();
+//                 $itemInTrash->forceDelete();
                 
-                return $itemInTrash;
-            }
-        }else{
+//                 return $itemInTrash;
+//             }
+//         }else{
 
-            // return __('not found');
-            return 'غير موجود بالنظام ';
+//             // return __('not found');
+//             return 'غير موجود بالنظام ';
                   
-                          }
+//                           }
 
 
-    }
+//     }
 
     
 }

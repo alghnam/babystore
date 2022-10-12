@@ -25,15 +25,12 @@ class StoreChatRequest extends FormRequest
         $this->baseRepo = $baseRepo;
     }
     /**
-     * Determine if the Category is authorized to make this request.
+     * Determine if the  is authorized to make this request.
      *
      * @return bool
      */
     public function authorize()
     {
-                return true;
-
-        //store Category for only superadministrator , admins 
         $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
         if($authorizeRes==true){
                 return true;
@@ -51,7 +48,7 @@ class StoreChatRequest extends FormRequest
     public function rules()
     {
         return [
-            'message' => ['max:255'],
+            'message' => ['required'],
             'client_id' => ['numeric','exists:users,id'],
             'user_id' => ['numeric','exists:users,id'],
             'chat_room_id' => ['numeric','exists:chat_rooms,id'],
@@ -77,6 +74,6 @@ class StoreChatRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this category'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

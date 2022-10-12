@@ -6,6 +6,8 @@ use Modules\Product\Http\Controllers\API\User\ProductController as ProductContro
 Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(function(){
     Route::prefix('products')->group(function(){
         Route::get('/', [ProductControllerAdmin::class,'index'])->name('api.admin.products.index');  
+                Route::get('/count', [ProductControllerAdmin::class,'countData'])->name('api.admin.products.count-data');    
+
                     Route::get('search/{word}', [ProductControllerAdmin::class,'search'])->name('api.admin.products.search');    
 
         Route::get('some', [ProductControllerAdmin::class,'someProducts'])->name('api.admin.products.some-products');    

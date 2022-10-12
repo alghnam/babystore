@@ -38,7 +38,7 @@ class ReviewController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, Review $review,ReviewRepository $reviewRepo)
     {
-     //   $this->middleware(['permission:reviews_add'])->only('addReview');
+        $this->middleware(['permission:reviews_add'])->only('addReview');
         $this->baseRepo = $baseRepo;
         $this->review = $review;
         $this->reviewRepo = $reviewRepo;
@@ -46,13 +46,15 @@ class ReviewController extends Controller
 
         public function addReview(AddReviewRequest $request,$productId)
     {
+        try{
        $review= $this->reviewRepo->addReview($request,$this->review,$productId);
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'your review on this product has been added successfully',
-            'data'=> $review
-        ]);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$review],200);
+
+               
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 }

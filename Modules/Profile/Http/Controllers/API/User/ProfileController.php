@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Profile\Http\Controllers;
+namespace Modules\Profile\Http\Controllers\API\User;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Contracts\Support\Renderable;
@@ -9,7 +9,6 @@ use Illuminate\Routing\Controller;
 use Modules\Auth\Entities\User;
 use Modules\Profile\Http\Requests\AcceptOnRequestDocumentationRequest;
 use Modules\Profile\Http\Requests\ShowProfileRequest;
-use Modules\Profile\Http\Requests\StoreProfileRequest;
 use Modules\Profile\Http\Requests\UpdateProfileRequest;
 use Modules\Profile\Repositories\ProfileRepository;
 use Symfony\Component\HttpKernel\Profiler\Profile;
@@ -35,49 +34,13 @@ class ProfileController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, ProfileRepository $profileRepo, User $user)
     {
-                $this->middleware(['permission:profile_store'])->only('store');
-                $this->middleware(['permission:profile_show'])->only('show');
-                $this->middleware(['permission:profile_request'])->only('requestDocumentation');
                 $this->middleware(['permission:profile_accept'])->only('acceptingOnRequestDocumentation');//for admin
-                $this->middleware(['permission:profile_update'])->only('update');
-                $this->middleware(['permission:profile_update-password'])->only('updatePassword');
 
         $this->baseRepo = $baseRepo;
         $this->profileRepo = $profileRepo;
         $this->user = $user;
     }
-    /**
-     * Display a listing of the resource.
-     * @return Renderable
-     */
-    public function index()
-    {
-        return view('profile::index');
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Renderable
-     */
-    public function create()
-    {
-        return view('profile::create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreProfileRequest $request,$id)
-    {
-        $this->profileRepo->storeImage($request,$id,$this->user);
-        return \response()->json([
-            'status'=>true,
-            'message'=>'stored your image successfully'
-        ]);
-    }
 
     /**
      * Show the specified resource.
@@ -86,12 +49,9 @@ class ProfileController extends Controller
      */
     public function show(ShowProfileRequest $request)
     {
-        $show=  $this->profileRepo->show($this->user);
-        return \response()->json([
-            'status'=>true,
-            'message'=>'data has been getten successfully',
-            'data'=>$show
-        ]);
+        $data=  $this->profileRepo->show($this->user);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data->load('image')],200);
+
 
 
     }
@@ -101,11 +61,8 @@ class ProfileController extends Controller
         if(is_string($requestDocumentation)){
             return response()->json(['status'=>false,'message'=>$requestDocumentation],400);
         }
-          return \response()->json([
-                'status'=>true,
-                'message'=>'your request documentation under reviewing',
-                'data'=>$requestDocumentation
-            ]);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$requestDocumentation],200);
+
      
     }
 
@@ -114,11 +71,8 @@ class ProfileController extends Controller
                if(is_string($acceptingOnRequestDocumentation)){
             return response()->json(['status'=>false,'message'=>$acceptingOnRequestDocumentation],400);
         }
-           return \response()->json([
-                'status'=>true,
-                'message'=>'request documentation has been accepted',
-                'data'=>$acceptingOnRequestDocumentation
-            ]);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$acceptingOnRequestDocumentation],200);
+
 
 
     }
@@ -142,12 +96,8 @@ class ProfileController extends Controller
                               'image'=>$image
                               ];
 
-        return \response()->json([
-            'code'=>200,
-            'status'=>true,
-            'message'=>'updated successfully',
-            'data'=>$data
-        ]);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
+
 
 
     }
@@ -161,29 +111,17 @@ class ProfileController extends Controller
         }
                           $token=Storage::get($userId.'-token');
 
-        //   dd($userUpdatedPassword);
-          
+
               $data=[
                   'user'=>$userUpdatedPassword,
                   'token'=>$token
                   ];
-                              return \response()->json([
-            'status'=>true,
-            'message'=>'updated successfully',
-            'data'=>$data
-        ]);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
+
           
         
       
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
-     */
-    public function destroy($id)
-    {
-        //
-    }
+
 }

@@ -14,14 +14,21 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Scopes\ActiveScope;
+use App\Repositories\Auth\Sms\SmsRepository;
 
 class UserRepository extends EloquentRepository implements UserRepositoryInterface
-// class UserRepository implements UserRepositoryInterface
 {
+            /**
+     * @var SmsRepository
+     */
+    protected $smsRepo;
+    public function __construct(SmsRepository $smsRepo){
+        $this->smsRepo = $smsRepo;
+    }
+    
      public function search($model,$words){
-   // $model->where('name', 'like', '%' . str_slug($search, ' ') . '%')->paginate(9);
     $modelData=$model->where(function ($query) use ($words) {
-              $query->where('first_name', 'like', '%' . $words . '%');
+              $query->where('phone_no', 'like', '%' . $words . '%');
          })->get();
        return  $modelData;
    
@@ -53,7 +60,6 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
         $enteredData=  Arr::except($data ,['image']);
 
         $user= $model->create($enteredData);
-        // dd(json_decode($data['roles']));
         if(!empty($data['roles'])){
             $user->roles()->attach(json_decode($data['roles']));//to create roles for a user
         }
@@ -68,18 +74,21 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
                 }
                 $user->image()->create(['url'=>$data['image'],'imageable_id'=>$user->id,'imageable_type'=>'App\Models\User']);
             }
-
+            // Send sms to phone
+            // $this->smsRepo->send($password,$user->phone_no);
             return $user;
     }
         public function update($request,$id,$model){
 
         $user=$this->find($id,$model);
-        if(!empty($category)){
+        if(!empty($user)){
         $data= $request->validated();
         $password=Str::random(8);
         $data['password']=Hash::make($password);
 
         $enteredData=  Arr::except($data ,['image']);
+                // dd($enteredData);
+
         $user->update($enteredData);
         
 
@@ -103,7 +112,7 @@ class UserRepository extends EloquentRepository implements UserRepositoryInterfa
      }
 
         if(!empty($data['roles'])){
-            $user->syncRoles($data['roles']);//to update roles a user
+            $user->syncRoles(json_decode($data['roles']));//to update roles a user
         }
     }
         return $user;

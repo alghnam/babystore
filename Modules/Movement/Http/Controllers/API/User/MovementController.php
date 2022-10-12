@@ -8,57 +8,95 @@ use Illuminate\Routing\Controller;
 use Modules\Movement\Entities\Movement;
 use Modules\Wallet\Entities\Wallet;
 use Modules\Movement\Http\Requests\AddReplacedPointsRequest;
+use App\Repositories\BaseRepository;
+
 class MovementController extends Controller
 {
    
+        /**
+    * MovementsController constructor.
+    *
+    * @param MovementRepository $movements
+    */
+    public function __construct(BaseRepository $baseRepo, Movement $movement)
+    {
+    $this->middleware(['permission:movements_get'])->only(['getAllMovementsWalletUser']);
+    $this->middleware(['permission:movements_add'])->only('addReplacedPoints');
+    $this->middleware(['permission:movements_remove'])->only('deleteMovement');
     
+    $this->baseRepo = $baseRepo;
+    $this->movement = $movement;
+    }
         //for user
     public function getAllMovementsWalletUser(Request $request){
-                      $user=auth()->guard('api')->user();
+        try{
+        $user=auth()->guard('api')->user();
         $wallet=Wallet::where(['user_id'=>$user->id])->first();
                       
-              if(empty($wallet)){//اي هادا اليوزر ما الو لسا محفظة في النظام فاول عملية ايداع بيتم كريتة محفظة لالو 
-                $wallet=new Wallet();
-                $wallet->user_id=$user->id;
-                $wallet->save();
-              }
-        $Movements=Movement::where(['wallet_id'=>$wallet->id])->paginate($request->total);
+      if(empty($wallet)){
+        $wallet=new Wallet();
+        $wallet->user_id=$user->id;
+        $wallet->save();
+      }
+        $Movements=Movement::where(['wallet_id'=>$wallet->id])->where('type','!=',0)->latest()->paginate($request->total);
         
         $data=[
-            'pionts_wallet'=>$wallet->amount,
-            // 'movements'=>$Movements->load(['payment','wallet.user']),
+            'points_wallet'=>$wallet->amount,
             'movements'=>$Movements,
             ];
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'all movements wallet user has been getten successfully',
-                'data'=>  $data
-            ]);
+                       return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
+            
+                
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+    }
+    public function getAllMovementsWalletPointsUser(Request $request){
+        try{
+         $user=auth()->guard('api')->user();
+       $wallet= Wallet::where(['user_id'=>$user->id])->first();
+       
+      $movements= Movement::where(['wallet_id'=>$wallet->id,'type'=>1])->orWhere(['type'=>0])->latest()->paginate($request->total);
+        $data=[
+            'points_wallet'=>$wallet->points,
+            'movements'=>$movements,
+            ];
+                       return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
+            
+                
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     public function deleteMovement(){
-                              $user=auth()->guard('api')->user();
-        $wallet=Wallet::where(['user_id'=>$user->id])->first();
-              if(empty($wallet)){//اي هادا اليوزر ما الو لسا محفظة في النظام فاول عملية ايداع بيتم كريتة محفظة لالو 
+        try{
+            $user=auth()->guard('api')->user();
+            $wallet=Wallet::where(['user_id'=>$user->id])->first();
+            if(empty($wallet)){
                 $wallet=new Wallet();
                 $wallet->user_id=$user->id;
                 $wallet->save();
               }
               $movementWallet=Movement::where(['wallet_id'=>$wallet->id,'status'=>0,'payment_id'=>1,'type'=>2])->first();
-          if(!empty($movementWallet)){
-              $movementWallet->delete();
-                            return response()->json(['status'=>true,'message'=>'تم حذف حركة الايداع الحالية الخاصة بك بنجاح'],200);
+              if(!empty($movementWallet)){
+                  $movementWallet->delete();
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movementWallet],200);
+                
+                    
+              }else{
+                  return response()->json(['status'=>false,'message'=>'لا يوجد حركة ايداع حالية في محفظتك لحذفها'],404);
+              }
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-          }else{
-              return response()->json(['status'=>false,'message'=>'لا يوجد حركة ايداع حالية في محفظتك لحذفها'],404);
-          }
+        } 
               
           }
     public function addReplacedPoints(AddReplacedPointsRequest $request){
-        //المستبدلة يعني استبدلت نقاط انخصمو من المحفظة تاعتي وبدالهم اخدت عارض الواقع اخدت مصاري متلا 
-//اي لازم المبلغ اللي حكتبو اللي حستبدله يكون اقل او يساوي الموجود بالمحفظة فلو اكبر ما بزبط لانو بالفعل ما في بمحفظتي هادا المبغ لاستبدلو
-
-     $data=$request->validated();
+        try{
+            $data=$request->validated();
                    $user=auth()->guard('api')->user();
               $wallet=Wallet::where(['user_id'=>$user->id])->first();
               
@@ -68,31 +106,29 @@ class MovementController extends Controller
                 $wallet->save();
               }
               if($data['amount']>$wallet->amount){
-     //هل المبلغ اللي بالمحفظة 0 لو 0 اعمل حدف دعري غير م انك حتطلع رسالة 
-           //عشان ما يصير بالسالب
-           //لا خلص هينا وقفناه بالهندلة اي مش حيروح عالمكان اللي بيعمل تنقيص اي ما بيصير بالسالب
-                // if($wallet->amount==0){
-                   
-                // }
-                            // return response()->json(['status'=>false,'message'=>'amount in your wallet not enough this amount to replace it'],400);
-                            return response()->json(['status'=>false,'message'=>'محفظتك لا تحتوي على المبلغ الكافي لاتمام عملية الاستبدال هذه '],400);
+
+                return response()->json(['status'=>false,'message'=>'محفظتك لا تحتوي على المبلغ الكافي لاتمام عملية الاستبدال هذه '],400);
 
               }
 
-     $movement=new Movement();
-     $movement->value=$data['amount'];
-     $movement->name='replaced points';
-     $movement->type=1;//replaced
-     $movement->wallet_id=$wallet->id;
-     $movement->remaining_wallet_points=$wallet->amount-$data['amount'];//عشان مع كل حركة اكون عارف كم صار رصيد المحفظة 
-     $movement->save();
+                 $movement=new Movement();
+                 $movement->value=$data['amount'];
+                 $movement->name='replaced points';
+                 $movement->type=1;//replaced
+                 $movement->wallet_id=$wallet->id;
+                 $movement->remaining_wallet_points=$wallet->amount-$data['amount'];//عشان مع كل حركة اكون عارف كم صار رصيد المحفظة 
+                 $movement->save();
                    //خصم من المحفظو تاعتي هادا المبلغ تاع الاستبدال
-              $wallet->amount=$wallet->amount-$data['amount'];
-              $wallet->save();
-     return response()->json([
-                'status'=>true,
-                'message' => 'added replaced points into your wallet ',
-                'data'=>  $movement->load('wallet.user')
-            ]);
+                  $wallet->amount=$wallet->amount-$data['amount'];
+                  $wallet->save();
+
+            
+                      return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movement->load('wallet.user')],200);
+
+        
+            }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+    
+            } 
     }
 }

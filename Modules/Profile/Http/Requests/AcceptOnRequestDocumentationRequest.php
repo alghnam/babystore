@@ -31,12 +31,8 @@ class AcceptOnRequestDocumentationRequest extends FormRequest
      */
     public function authorize()
     {
-            $authorizeRes= $this->baseRepo->authorize();
-            if($authorizeRes==true){
-                return true;
-            }else{
-                return $this->failedAuthorization();
-            }
+        return true;
+            
 
 
     }
@@ -62,6 +58,6 @@ class AcceptOnRequestDocumentationRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator can enter into it.'));
+        throw new AuthorizationException(__('Only the superadministrator  can make this action'));
     }
 }

@@ -13,6 +13,7 @@ class Question extends Model
 {
     
   use SoftDeletes;
+        protected $appends = ['original_status'];
   protected $table='questions';
     /**
      * The attributes that are mass assignable.
@@ -29,16 +30,19 @@ class Question extends Model
         'deleted_at',
         'created_at'
     ];
-    public function getStatusAttribute($value){
+  public function getStatusAttribute(){
+        return  $this->attributes['status'];
+        
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
-            return 'Not Active';
-        }elseif ($value==1) {
+            return 'InActive';
+        }elseif($value==1) {
             return 'Active';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-       return  $this->attributes['status'];
-    }
+    } 
+    
     protected static function boot(){
         parent::boot();
         static::addGlobalScope(new ActiveScope);

@@ -61,7 +61,7 @@ class UserController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, User $user,UserRepository $userRepo, RoleRepository $roleRepo,PermissionRepository $permissionRepo, CountryRepository $countryRepo,CityRepository $cityRepo,TownRepository $townRepo)
     {
-        $this->middleware(['permission:users_read'])->only(['index','getAllPaginates']);
+        $this->middleware(['permission:users_read'])->only(['index','getAllPaginates','usersCount']);
         $this->middleware(['permission:users_trash'])->only('trash');
         $this->middleware(['permission:users_restore'])->only('restore');
         $this->middleware(['permission:users_restore-all'])->only('restore-all');
@@ -89,6 +89,11 @@ class UserController extends Controller
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
         } 
+     }
+     public function countData(){
+        $countData=$this->userRepo->countData($this->user);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countData],200);
+          
      }
     /**
      * Display a listing of the resource.
@@ -140,6 +145,9 @@ class UserController extends Controller
     public function trash(Request $request){
  try{
         $users=$this->userRepo->trash($this->user,$request);
+        if(is_string($users)){
+            return response()->json(['status'=>false,'message'=>$users],404);
+        }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$users],200);
 
         
@@ -158,9 +166,9 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        // try{
-       $user= $this->userRepo->store($request,$this->user);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$user],200);
+       // try{
+           $user= $this->userRepo->store($request,$this->user);
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$user->load('roles')],200);
 
         
         // }catch(\Exception $ex){
@@ -203,18 +211,18 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request,$id)
     {
-         try{
+        //  try{
         $user= $this->userRepo->update($request,$id,$this->user);
-                        if(is_string($user)){
+          if(is_string($user)){
             return response()->json(['status'=>false,'message'=>$user],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$user],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$user->load('roles')],200);
 
         
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        } 
+        // } 
         
 
     }
@@ -224,7 +232,7 @@ class UserController extends Controller
         
          try{
         $user =  $this->userRepo->restore($id,$this->user);
-                                if(is_string($user)){
+         if(is_string($user)){
             return response()->json(['status'=>false,'message'=>$user],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$user],200);

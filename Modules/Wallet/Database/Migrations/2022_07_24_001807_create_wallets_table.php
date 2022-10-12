@@ -23,8 +23,8 @@ class CreateWalletsTable extends Migration
                 ->on('users')
                 ->onDelete('cascade');
             $table->unsignedBigInteger('amount')->default(0);
+            $table->unsignedBigInteger('points')->default(0);
             $table->tinyInteger('status')->default(1);
-            $table->date('deleted_at')->nullable();
             $table->timestamps();
         });
     }

@@ -50,9 +50,8 @@ class StoreProductAttributeRequest extends FormRequest
     {
         return [
             'product_id' => ['numeric','exists:products,id','required'],
-                            'option'=>['max:1000000'],
-                                            'attributes'=>['max:100000'],
-            'status' => ['required', 'in:1,0']
+                            'option'=>['required'],
+                                            'attributes'=>['required'],
 
         ];
     }

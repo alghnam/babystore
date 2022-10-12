@@ -19,8 +19,8 @@ class GeocodeDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        $this->call(CountrySeeder::class);//run CountrySeeder seeder that it in module LaratrustSeeder(user,role,permission)
-        $this->call(CitySeeder::class);//run CitySeeder seeder that it in module LaratrustSeeder(user,role,permission)
-        $this->call(TownSeeder::class);//run TownSeeder seeder that it in module LaratrustSeeder(user,role,permission)
+        $this->call(CountrySeeder::class);
+        $this->call(CitySeeder::class);
+        $this->call(TownSeeder::class);
     }
 }

@@ -49,9 +49,9 @@ class StoreStorageDetailRequest extends FormRequest
     public function rules()
     {
         return [
-            'sku' => ['required','max:255'],
-            'barcode' => ['max:255',Rule::unique('storage_details')],
-            'wight' => ['max:255']
+            'sku' => ['nullable','max:255'],
+            'barcode' => ['nullable','max:255',Rule::unique('storage_details')],
+            'wight' => ['nullable','max:255']
         ];
     }
 
@@ -72,6 +72,6 @@ class StoreStorageDetailRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this StorageDetail'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

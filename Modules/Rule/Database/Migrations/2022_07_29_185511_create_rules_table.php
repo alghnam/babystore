@@ -18,7 +18,7 @@ class CreateRulesTable extends Migration
                         $table->string('locale')->default(config('app.locale'));
 
             $table->string('name');
-            $table->string('description');
+            $table->longText('description');
                         $table->tinyInteger('status')->default(1);
             $table->date('deleted_at')->nullable();
             $table->timestamps();

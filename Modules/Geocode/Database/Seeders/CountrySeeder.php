@@ -17,15 +17,20 @@ class CountrySeeder extends Seeder
     public function run()
     {
 
-        // Add countries (palestine,egypt) 
+        // Add countries (Kuwait,palestine,egypt) 
+        Country::create([
+            'code' => '80001',
+            'name' => 'الكويت',
+            'status' => 1
+        ]);
         Country::create([
             'code' => '12454',
-            'name' => 'Palestine',
+            'name' => 'فلسطين',
             'status' => 1
         ]);
         Country::create([
             'code' => '14574',
-            'name' => 'Egypt',
+            'name' => 'مصر',
             'status' => 1
         ]);
 

@@ -46,10 +46,20 @@ class DeleteCountryRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-        ];
+            if($this->id=="1"){
+                
+                return $this->failedAction();
+            }else{
+                return [
+                ];
+            }
     }
 
+   protected function failedAction()
+    {
+        // throw new AuthorizationException(__('Cannt make any action here'));
+        throw new AuthorizationException('لا تستطيع فعل هذا الامر هنا');
+    }
     /**
      * Handle a failed authorization attempt.
      *

@@ -6,9 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Repositories\BaseRepository;
 use Illuminate\Validation\Rule;
-use Modules\Profile\Entities\Profile;
 use Illuminate\Validation\Rules;
-use Modules\Order\Entities\Order;
 /**
  * Class FinishingPaymentRequest.
  */
@@ -34,9 +32,7 @@ class FinishingPaymentRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        //update Order for only superadministrator  and admins
-        $authorizeRes= $this->baseRepo->authorize();
+        $authorizeRes= $this->baseRepo->authorizeUser();
         if($authorizeRes==true){  
                 return true;
             
@@ -80,7 +76,7 @@ class FinishingPaymentRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Order'));
+        throw new AuthorizationException(__('Only user can make this action'));
     }
     
 }

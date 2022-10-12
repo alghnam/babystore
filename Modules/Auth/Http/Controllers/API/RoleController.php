@@ -97,7 +97,6 @@ class RoleController extends Controller
     public function rolesUserByName($userId){
         
        $roles=  $this->roleRepo->rolesUserByNameModel($this->user,$userId);
-        //   $arrays[] =  (array) $roles;
        return $roles;
     }
         public function rolesPermissionByName($permissionId){
@@ -120,11 +119,9 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        
-
-                try{
+        try{
        $role =  $this->roleRepo->store($request,$this->role);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$role->id],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$role->load('permissions')],200);
 
         
         }catch(\Exception $ex){
@@ -173,7 +170,7 @@ class RoleController extends Controller
                   if(is_string($role)){
             return response()->json(['status'=>false,'message'=>$role],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$role],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$role->load('permissions')],200);
 
         
         }catch(\Exception $ex){

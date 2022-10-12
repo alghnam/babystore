@@ -4,13 +4,12 @@ namespace Modules\Wallet\Entities;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Auth\Entities\User;
 use Modules\Movement\Entities\Movement;
 
 class Wallet extends Model
 {
-    use SoftDeletes;
+        protected $appends = ['original_status'];
     /**
      * The attributes that are mass assignable.
      *
@@ -19,17 +18,19 @@ class Wallet extends Model
     protected $fillable = [
         'amount',
         'user_id',
-        'deleted_at'
+        'status',
     ];
-       public function getStatusAttribute($value){
+       public function getStatusAttribute(){
+        return  $this->attributes['status'];
+        
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'InActive';
-        }elseif ($value==1) {
+        }elseif($value==1) {
             return 'Active';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
     } 
     
     public function user(){

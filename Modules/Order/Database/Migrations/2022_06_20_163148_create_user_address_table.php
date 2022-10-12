@@ -25,7 +25,7 @@ class CreateUserAddressTable extends Migration
                 ->references('id')
                 ->on('addresses')
                 ->onDelete('cascade');
-                            $table->tinyInteger('confirmed')->default(0);
+                             $table->tinyInteger('confirmed')->default(0);
 
             $table->timestamps();
         });

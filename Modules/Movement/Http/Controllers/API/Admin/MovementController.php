@@ -3,7 +3,6 @@
 namespace Modules\Movement\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Movement\Entities\Movement;
@@ -54,25 +53,27 @@ class MovementController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $movements=$this->movementRepo->all($this->movement);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Movements has been getten successfully',
-        'data'=> $movements
-    ]);
+        try{
+            $movements=$this->movementRepo->all($this->movement);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movements],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllPaginates(Request $request){
-    
-    $movements=$this->movementRepo->getAllPaginates($this->movement,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Movements has been getten successfully(pagination)',
-        'data'=> $movements
-    ]);
+    try{
+        $movements=$this->movementRepo->getAllPaginates($this->movement,$request);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movements],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -80,14 +81,18 @@ class MovementController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-    $movements=$this->movementRepo->trash($this->movement,$request);
+        try{
+            $movements=$this->movementRepo->trash($this->movement,$request);
+            if(is_string($movements)){
+                return response()->json(['status'=>false,'message'=>$movements],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movements],200);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Movements has been getten successfully (in trash)',
-        'data'=> $movements
-    ]);
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -99,13 +104,15 @@ class MovementController extends Controller
     */
     public function store(StoreMovementRequest $request)
     {
-    $movement=$this->movementRepo->store($request,$this->movement);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Movement has been stored successfully',
-        'data'=> $movement
-    ]);
+        try{
+            $movement=$this->movementRepo->store($request,$this->movement);
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movement],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
 
@@ -117,18 +124,20 @@ class MovementController extends Controller
     */
     public function show($id)
     {
-    $movement=$this->movementRepo->find($id,$this->movement);
-    
-        if(is_string($movement)){
-            return response()->json(['status'=>false,'message'=>$movement],404);
-        }
-   
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'Movement has been getten successfully',
-            'data'=> $movement
-        ]);
+        try{
+            $movement=$this->movementRepo->find($id,$this->movement);
+        
+            if(is_string($movement)){
+                return response()->json(['status'=>false,'message'=>$movement],404);
+            }
+       
+                    return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movement],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
 
@@ -143,64 +152,55 @@ class MovementController extends Controller
     */
     public function update(UpdateMovementRequest $request,$id)
     {
-    $movement= $this->movementRepo->update($request,$id,$this->movement);
-    if(is_string($movement)){
-            return response()->json(['status'=>false,'message'=>$movement],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Movement has been updated successfully',
-        'data'=> $movement
-    ]);
+        try{
+            $movement= $this->movementRepo->update($request,$id,$this->movement);
+            if(is_string($movement)){
+                    return response()->json(['status'=>false,'message'=>$movement],404);
+                }
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movement],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
 
-    public function inventory(){
-    $movementsInInventory= $this->movementRepo->movementsInInventory($this->movement);
-    if(empty($movementsInInventory)){
-    if(is_string($movement)){
-            return response()->json(['status'=>false,'message'=>$movement],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'MovementsInInventory getting successfully',
-        'data'=> $movementsInInventory
-    ]);
-     
-    }
-    }
+   
 
     //methods for restoring
     public function restore($id){
+        try{
+            $movement =  $this->movementRepo->restore($id,$this->movement);
+             if(is_string($movement)){
+                    return response()->json(['status'=>false,'message'=>$movement],404);
+                }
     
-    $movement =  $this->movementRepo->restore($id,$this->movement);
-     if(is_string($movement)){
-            return response()->json(['status'=>false,'message'=>$movement],404);
-        }
-    
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'Movement has been restored',
-                'data'=> $movement
-            ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movement],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
         
 
     }
     public function restoreAll(){
-    $movements =  $this->movementRepo->restoreAll($this->movement);
-     if(is_string($movements)){
-            return response()->json(['status'=>false,'message'=>$movements],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $movements
-        ]);
+        try{
+            $movements =  $this->movementRepo->restoreAll($this->movement);
+             if(is_string($movements)){
+                    return response()->json(['status'=>false,'message'=>$movements],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movements],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
@@ -213,17 +213,19 @@ class MovementController extends Controller
     */
     public function destroy(DeleteMovementRequest $request,$id)
     {
-    $movement= $this->movementRepo->destroy($id,$this->movement);
-     if(is_string($movement)){
-            return response()->json(['status'=>false,'message'=>$movement],404);
-        }
+        try{
+        $movement= $this->movementRepo->destroy($id,$this->movement);
+         if(is_string($movement)){
+                return response()->json(['status'=>false,'message'=>$movement],404);
+            }
   
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $movement
-    ]); 
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movement],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     public function forceDelete(DeleteMovementRequest $request,$id)
@@ -233,13 +235,8 @@ class MovementController extends Controller
      if(is_string($movement)){
             return response()->json(['status'=>false,'message'=>$movement],404);
         }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movement],200);
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
     
     }
     

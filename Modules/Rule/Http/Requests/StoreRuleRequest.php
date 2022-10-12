@@ -52,7 +52,7 @@ class StoreRuleRequest extends FormRequest
               
             return [
                'name' => ['required','max:255',Rule::unique('rules')],
-               'description' => ['required','max:255'],
+               'description' => ['required'],
             'status' => ['sometimes', 'in:1,0'],
 
             ];
@@ -78,6 +78,6 @@ class StoreRuleRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Cart'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

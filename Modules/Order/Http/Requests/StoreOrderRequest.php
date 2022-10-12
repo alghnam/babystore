@@ -70,7 +70,6 @@ class StoreOrderRequest extends FormRequest
     public function messages()
     {
         return [
-            'Order_images.*.exists' => __('One or more Order images were not found or are not allowed to be associated with this Order.'),
 
         ];
     }
@@ -83,6 +82,6 @@ class StoreOrderRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Order'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

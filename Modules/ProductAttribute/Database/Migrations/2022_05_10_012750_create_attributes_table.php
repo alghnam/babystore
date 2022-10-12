@@ -18,8 +18,8 @@ class CreateAttributesTable extends Migration
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onUpdate('CASCADE')->onDelete('CASCADE');
 			$table->string('locale')->default(config('app.locale'));
-			$table->string('arrtibutes');
-            $table->tinyInteger('status')->default(0);
+			$table->string('option');
+			$table->longText('attributes');
             $table->date('deleted_at')->nullable();
             $table->timestamps();
 

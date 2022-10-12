@@ -9,7 +9,7 @@ use Modules\Product\Entities\Product;
 use App\Models\Image;
 class ProductAttribute extends Model
 {
-   // use SoftDeletes;
+    use SoftDeletes;
     protected $table= "attributes";
     /**
   * The attributes that are mass assignable.
@@ -25,16 +25,8 @@ class ProductAttribute extends Model
  ];
      
     
-     public function getStatusAttribute($value){
-        if($value==0){
-            return 'InActive';
-        }elseif ($value==1) {
-            return 'Active';
-        }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
-    } 
+ 
+    
     
     
          public function mainCategory(){

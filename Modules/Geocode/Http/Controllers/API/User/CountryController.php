@@ -42,20 +42,14 @@ class CountryController extends Controller
 
         public function getAllCountries(){
         
-        //  try{
+         try{
         $countries=$this->countryRepo->getAllCountries($this->country);
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countries],200);
 
-        //         }catch(\Exception $ex){
-        //     return response()->json([
-        //         'status'=>500,
-        //         'message'=>'There is something wrong, please try again'
-        //     ]);  
-        // } 
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
      
 

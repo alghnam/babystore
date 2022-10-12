@@ -19,7 +19,7 @@ class CreateViewsTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->tinyInteger('status')->default(1);
+            // $table->tinyInteger('status')->default(1);
             $table->date('view_at');
             $table->date('deleted_at')->nullable();
             $table->timestamps();

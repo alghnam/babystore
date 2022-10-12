@@ -11,10 +11,16 @@ class BuyingSystemMountController extends Controller
 {
       public function getBuyingSystemMount()
         {
-            $BuyingSystemMount=BuyingSystemMount::first();
-            return response()->json(['status'=>true,'message'=>'data has been getten successfully','data'=>$BuyingSystemMount],200);
+            try{
+                $BuyingSystemMount=BuyingSystemMount::first();
+                return response()->json(['status'=>true,'message'=>'data has been getten successfully','data'=>$BuyingSystemMount],200);
 
-               
+
+        
+            }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+    
+            } 
           
     }
 }

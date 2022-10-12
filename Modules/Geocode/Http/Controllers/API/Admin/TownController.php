@@ -3,7 +3,6 @@
 namespace Modules\Geocode\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Geocode\Http\Requests\Town\DeleteTownRequest;
@@ -69,25 +68,20 @@ class TownController extends Controller
         public function getAllPaginates(Request $request){
         
          try{
-        $cities=$this->townRepo->getAllPaginates($this->town,$request);
+             $cities=$this->townRepo->getAllPaginates($this->town,$request);
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cities],200);
 
-                }catch(\Exception $ex){
-            return response()->json([
-                'status'=>500,
-                'message'=>'There is something wrong, please try again'
-            ]);  
-        } 
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+           
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
         public function getCountriesProduct(Request $request,$productId){
         
          try{
-        $cities=$this->townRepo->getCountriesProduct($this->town,$request,$productId);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cities],200);
+            $cities=$this->townRepo->getCountriesProduct($this->town,$request,$productId);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cities],200);
 
         
         }catch(\Exception $ex){
@@ -101,15 +95,18 @@ class TownController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-//   try{
+        try{
         $cities=$this->townRepo->trash($this->town,$request);
+          if(is_string($cities)){
+                return response()->json(['status'=>false,'message'=>$cities],404);
+            }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cities],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
 
@@ -121,15 +118,15 @@ class TownController extends Controller
      */
     public function store(StoreTownRequest $request)
     {
-        //  try{
-       $town= $this->townRepo->store($request,$this->town);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town],200);
+         try{
+            $town= $this->townRepo->store($request,$this->town);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
 
     /**
@@ -221,9 +218,9 @@ class TownController extends Controller
      */
     public function destroy(DeleteTownRequest $request,$id)
     {
-          try{
-       $town= $this->townRepo->destroy($id,$this->town);
-                          if(is_string($town)){
+        try{
+            $town= $this->townRepo->destroy($id,$this->town);
+            if(is_string($town)){
             return response()->json(['status'=>false,'message'=>$town],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town],200);

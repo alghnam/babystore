@@ -31,9 +31,7 @@ class AddReplacedPointsRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        //store Review for only superadministrator , admins 
-        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
+        $authorizeRes= $this->baseRepo->authorizeUser();
         if($authorizeRes==true){
                 return true;
             
@@ -50,7 +48,7 @@ class AddReplacedPointsRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount'=>['max:255','required']
+            'amount'=>['max:20','required']
 
         ];
     }
@@ -61,7 +59,8 @@ class AddReplacedPointsRequest extends FormRequest
     public function messages()
     {
         return [
-
+            'amount.max:20'=>'يجب ان يكون المبلغ لا يتحاوز ال 20 رقم',
+            'amount.required'=>'يجب عليك وضع المبلغ'
         ];
     }
         /**
@@ -73,6 +72,6 @@ class AddReplacedPointsRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Review'));
+        throw new AuthorizationException(__('Only user can make this action'));
     }
 }

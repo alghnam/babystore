@@ -3,7 +3,6 @@
 namespace Modules\Payment\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Payment\Entities\Payment;
@@ -54,25 +53,27 @@ class PaymentController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $payments=$this->paymentRepo->all($this->payment);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Payments has been getten successfully',
-        'data'=> $payments
-    ]);
+        try{
+            $payments=$this->paymentRepo->all($this->payment);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payments],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllPaginates(Request $request){
-    
-    $payments=$this->paymentRepo->getAllPaginates($this->payment,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Payments has been getten successfully(pagination)',
-        'data'=> $payments
-    ]);
+        try{
+            $payments=$this->paymentRepo->getAllPaginates($this->payment,$request);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payments],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -80,14 +81,16 @@ class PaymentController extends Controller
 
     // methods for trash
     public function trash(Request $request){
-    $payments=$this->paymentRepo->trash($this->payment,$request);
+        try{
+            $payments=$this->paymentRepo->trash($this->payment,$request);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Payments has been getten successfully (in trash)',
-        'data'=> $payments
-    ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payments],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -99,13 +102,15 @@ class PaymentController extends Controller
     */
     public function store(StorePaymentRequest $request)
     {
-    $payment=$this->paymentRepo->store($request,$this->payment);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Payment has been stored successfully',
-        'data'=> $payment
-    ]);
+        // try{
+            $payment=$this->paymentRepo->store($request,$this->payment);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payment],200);
+
+        
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
     }
     
 
@@ -117,19 +122,20 @@ class PaymentController extends Controller
     */
     public function show($id)
     {
-    $payment=$this->paymentRepo->find($id,$this->payment);
-    
-        if(is_string($payment)){
-            return response()->json(['status'=>false,'message'=>$payment],404);
-        }
-   
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'Payment has been getten successfully',
-            'data'=> $payment
-        ]);
-    
+        try{
+            $payment=$this->paymentRepo->find($id,$this->payment);
+        
+            if(is_string($payment)){
+                return response()->json(['status'=>false,'message'=>$payment],404);
+            }
+       
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payment],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -143,64 +149,52 @@ class PaymentController extends Controller
     */
     public function update(UpdatePaymentRequest $request,$id)
     {
-    $payment= $this->paymentRepo->update($request,$id,$this->payment);
-    if(is_string($payment)){
-            return response()->json(['status'=>false,'message'=>$payment],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Payment has been updated successfully',
-        'data'=> $payment
-    ]);
+        try{
+            $payment= $this->paymentRepo->update($request,$id,$this->payment);
+            if(is_string($payment)){
+                    return response()->json(['status'=>false,'message'=>$payment],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payment],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+
+    }
+
     
-
-    }
-
-    public function inventory(){
-    $paymentsInInventory= $this->paymentRepo->paymentsInInventory($this->payment);
-    if(empty($paymentsInInventory)){
-    if(is_string($payment)){
-            return response()->json(['status'=>false,'message'=>$payment],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'PaymentsInInventory getting successfully',
-        'data'=> $paymentsInInventory
-    ]);
-     
-    }
-    }
 
     //methods for restoring
     public function restore($id){
+        try{
+            $payment =  $this->paymentRepo->restore($id,$this->payment);
+             if(is_string($payment)){
+                    return response()->json(['status'=>false,'message'=>$payment],404);
+                }
     
-    $payment =  $this->paymentRepo->restore($id,$this->payment);
-     if(is_string($payment)){
-            return response()->json(['status'=>false,'message'=>$payment],404);
-        }
-    
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'Payment has been restored',
-                'data'=> $payment
-            ]);
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payment],200);
+
         
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
     public function restoreAll(){
-    $payments =  $this->paymentRepo->restoreAll($this->payment);
-     if(is_string($payments)){
-            return response()->json(['status'=>false,'message'=>$payments],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $payments
-        ]);
+        try{
+            $payments =  $this->paymentRepo->restoreAll($this->payment);
+             if(is_string($payments)){
+                    return response()->json(['status'=>false,'message'=>$payments],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payments],200);
+
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
@@ -213,33 +207,37 @@ class PaymentController extends Controller
     */
     public function destroy(DeletePaymentRequest $request,$id)
     {
-    $payment= $this->paymentRepo->destroy($id,$this->payment);
-     if(is_string($payment)){
-            return response()->json(['status'=>false,'message'=>$payment],404);
-        }
+        try{
+            $payment= $this->paymentRepo->destroy($id,$this->payment);
+             if(is_string($payment)){
+                    return response()->json(['status'=>false,'message'=>$payment],404);
+                }
   
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $payment
-    ]); 
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payment],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     public function forceDelete(DeletePaymentRequest $request,$id)
     {
-    //to make force destroy for a Payment must be this Payment  not found in Payments table  , must be found in trash Payments
-    $payment=$this->paymentRepo->forceDelete($id,$this->payment);
-     if(is_string($payment)){
-            return response()->json(['status'=>false,'message'=>$payment],404);
-        }
+        try{
+            //to make force destroy for a Payment must be this Payment  not found in Payments table  , must be found in trash Payments
+            $payment=$this->paymentRepo->forceDelete($id,$this->payment);
+             if(is_string($payment)){
+                    return response()->json(['status'=>false,'message'=>$payment],404);
+                }
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$payment],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     

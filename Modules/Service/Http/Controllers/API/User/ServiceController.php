@@ -27,15 +27,8 @@ class ServiceController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, Service $service, ServiceRepository $serviceRepo)
     {
-        // $this->middleware(['permission:services_read'])->only('index');
-        // $this->middleware(['permission:services_trash'])->only('trash');
-        // $this->middleware(['permission:services_restore'])->only('restore');
-        // $this->middleware(['permission:services_restore-all'])->only('restore-all');
-        // $this->middleware(['permission:services_show'])->only('show');
-        // $this->middleware(['permission:services_store'])->only('store');
-        // $this->middleware(['permission:services_update'])->only('update');
-        // $this->middleware(['permission:services_destroy'])->only('destroy');
-        // $this->middleware(['permission:services_destroy-force'])->only('destroy-force');
+             $this->middleware(['permission:services_get'])->only('getServices');
+             $this->middleware(['permission:services_show'])->only('showService');
         $this->baseRepo = $baseRepo;
         $this->service = $service;
         $this->serviceRepo = $serviceRepo;
@@ -49,13 +42,16 @@ class ServiceController extends Controller
 
     }
     public function showService($id){
-
+        try{
         $service=$this->serviceRepo->showService($this->service,$id);
         
                 if(is_string($service)){
             return response()->json(['status'=>false,'message'=>$service],404);
         }
-                    return response()->json(['status'=>true,'message'=>'تم ايجاد الخدمة بنجاح','data'=>$service],200);
+                    return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$service],200);
+    }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
+        } 
     }
 }

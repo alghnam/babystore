@@ -35,7 +35,7 @@ class UpdateCartRequest extends FormRequest
     public function authorize()
     {
         //update Cart for only superadministrator  and admins
-        $authorizeRes= $this->baseRepo->authorize();
+        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
         if($authorizeRes==true){  
                 return true;
             
@@ -83,7 +83,7 @@ class UpdateCartRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Cart'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
     
 }

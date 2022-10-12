@@ -10,6 +10,8 @@ use Modules\Geocode\Entities\City;
 use Modules\Geocode\Entities\Town;
 class Address extends Model
 {
+    
+        protected $appends = ['original_confirmed'];
             /**
      * The attributes that are mass assignable.
      *
@@ -35,22 +37,14 @@ class Address extends Model
         'default_address', 
         'confirmed'
     ];
-    // public function order(){
-    //     return $this->belongsTo('Modules\Order\Entities\Order');
 
-    // }
-    
     public function orders(){
         return $this->belongsToMany('Modules\Order\Entities\Order','address_order','address_id','order_id');
     }
-            public function users(){
-        return $this->belongsToMany(User::class,'user_address','address_id','user_id');
-        // return $this->belongsToMany(User::class,'user_address');
+            public function user(){
+        return $this->belongsTo(User::class);
     }
-    // public function user(){
-    //     return $this->belongsTo(User::class);
 
-    // }
         public function country(){
         return $this->belongsTo(Country::class);
 
@@ -63,15 +57,16 @@ class Address extends Model
         return $this->belongsTo(Town::class);
 
     }
-        public function getConfirmedAttribute($value){
+        public function getConfirmedAttribute(){
+       return  $this->attributes['confirmed'];
+    }
+    public function getOriginalConfirmedAttribute(){
+        $value=$this->attributes['confirmed'];
         if($value==0){
             return 'Not Confirmed';
         }elseif ($value==1) {
             return 'Confirmed';
         }
-    }
-    public function getOriginalConfirmedAttribute($value){
-       return  $this->attributes['confirmed'];
     }
     
 }

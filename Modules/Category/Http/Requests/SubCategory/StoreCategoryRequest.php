@@ -35,7 +35,6 @@ class StoreCategoryRequest extends FormRequest
         $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
         if($authorizeRes==true){
                 return true;
-            
         }else{
             return $this->failedAuthorization();
         }
@@ -49,9 +48,8 @@ class StoreCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required','max:255',Rule::unique('categories')],
-            'description' => ['max:255'],
-            'category_id' => ['required','numeric','exists:categories,id'],
+            'name' => ['required','max:255'],
+            'category_id' => ['required','numeric','exists:categories,id,parent_id,!null'],
             'image'=>['nullable'],
             'image.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf'],
             'status' => ['sometimes', 'in:1,0'],
@@ -67,7 +65,7 @@ class StoreCategoryRequest extends FormRequest
 
         ];
     }
-        /**
+    /**
      * Handle a failed authorization attempt.
      *
      * @return void
@@ -76,6 +74,6 @@ class StoreCategoryRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this category'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

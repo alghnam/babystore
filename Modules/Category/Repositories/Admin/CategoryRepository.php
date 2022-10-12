@@ -24,7 +24,7 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
         return $mainCategory;
     }
     public function getAllPaginates($model,$request){
-          $mainCategories=$model->withoutGlobalScope(ActiveScope::class)->where(['parent_id'=>null])->paginate($request->total);
+          $mainCategories=$model->with('image')->withoutGlobalScope(ActiveScope::class)->where(['parent_id'=>null])->paginate($request->total);
         return $mainCategories;
     }   
     public function mainCategories($model){
@@ -36,7 +36,7 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
           return  $modelData;
     }      
     public function getFirstSubCategoriesPaginate($model,$request){
-        $modelData=$model->withoutGlobalScope(ActiveScope::class)->where('parent_id','!=',null)->with('mainCategory')->paginate($request->total);
+        $modelData=$model->with('image')->withoutGlobalScope(ActiveScope::class)->where('parent_id','!=',null)->with('mainCategory')->paginate($request->total);
           return  $modelData;
     }
     public function getSubCategoriesForMain($model,$categoryId){
@@ -45,17 +45,21 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
     }
   
     public  function trashSub($model,$request){
-       $modelData=$this->findAllItemsOnlyTrashed($model)->with('mainCategory')->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
-        return $modelData;
+        
+        
+       $modelData=$this->findAllItemsOnlyTrashed($model);
+                    if(is_string($modelData)){
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
+            }
+        return $modelData->with('mainCategory')->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
     }
     public function getAllCategoriesPaginate($model,$request){
     $modelData=$model->where('locale',config('app.locale'))->with('mainCategory')->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
        return  $modelData;
    
     }
-    // methods overrides
-    public function store($request,$model){
-        $data=$request->validated();
+        public function store($request,$model){
+        $data=$request->all();
         $data['locale']=config('app.locale');
 
         
@@ -67,21 +71,22 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
 
             if(!empty($data['image'])){
                 if($request->hasFile('image')){
-                    $file_path_original_image_Category= MediaClass::store($request->file('image'),'category-images');//store category image
+                    $file_path_original_image_Category= MediaClass::store($request->file('image'),'sub-categories-images');//store category image
                     $data['image']=$file_path_original_image_Category;
                 }else{
                     $data['image']=$category->image;
                 }
-                $category->image()->create(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Auth\Entities\Category']);
+                $category->image()->create(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Category\Entities\Category']);
             }
             return $category;
     }
         public function update($request,$id,$model){
 
         $category=$this->find($id,$model);
+        // dd($category);
         if(!empty($category)){
             
-            $data= $request->validated();
+            $data= $request->all();
     
             $enteredData=  Arr::except($data ,['image']);
             $category->update($enteredData);
@@ -90,45 +95,29 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
     
          if(!empty($data['image'])){
                if($request->hasFile('image')){
-                   $file_path_original= MediaClass::store($request->file('image'),'category-images');//store category image
+                   $file_path_original= MediaClass::store($request->file('image'),'sub-categories-images');//store category image
                    $data['image']=$file_path_original;
     
                }else{
                    $data['image']=$category->image;
                }
+
              if($category->image){
                 //   dd($data['image']);
-                 $category->image()->update(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Auth\Entities\Category']);
-       
+                 $category->image()->update(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Category\Entities\Category']);
+               return $category;
+
              }else{
        
-                 $category->image()->create(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Auth\Entities\Category']);
+                 $category->image()->create(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Category\Entities\Category']);
+                                    //   dd($category->image);
+                                               return $category;
+
              }
          }
 
         }    
 
-        return $category;
     }
 
-
-    
-    
-        public function forceDelete($id,$model){
-            //to make force destroy for an item must be this item  not found in items table  , must be found in trash items
-            $itemInTableitems = $this->find($id,$model);//find this item from  table items
-            if(is_string($itemInTableitems)){//this item not found in items table
-                return $itemInTableitems;
-            }
-            $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
-            if(is_string($itemInTrash)){//this item not found in trash items table
-                return trans('messages.this item not found in trash');
-            }
-            $itemInTrash->forceDelete();
-            //  MediaClass::delete($itemInTrash->image);
-
-            return 200;
-        }
-
-    
 }

@@ -28,15 +28,16 @@ class CreateAddressesTable extends Migration
             $table->float('latitude');
             $table->float('longitute');
 
+            $table->string('home_no');
             $table->string('phone_no');
             $table->string('piece_number');
             $table->string('street_number')->nullable();
             $table->string('jada_number')->nullable();
-            $table->string('home_phone');
             $table->string('floor_number')->nullable();
             $table->string('apartment_number')->nullable();
             $table->string('additional_tips')->nullable();
             $table->tinyInteger('default_address')->default(0);
+            $table->tinyInteger('confirmed')->default(0);
 
 
             $table->timestamps();

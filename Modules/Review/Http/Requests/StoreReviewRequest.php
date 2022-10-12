@@ -52,7 +52,7 @@ class StoreReviewRequest extends FormRequest
             'first_name'=>['max:255','required'],
             'last_name'=>['max:255'],
             'product_id' => ['numeric','exists:products,id','required'],
-            'description'=>['max:255'],
+            'description'=>['nullable'],
             'rating'=>['numeric'],
             'status' => ['required', 'in:1,0']
 
@@ -78,6 +78,6 @@ class StoreReviewRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Review'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

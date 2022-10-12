@@ -2,7 +2,6 @@
 
 namespace Modules\Banner\Http\Controllers\API\User;
 
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Repositories\BaseRepository;
@@ -34,12 +33,14 @@ class BannerController extends Controller
         $this->bannerRepo = $bannerRepo;
     }
  public function getAllBannersForUserPaginate(Request $request){
+     try{
         $banners=$this->bannerRepo->getAllBannersForUserPaginate($this->banner,$request);
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'banners for user has been getten successfully(pagination)',
-            'data'=> $banners
-        ]);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$banners],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     } 
 }

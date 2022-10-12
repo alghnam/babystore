@@ -53,15 +53,13 @@ class UpdateDetailsArrayProductAttributesRequest extends FormRequest
         
             return [
 
-                            'product_id' => ['numeric','exists:products,id','required'],
-'quantity' => ['numeric'],
-                        'counter_discount' => ['numeric'],
-                        'original_price' => ['numeric'],
-                        'price_after_discount' => ['numeric'],
-                        'price_discount_ends' => ['numeric'],
-                        'sku' => ['required','max:255'],
-            'barcode' => ['max:255',Rule::unique('storage_details')],
-            'weight' => ['max:255'],
+                            'product_id' => ['required','numeric','exists:products,id'],
+'quantity' => ['required','numeric'],
+                'original_price' => ['required','numeric'],
+                'price_discount_ends' => ['required','numeric'],
+                'sku' => ['nullable','max:255'],
+                'barcode' => ['nullable','max:255',Rule::unique('storage_details')],
+                'weight' => ['nullable','max:255'],
                 'image'=>['nullable'],
                 'image.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf'],
             ];

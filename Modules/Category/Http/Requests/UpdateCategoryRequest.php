@@ -34,8 +34,7 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize()
     {
-        //update Category for only superadministrator  and admins
-        $authorizeRes= $this->baseRepo->authorize();
+        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
         if($authorizeRes==true){  
                 return true;
             
@@ -54,14 +53,12 @@ class UpdateCategoryRequest extends FormRequest
         
 
             return [
-                'name' => ['required','max:255',Rule::unique('categories')->ignore($this->id)],
-                'description' => ['required','max:255'],
+                'name' => ['required','max:255'],
                 'parent_id' => ['numeric','exists:categories,id','nullable'],
                 'image'=>['nullable'],
                 'image.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf'],
-                'status' => ['sometimes', 'in:1,0'],
-                'status' => ['required's', 'in:1,0']
-    
+                'status' => ['required', 'in:1,0'],
+
             ];
 
     }
@@ -84,7 +81,7 @@ class UpdateCategoryRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this category'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
     
 }

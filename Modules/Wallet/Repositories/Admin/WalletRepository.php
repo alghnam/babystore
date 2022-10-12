@@ -15,12 +15,20 @@ class WalletRepository extends EloquentRepository implements WalletRepositoryInt
          public  function trash($model,$request){
        $modelData=$this->findAllItemsOnlyTrashed($model);
         if(is_string($modelData)){
-                            // return trans('messages.there is not found any items in trash');
+
                             return 'لا يوجد اي عنصر في سلة المحذوفات';
 
         }
        $modelData=$this->findAllItemsOnlyTrashed($model)->with(['user'])->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
         return $modelData;
     }
-
+    public function destroy($id,$item){
+        $item=Wallet::where('id',$id)->first();
+        if(is_string($item)){
+            return $item;
+        }
+        $item->delete($item);
+        
+        return $item;
+    }
 }

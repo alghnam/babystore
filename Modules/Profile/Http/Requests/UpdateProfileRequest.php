@@ -31,19 +31,8 @@ class UpdateProfileRequest extends FormRequest
      */
     public function authorize()
     {
-        if($this->userId==1){
-            //show user for only superadministrator     
-            //this user superadmin   
-            $authorizeRes= $this->baseRepo->authorize();
-            if($authorizeRes==true){
                 return true;
-            }else{//this user not superadmin
-                return $this->failedAuthorization();
-            }
-
-        }else{
-            return true;
-        }
+        
     }
 
     /**
@@ -56,17 +45,30 @@ class UpdateProfileRequest extends FormRequest
                 $userId=auth()->guard('api')->user()->id;
 
         return [
-            //'phone_no' => ['required','max:255',Rule::unique('users')->ignore($userId)],
-            'phone_no' => ['required','max:255'],
-            'first_name' => ['required','max:255'],
-            'last_name' => ['required','max:255'],            
-           // 'email' => ['required','max:255','email',Rule::unique('users')->ignore($userId)],            
-            'email' => ['max:255','email'],            
-            'image'=>['nullable'],
-            'image.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf']
+            'phone_no' => ['required','max:20',Rule::unique('users')->ignore($userId)],
+            'first_name' => ['max:255'],
+            'last_name' => ['max:255'],            
+            'email' => ['nullable','max:255',Rule::unique('users')->ignore($userId)],            
+            'image'=>['nullable','mimes:jpeg,bmp,png,gif,svg']
         ];
     }
-
+  /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'phone_no.required'=>'يجب عليك كتابة رقم الهاتف ',
+            'phone_no.max:255'=>'يجب الا يكون رقم الهاتف اكثر من 20',
+            'phone_no.unique'=>'يجب ان يكون رقم الهاتف موجود بالنظام',
+            'first_name.max:255'=>'يجب الا يكون الاسم الاول اكثر من 225حرف',
+            'last_name.max:255'=>'يجب الا يكون الاسم الاخير اكثر من 225حرف',
+            'email.max:255'=>'يجب الا يكون رقم الهاتف اكثر من 20',
+            'email.unique'=>'يجب ان يكون رقم الهاتف موجود بالنظام',
+            'image.mimes'=>'يجب ان تكون الصورة  png, bmp,gif,svg',
+            // 'images.*.exists' => __('One or more  images were not found or are not allowed to be associated with this Seo.'),
+        ];
+    }
             /**
      * Handle a failed authorization attempt.
      *

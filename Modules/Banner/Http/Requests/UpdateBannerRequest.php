@@ -34,9 +34,7 @@ class UpdateBannerRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        //update Category for only superadministrator  and admins
-        $authorizeRes= $this->baseRepo->authorize();
+        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
         if($authorizeRes==true){  
                 return true;
             
@@ -58,7 +56,7 @@ class UpdateBannerRequest extends FormRequest
               
             return [
                'title' => ['required','max:255',Rule::unique('banners')->ignore($this->id)],
-            'description' => ['max:255'],
+            'description' => ['nullable'],
             'product_id' => ['numeric','exists:products,id'],
             'image'=>['nullable'],
             'image.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf'],
@@ -91,7 +89,7 @@ class UpdateBannerRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this category'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
     
 }

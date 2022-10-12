@@ -31,18 +31,13 @@ class DeleteUserRequest extends FormRequest
      */
     public function authorize()
     {
-      //delete user for only superadministrator  and prevent delete on superadmin
       $authorizeRes= $this->baseRepo->authorize();
-      if($authorizeRes==true){
-          if($this->id==="1"){
-              return $this->failedAuthorization();
-          }else{
-          //this user superadmin   
-              return true;
-          }
-      }else{
-          return $this->failedAuthorization();
-      }
+        if($authorizeRes==true){  
+                return true;
+            
+        }else{
+            return $this->failedAuthorization();
+        }
     }
 
     /**
@@ -65,6 +60,6 @@ class DeleteUserRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator can Delete this user,and prevent delete on superadmin'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

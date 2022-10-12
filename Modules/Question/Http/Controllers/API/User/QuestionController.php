@@ -42,19 +42,19 @@ class QuestionController extends Controller
   
         public function getAllPaginates(Request $request){
         
-        //  try{
+         try{
         $questions=$this->questionRepo->getAllPaginates($this->question,$request);
                   return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$questions],200);
 
                
-        // }catch(\Exception $ex){
-            // return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
     
     public function getAllQuestionsCategoryPaginates($categoryId,Request $request){
-         //  try{
+          try{
         $questions=$this->questionRepo->getAllQuestionsCategoryPaginates($this->question,$categoryId,$request);
         if(is_string($questions)){
             return response()->json(['status'=>true,'message'=>$questions],404);
@@ -63,10 +63,10 @@ class QuestionController extends Controller
                   return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$questions],200);
 
                
-        // }catch(\Exception $ex){
-            // return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
       
     

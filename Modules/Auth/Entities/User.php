@@ -21,6 +21,7 @@ class User extends Authenticatable
 {
     use LaratrustUserTrait,HasApiTokens, HasFactory, Notifiable;
     use SoftDeletes;
+        protected $appends = ['original_status'];
 
 
     /**
@@ -36,8 +37,8 @@ class User extends Authenticatable
         'email',
         'password',
         'phone_no',
-         'device_key',
         'status',
+        'fcm_token'
     ];
 
     /**
@@ -92,15 +93,12 @@ class User extends Authenticatable
         return $this->hasMany('Modules\Order\Entities\Order');
     }
     
-            public function addresses(){
-        return $this->belongsToMany(Address::class,'user_address','user_id','address_id');
-        // return $this->belongsToMany(Address::class,'user_address');
+
+
+    public function addresses(){
+        return $this->hasMany(Address::class);
+
     }
-
-    // public function addresses(){
-    //     return $this->hasMany(Address::class);
-
-    // }
     public function favorites(){
         return $this->hasMany(Favorite::class);
     }
@@ -115,7 +113,11 @@ class User extends Authenticatable
     public function pushNotifications(){
         return $this->belongsToMany(PushNotification::class,'push_notification_user','user_id','push_notification_id');
     } 
-    public function getStatusAttribute($value){
+    public function getStatusAttribute(){
+       return  $this->attributes['status'];
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'Pending';
         }elseif ($value==1) {
@@ -123,9 +125,6 @@ class User extends Authenticatable
         }elseif ($value==-1) {
             return 'Reject Verification';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-       return  $this->attributes['status'];
     }
     
 }

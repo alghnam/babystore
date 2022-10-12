@@ -4,6 +4,7 @@ namespace Modules\BuyingSystemMount\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Modules\BuyingSystemMount\Database\Seeders\BuyingSystemMountSeeder;
 
 class BuyingSystemMountDatabaseSeeder extends Seeder
 {
@@ -16,6 +17,6 @@ class BuyingSystemMountDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        // $this->call("OthersTableSeeder");
+        $this->call(BuyingSystemMountSeeder::class);
     }
 }

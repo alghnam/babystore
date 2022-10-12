@@ -31,9 +31,7 @@ class AddSystemReviewRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        //store Seo for only superadministrator , admins 
-        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
+        $authorizeRes= $this->baseRepo->authorizeUser();
         if($authorizeRes==true){
                 return true;
             
@@ -52,9 +50,9 @@ class AddSystemReviewRequest extends FormRequest
         return [
             'user_id' => ['required','numeric','exists:users,id'],
             'system_review_type_id' => ['required','numeric','exists:system_review_types,id'],
-            'body' => ['required','string'],
-            'name' => ['required','max:255'],
-            'email' => ['required','email']
+            'body' => ['required'],
+            'name' => ['required','max:225'],
+            'email' => ['required','email','max:225']
         ];
     }
 
@@ -64,8 +62,13 @@ class AddSystemReviewRequest extends FormRequest
     public function messages()
     {
         return [
-            // 'seo_images.*.exists' => __('One or more Seo images were not found or are not allowed to be associated with this Seo.'),
-
+            'system_review_type_id.required'=>'يجب عليك ادخال نوع التقييم',
+            'body.required'=>'يجب عليك وضع الوصف ',
+            'name.required'=>'يجب عليك وضع الاسم ',
+            'name.max:225'=>'يجب عليك ادخال الاسم لا يتراوح 225 حرف',
+            'email.max:225'=>'يجب عليك ادخال الايميل لا يتراوح 225 حرف',
+            'email.required'=>'يجب عليك ادخال الايميل',
+            'email.email'=>'يجب ان الايميل بشكل صحيح',
         ];
     }
         /**
@@ -77,6 +80,6 @@ class AddSystemReviewRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Seo'));
+        throw new AuthorizationException(__('Only user can make this action'));
     }
 }

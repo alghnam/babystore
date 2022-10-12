@@ -3,7 +3,6 @@
 namespace Modules\Cart\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Cart\Entities\Cart;
@@ -36,15 +35,15 @@ class CartController extends Controller
     */
     public function __construct(BaseRepository $baseRepo, Cart $cart,CartRepository $cartRepo)
     {
-    // $this->middleware(['permission:carts_read'])->only(['index','getAllPaginates']);
-    // $this->middleware(['permission:carts_trash'])->only('trash');
-    // $this->middleware(['permission:carts_restore'])->only('restore');
-    // $this->middleware(['permission:carts_restore-all'])->only('restore-all');
-    // $this->middleware(['permission:carts_show'])->only('show');
-    // $this->middleware(['permission:carts_store'])->only('store');
-    // $this->middleware(['permission:carts_update'])->only('update');
-    // $this->middleware(['permission:carts_destroy'])->only('destroy');
-    // $this->middleware(['permission:carts_destroy-force'])->only('destroy-force');
+    $this->middleware(['permission:carts_read'])->only(['index','getAllPaginates']);
+    $this->middleware(['permission:carts_trash'])->only('trash');
+    $this->middleware(['permission:carts_restore'])->only('restore');
+    $this->middleware(['permission:carts_restore-all'])->only('restore-all');
+    $this->middleware(['permission:carts_show'])->only('show');
+    $this->middleware(['permission:carts_store'])->only('store');
+    $this->middleware(['permission:carts_update'])->only('update');
+    $this->middleware(['permission:carts_destroy'])->only('destroy');
+    $this->middleware(['permission:carts_destroy-force'])->only('destroy-force');
     $this->baseRepo = $baseRepo;
     $this->cart = $cart;
     $this->cartRepo = $cartRepo;
@@ -55,49 +54,52 @@ class CartController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $carts=$this->cartRepo->all($this->cart);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Carts has been getten successfully',
-        'data'=> $carts
-    ]);
+        try{
+            $carts=$this->cartRepo->all($this->cart);
+             return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$carts],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+   
     }
 
     public function getAllPaginates(Request $request){
-    
-    $carts=$this->cartRepo->getAllPaginates($this->cart,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Carts has been getten successfully(pagination)',
-        'data'=> $carts
-    ]);
+        try{
+            $carts=$this->cartRepo->getAllPaginates($this->cart,$request);
+             return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$carts],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllProductArrayAttributesCartPaginates(Request $request,$id){
-        
+        try{
             $carts=$this->cartRepo->getAllProductArrayAttributesCartPaginates($this->cart,$request,$id);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'ProductArrayAttributes has been getten successfully(pagination)',
-        'data'=> $carts
-    ]);
+            if(is_string($carts)){
+                return response()->json(['status'=>false,'message'=>$carts],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$carts],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
     // methods for trash
     public function trash(Request $request){
-    $carts=$this->cartRepo->trash($this->cart,$request);
+        try{
+            $carts=$this->cartRepo->trash($this->cart,$request);
+            if(is_string($carts)){
+                return response()->json(['status'=>false,'message'=>$carts],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$carts],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Carts has been getten successfully (in trash)',
-        'data'=> $carts
-    ]);
+        } 
     }
 
 
@@ -109,13 +111,13 @@ class CartController extends Controller
     */
     public function store(StoreCartRequest $request)
     {
-    $cart=$this->cartRepo->store($request,$this->cart);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Cart has been stored successfully',
-        'data'=> $cart
-    ]);
+        try{
+            $cart=$this->cartRepo->store($request,$this->cart);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cart],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
 
@@ -127,18 +129,18 @@ class CartController extends Controller
     */
     public function show($id)
     {
-    $cart=$this->cartRepo->find($id,$this->cart);
+        try{
+            $cart=$this->cartRepo->find($id,$this->cart);
     
-        if(is_string($cart)){
-            return response()->json(['status'=>false,'message'=>$cart],404);
-        }
+            if(is_string($cart)){
+                return response()->json(['status'=>false,'message'=>$cart],404);
+            }
    
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'Cart has been getten successfully',
-            'data'=> $cart
-        ]);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cart],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
 
@@ -153,16 +155,17 @@ class CartController extends Controller
     */
     public function update(UpdateCartRequest $request,$id)
     {
-    $cart= $this->cartRepo->update($request,$id,$this->cart);
-    if(is_string($cart)){
-            return response()->json(['status'=>false,'message'=>$cart],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'Cart has been updated successfully',
-        'data'=> $cart
-    ]);
+        try{
+            $cart= $this->cartRepo->update($request,$id,$this->cart);
+            if(is_string($cart)){
+                    return response()->json(['status'=>false,'message'=>$cart],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cart],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+    
     
 
     }
@@ -170,32 +173,34 @@ class CartController extends Controller
  
     //methods for restoring
     public function restore($id){
+        try{
+            $cart =  $this->cartRepo->restore($id,$this->cart);
+            if(is_string($cart)){
+                    return response()->json(['status'=>false,'message'=>$cart],404);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cart],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
-    $cart =  $this->cartRepo->restore($id,$this->cart);
-     if(is_string($cart)){
-            return response()->json(['status'=>false,'message'=>$cart],404);
-        }
-    
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'Cart has been restored',
-                'data'=> $cart
-            ]);
         
 
     }
     public function restoreAll(){
-    $carts =  $this->cartRepo->restoreAll($this->cart);
-     if(is_string($carts)){
-            return response()->json(['status'=>false,'message'=>$carts],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $carts
-        ]);
+        try{
+            $carts =  $this->cartRepo->restoreAll($this->cart);
+            
+             if(is_string($carts)){
+                    return response()->json(['status'=>false,'message'=>$carts],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$carts],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+    
+       
     
 
     }
@@ -208,33 +213,34 @@ class CartController extends Controller
     */
     public function destroy(DeleteCartRequest $request,$id)
     {
-    $cart= $this->cartRepo->destroy($id,$this->cart);
-     if(is_string($cart)){
-            return response()->json(['status'=>false,'message'=>$cart],404);
-        }
+        try{
+            $cart= $this->cartRepo->destroy($id,$this->cart);
+             if(is_string($cart)){
+                    return response()->json(['status'=>false,'message'=>$cart],404);
+                }
   
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $cart
-    ]); 
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cart],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+    
     
     }
     public function forceDelete(DeleteCartRequest $request,$id)
     {
-    //to make force destroy for a Cart must be this Cart  not found in Carts table  , must be found in trash Carts
-    $cart=$this->cartRepo->forceDelete($id,$this->cart);
-     if(is_string($cart)){
-            return response()->json(['status'=>false,'message'=>$cart],404);
-        }
+        try{
+            //to make force destroy for a Cart must be this Cart  not found in Carts table  , must be found in trash Carts
+            $cart=$this->cartRepo->forceDelete($id,$this->cart);
+             if(is_string($cart)){
+                    return response()->json(['status'=>false,'message'=>$cart],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cart],200);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
+        } 
+    
     
     }
     

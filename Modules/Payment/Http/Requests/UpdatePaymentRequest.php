@@ -6,9 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Repositories\BaseRepository;
 use Illuminate\Validation\Rule;
-use Modules\Profile\Entities\Profile;
 use Illuminate\Validation\Rules;
-use Modules\Payment\Entities\Payment;
 /**
  * Class UpdatePaymentRequest.
  */
@@ -57,8 +55,9 @@ class UpdatePaymentRequest extends FormRequest
             }else{
                 return [
                     'name' => ['required','max:255',Rule::unique('payments')->ignore($this->id)],
-                    'status' => ['sometimes', 'in:1,0']
-                ];
+            'type' => ['required', 'in:1,0'],
+            'status' => ['required', 'in:1,0'],
+            ];
             }
 
  
@@ -87,7 +86,7 @@ class UpdatePaymentRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Cart'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
     
     

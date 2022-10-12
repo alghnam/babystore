@@ -18,8 +18,8 @@ class CreateQuestionsTable extends Migration
             $table->string('locale')->default(config('app.locale'));
             $table->unsignedBigInteger('question_category_id');
             $table->foreign('question_category_id')->references('id')->on('question_categories')->onUpdate('CASCADE')->onDelete('CASCADE');   
-            $table->string('question');
-            $table->string('answer');
+            $table->longText('question');
+            $table->longText('answer');
             $table->tinyInteger('status')->default(1);
             $table->date('deleted_at')->nullable();
             $table->timestamps();

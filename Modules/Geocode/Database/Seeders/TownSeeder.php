@@ -19,13 +19,19 @@ class TownSeeder extends Seeder
         // Add cities (Al-Naser,Bany-Mazar) 
         Town::create([
             'code' => '457',
-            'name' => 'Al-Naser',
+            'name' => 'محافظة العاصمة',
             'city_id'=> 1 ,
             'status' => 1
         ]);
         Town::create([
+            'code' => '457',
+            'name' => 'النصر',
+            'city_id'=> 2 ,
+            'status' => 1
+        ]);
+        Town::create([
             'code' => '5414',
-            'name' => 'Bany-Mazar',
+            'name' => 'بني مزار',
             'city_id'=> 2 ,
             'status' => 1
         ]);

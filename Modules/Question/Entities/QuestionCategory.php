@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Scopes\ActiveScope;
 use Modules\Question\Entities\Question;
+use App\Models\Image;
 class QuestionCategory extends Model
 {
     
   use SoftDeletes;
+        protected $appends = ['original_status'];
     /**
      * The attributes that are mass assignable.
      *
@@ -25,16 +27,19 @@ class QuestionCategory extends Model
         'deleted_at',
         'created_at'
     ];
-    public function getStatusAttribute($value){
+  public function getStatusAttribute(){
+        return  $this->attributes['status'];
+        
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
-            return 'Not Active';
-        }elseif ($value==1) {
+            return 'InActive';
+        }elseif($value==1) {
             return 'Active';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-       return  $this->attributes['status'];
-    }
+    } 
+    
     protected static function boot(){
         parent::boot();
         static::addGlobalScope(new ActiveScope);
@@ -42,6 +47,9 @@ class QuestionCategory extends Model
     
         public function questions(){
         return $this->hasMany(Question::class);
+    }
+            public function image(){
+        return $this->morphOne(Image::class, 'imageable');
     }
     
 }

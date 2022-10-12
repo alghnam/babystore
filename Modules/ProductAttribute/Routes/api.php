@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Modules\ProductAttribute\Http\Controllers\API\ProductAttributeController;
+use Modules\ProductAttribute\Http\Controllers\API\Admin\ProductAttributeController;
 
 /**************************Routes Admin***************************** */
 Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(function(){
@@ -24,6 +24,7 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
 
         Route::get('show/{id}', [ProductAttributeController::class,'show'])->name('api.admin.product-attributes.show');
         Route::post('update/{id}', [ProductAttributeController::class,'update'])->name('api.admin.product-attributes.update');
+        // Route::get('destroy/{id}/{name}/{attrs}', [ProductAttributeController::class,'destroyAttr'])->name('api.admin.product-attributes.destroy');        
         Route::get('destroy/{id}', [ProductAttributeController::class,'destroy'])->name('api.admin.product-attributes.destroy');        
         Route::get('force-delete/{id}', [ProductAttributeController::class,'forceDelete'])->name('api.admin.product-attributes.force-delete');
     });

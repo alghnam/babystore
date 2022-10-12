@@ -8,6 +8,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use App\Repositories\BaseRepository;
 use Illuminate\Validation\Rules;
 
+
 /**
  * Class AddReviewOrderRequest.
  */
@@ -31,9 +32,7 @@ class AddReviewOrderRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
-        //store Order for only superadministrator , admins 
-        $authorizeRes= $this->baseRepo->authorizeSuperAndAdmin();
+        $authorizeRes= $this->baseRepo->authorizeUser();
         if($authorizeRes==true){
                 return true;
             
@@ -52,14 +51,22 @@ class AddReviewOrderRequest extends FormRequest
         return [
             'order_id' => ['required','numeric','exists:orders,id','required'],
             'user_id' => ['required','numeric','exists:users,id'],
-            'description'=>['max:255'],
-            'rating'=>['numeric'],
-            'image'=>['sometimes'],
-            'image.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf']
+            'description'=>['max:2000'],
+            'rating'=>['numeric','required'],
+            'image'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf']
             ];
     }
 
   
+      public function messages()
+    {
+        return [
+            'description.max:2000'=>'يجب الا يكون الوصف اكثر من 2000حرف',
+            'rating.required'=>'يجب عليك كتابة التقييم ',
+            'rating.numeric'=>'يجب عليك ادخال التقييم كرقم ',
+            'image.mimes'=>'يجب ان تكون الصورة  png, bmp,gif,svg',
+            ];
+    }
         /**
      * Handle a failed authorization attempt.
      *
@@ -69,6 +76,6 @@ class AddReviewOrderRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Order'));
+        throw new AuthorizationException(__('Only user can make this action'));
     }
 }

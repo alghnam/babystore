@@ -49,23 +49,17 @@ class TownController extends Controller
     
         public function getAllTownsCity($id){
         
-        //  try{
-        $towns=$this->townRepo->townsCity($this->city,$id);
-                                if(is_string($towns)){
-            return response()->json(['status'=>false,'message'=>$towns],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$towns],200);
+         try{
+            $towns=$this->townRepo->townsCity($this->city,$id);
+            if(is_string($towns)){
+                return response()->json(['status'=>false,'message'=>$towns],404);
+            }
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$towns],200);
 
-        //         }catch(\Exception $ex){
-        //     return response()->json([
-        //         'status'=>500,
-        //         'message'=>'There is something wrong, please try again'
-        //     ]);  
-        // } 
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
     }
        
 

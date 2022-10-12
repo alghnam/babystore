@@ -17,14 +17,14 @@ class CreateCouponsTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->unsignedBigInteger('value');
-            $table->string('is_used')->default(1);
+            $table->tinyInteger('is_used')->default(1);
 
-            // $table->unsignedBigInteger('order_id')->nullable();
-            // $table->unsignedBigInteger('order_id');
-            // $table->foreign('order_id')
-            //     ->references('id')
-            //     ->on('orders')
-            //     ->onDelete('cascade');
+            $table->unsignedBigInteger('order_id')->nullable();
+            $table->unsignedBigInteger('order_id');
+            $table->foreign('order_id')
+                ->references('id')
+                ->on('orders')
+                ->onDelete('cascade');
 
             $table->tinyInteger('status')->default(1);
             $table->date('end_date');

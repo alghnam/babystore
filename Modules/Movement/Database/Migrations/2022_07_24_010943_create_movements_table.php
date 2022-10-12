@@ -22,14 +22,15 @@ class CreateMovementsTable extends Migration
                 ->references('id')
                 ->on('wallets')
                 ->onDelete('cascade');
-            $table->unsignedBigInteger('payment_id');
+            $table->unsignedBigInteger('payment_id')->nullable();
             $table->foreign('payment_id')
                 ->references('id')
                 ->on('payments')
                 ->onDelete('cascade');
             $table->string('name');
             $table->string('value');
-            $table->unsignedBigInteger('remaining_wallet_points');
+            $table->unsignedBigInteger('remaining_wallet_amounts')->default(0);
+            $table->unsignedBigInteger('remaining_wallet_points')->default(0);
             $table->tinyInteger('type')->nullable();
             $table->tinyInteger('status')->nullable();
             $table->date('deleted_at')->nullable();

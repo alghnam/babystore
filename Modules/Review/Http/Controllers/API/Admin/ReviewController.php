@@ -6,7 +6,6 @@ namespace Modules\Review\Http\Controllers\API\Admin;
 use  Modules\Review\Entities\Review;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Review\Http\Requests\DeleteReviewRequest;
@@ -100,6 +99,9 @@ class ReviewController extends Controller
     public function trash(Request $request){
           try{
         $reviews=$this->reviewRepo->trash($this->review,$request);
+                if(is_string($reviews)){
+            return response()->json(['status'=>false,'message'=>$reviews],404);
+        }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$reviews],200);
 
         
@@ -197,7 +199,7 @@ class ReviewController extends Controller
 
     }
     public function restoreAll(){
-        //   try{
+          try{
         $reviews =  $this->reviewRepo->restoreAll($this->review);
                       if(is_string($reviews)){
             return response()->json(['status'=>false,'message'=>$reviews],404);
@@ -206,10 +208,10 @@ class ReviewController extends Controller
 
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
         
 
     }

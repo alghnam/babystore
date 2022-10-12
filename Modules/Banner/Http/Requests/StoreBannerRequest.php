@@ -52,7 +52,7 @@ class StoreBannerRequest extends FormRequest
     {
         return [
             'title' => ['required','max:255',Rule::unique('banners')],
-            'description' => ['max:255'],
+            'description' => ['nullable'],
             'product_id' => ['numeric','exists:products,id'],
             'image'=>['nullable'],
             'image.*'=>['sometimes','mimes:jpeg,bmp,png,gif,svg,pdf'],
@@ -78,6 +78,6 @@ class StoreBannerRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this category'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

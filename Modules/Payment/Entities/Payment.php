@@ -11,6 +11,7 @@ use App\Scopes\ActiveScope;
 class Payment extends Model
 {
     use SoftDeletes;
+        protected $appends = ['original_status','original_type'];
    /**
      * The attributes that are mass assignable.
      *
@@ -18,31 +19,33 @@ class Payment extends Model
      */
     protected $fillable = [
         'name',
+        'type',
         'status'
     ];
-       public function getTypeAttribute($value){
+       public function getTypeAttribute(){
+       return  $this->attributes['type'];
+    }
+    public function getOriginalTypeAttribute(){
+        $value=$this->attributes['type'];
         if($value==0){
-            return 'Public';//ex:via,knet
+            return 'Public';//ex: other payment: via,knet
         }elseif ($value==1) {
             return 'Private';//ex:wallet , upon receipt
         }
     }
-    public function getOriginalTypeAttribute($value){
-       return  $this->attributes['type'];
-    }
         
-    
-     public function getStatusAttribute($value){
+      public function getStatusAttribute(){
+        return  $this->attributes['status'];
+        
+    }
+    public function getOriginalStatusAttribute(){
+        $value=$this->attributes['status'];
         if($value==0){
             return 'InActive';
-        }elseif ($value==1) {
+        }elseif($value==1) {
             return 'Active';
         }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
     } 
-    
     
         public function orders(){
         return $this->hasMany(Order::class);

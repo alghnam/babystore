@@ -21,7 +21,7 @@ class CreateReviewsTable extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onUpdate('CASCADE')->onDelete('CASCADE');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->string('description');
+            $table->longText('description');
             $table->float('rating');
 
             $table->date('deleted_at')->nullable();

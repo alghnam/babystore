@@ -30,28 +30,13 @@ class ProductArrayAttribute extends Model
      'price_discount_ends',
      'sku',
      'weight',
-     'barcode',
-     'status'
+     'barcode'
  ];
      protected $casts=[
         "attributes"=>"json"
         ];
 
 
-    
-    
-     public function getStatusAttribute($value){
-        if($value==0){
-            return 'InActive';
-        }elseif ($value==1) {
-            return 'Active';
-        }
-    }
-    public function getOriginalStatusAttribute($value){
-        return  $this->attributes['status'];
-    } 
-    
-    
     public function product(){
         return $this->belongsTo(Product::class);
     }   
@@ -62,7 +47,7 @@ class ProductArrayAttribute extends Model
         return $this->belongsToMany(Cart::class,'product_cart','product_array_attribute_id','cart_id')->withPivot(['quantity']);
     }
         public function orders(){
-        return $this->belongsToMany(Order::class,'product_order','product_array_attribute_id','order_id');
+        return $this->belongsToMany(Order::class,'product_array_attribute_order','product_array_attribute_id','order_id');
     }
 
 

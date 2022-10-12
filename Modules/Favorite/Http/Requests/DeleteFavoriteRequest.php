@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Comment\Http\Requests;
+namespace Modules\Favorite\Http\Requests;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
@@ -61,6 +61,6 @@ class DeleteFavoriteRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this Favorite'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

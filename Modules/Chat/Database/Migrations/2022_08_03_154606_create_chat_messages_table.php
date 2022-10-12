@@ -25,7 +25,12 @@ class CreateChatMessagesTable extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
-            $table->mediumText('message');
+            $table->unsignedBigInteger('client_id')->nullable();
+            $table->foreign('client_id')
+                ->references('id')
+                ->on('clients')
+                ->onDelete('cascade');
+            $table->longText('message');
                         $table->date('deleted_at')->nullable();
 
             $table->timestamps();

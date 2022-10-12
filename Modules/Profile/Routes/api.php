@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Modules\Profile\Http\Controllers\ProfileController;
+use Modules\Profile\Http\Controllers\API\User\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,14 +16,13 @@ use Modules\Profile\Http\Controllers\ProfileController;
 */
 
 
-Route::prefix('profile')->middleware(['auth:api'])->namespace('API')->group(function(){
+Route::prefix('profile')->middleware(['auth:api'])->group(function(){
     Route::prefix('admin')->namespace('API')->group(function(){
         Route::get('accepting-on-request-documentation/{userId}', [ProfileController::class,'acceptingOnRequestDocumentation'])->name('api.profile.accepting-on-request-documentation');
 
     });
     // Route::get('show/{userId}', [ProfileController::class,'show'])->name('api.profile.show');
     Route::get('show', [ProfileController::class,'show'])->name('api.profile.show');
-    Route::post('store/{userId}', [ProfileController::class,'store'])->name('api.profile.store');
     Route::post('update', [ProfileController::class,'update'])->name('api.profile.update');
     Route::post('update-password', [ProfileController::class,'updatePassword'])->name('api.profile.update-password');
     Route::get('request-documentation/{userId}', function(){

@@ -3,10 +3,10 @@
 namespace Modules\UpSell\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\UpSell\Entities\UpSell;
+use Modules\Product\Entities\Product;
 use Modules\UpSell\Http\Requests\StoreUpSellRequest;
 use Modules\UpSell\Http\Requests\UpdateUpSellRequest;
 use Modules\UpSell\Http\Requests\DeleteUpSellRequest;
@@ -35,15 +35,15 @@ class UpSellController extends Controller
     */
     public function __construct(BaseRepository $baseRepo, UpSell $upsell,UpSellRepository $upsellRepo)
     {
-    $this->middleware(['permission:upsells_read'])->only([['index','getAllPaginates']]);
-    $this->middleware(['permission:upsells_trash'])->only('trash');
-    $this->middleware(['permission:upsells_restore'])->only('restore');
-    $this->middleware(['permission:upsells_restore-all'])->only('restore-all');
-    $this->middleware(['permission:upsells_show'])->only('show');
-    $this->middleware(['permission:upsells_store'])->only('store');
-    $this->middleware(['permission:upsells_update'])->only('update');
-    $this->middleware(['permission:upsells_destroy'])->only('destroy');
-    $this->middleware(['permission:upsells_destroy-force'])->only('destroy-force');
+    $this->middleware(['permission:up_sells_read'])->only([['index','getAllPaginates']]);
+    $this->middleware(['permission:up_sells_trash'])->only('trash');
+    $this->middleware(['permission:up_sells_restore'])->only('restore');
+    $this->middleware(['permission:up_sells_restore-all'])->only('restore-all');
+    $this->middleware(['permission:up_sells_show'])->only('show');
+    $this->middleware(['permission:up_sells_store'])->only('store');
+    $this->middleware(['permission:up_sells_update'])->only('update');
+    $this->middleware(['permission:up_sells_destroy'])->only('destroy');
+    $this->middleware(['permission:up_sells_destroy-force'])->only('destroy-force');
     $this->baseRepo = $baseRepo;
     $this->upsell = $upsell;
     $this->upsellRepo = $upsellRepo;
@@ -54,58 +54,76 @@ class UpSellController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $upsells=$this->upsellRepo->all($this->upsell);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSells has been getten successfully',
-        'data'=> $upsells
-    ]);
-    }
+        try{
+            $upsells=$this->upsellRepo->all($this->upsell);
+                  return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsells],200);
 
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+    }
+     public function countData(){
+        $countData=$this->upsellRepo->countData($this->upsell);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countData],200);
+          
+     }
     public function getAllPaginates(Request $request){
-    
-    $upsells=$this->upsellRepo->getAllPaginates($this->upsell,$request);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSells has been getten successfully(pagination)',
-        'data'=> $upsells
-    ]);
-    }
+        // try{
+            $upsells=$this->upsellRepo->getAllPaginates($this->upsell,$request);
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsells],200);
 
+        
+    //     }catch(\Exception $ex){
+    //         return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
+    // }
+
+}
 
     public function upsellsProduct($productId){
+        // try{
            $upsellsProduct=$this->upsellRepo->getUpsellsProduct($productId);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSells product has been getten successfully',
-        'data'=> $upsellsProduct
-    ]); 
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsellsProduct],200);
+
+        
+    //     }catch(\Exception $ex){
+    //         return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+    // }
     }
     
-    public function deleteUpsellProduct($productId,$upsellId){
-           $upsellProduct=$this->upsellRepo->deleteUpsellProduct($this->upsell,$productId,$upsellId);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSells product has been deleted successfully',
-        'data'=> $upsellProduct
-    ]); 
+    public function deleteUpsellProduct($id,$upsellId){
+        // try{
+           $upsellProduct=$this->upsellRepo->deleteUpsellProduct($this->upsell,$id,$upsellId);
+           if(is_string($upsellProduct)){
+            return response()->json(['status'=>false,'message'=>$upsellProduct],404);
+        }
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsellProduct],200);
+
+        
+    //     }catch(\Exception $ex){
+    //         return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+    // }
     }
     // methods for trash
     public function trash(Request $request){
-    $upsells=$this->upsellRepo->trash($this->upsell,$request);
-
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSells has been getten successfully (in trash)',
-        'data'=> $upsells
-    ]);
+        try{
+        $upsells=$this->upsellRepo->trash($this->upsell,$request);
+    
+            if(is_string($upsells)){
+                return response()->json(['status'=>false,'message'=>$upsells],404);
+            }
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsells],200);
+    
+            
+            }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+    
+            } 
+        
     }
 
 
@@ -117,13 +135,18 @@ class UpSellController extends Controller
     */
     public function store(StoreUpSellRequest $request)
     {
-    $upsell=$this->upsellRepo->store($request,$this->upsell);
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSell has been stored successfully',
-        'data'=> $upsell
-    ]);
+        // try{
+            $upsell=$this->upsellRepo->store($request,$this->upsell);
+             if(is_string($upsell)){
+            return response()->json(['status'=>false,'message'=>$upsell],400);
+        }
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsell],200);
+
+        
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
     }
     
 
@@ -135,19 +158,20 @@ class UpSellController extends Controller
     */
     public function show($id)
     {
+        try{
     $upsell=$this->upsellRepo->find($id,$this->upsell);
     
         if(is_string($upsell)){
             return response()->json(['status'=>false,'message'=>$upsell],404);
         }
    
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'UpSell has been getten successfully',
-            'data'=> $upsell
-        ]);
-    
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsell->load('product')],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -159,82 +183,73 @@ class UpSellController extends Controller
     * @param  \Illuminate\Http\Request  $request
     * @return \Illuminate\Http\Response
     */
-    public function update(UpdateDetailsUpSellRequest $request,$id)
+    public function update(UpdateDetailsUpSellRequest $request,$id,$productId)
     {
-    $upsell= $this->upsellRepo->update($request,$id,$this->upsell);
-    if(is_string($upsell)){
-            return response()->json(['status'=>false,'message'=>$upsell],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSell has been updated successfully',
-        'data'=> $upsell
-    ]);
+        // try{
+            $upsell= $this->upsellRepo->updateUpsellsPro($request,$id,$productId,$this->upsell);
+            if(is_string($upsell)){
+                    return response()->json(['status'=>false,'message'=>$upsell],400);
+                }
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsell],200);
+
+        
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
     
 
     }
     
-        public function updateUpsellsProduct(UpdateUpSellRequest $request,$id)
+        public function updateUpsellsProduct(UpdateUpSellRequest $request,$productId)
     {
-    $upsell= $this->upsellRepo->updateUpsellsProduct($request,$id,$this->upsell);
+        // try{
+                
+    $upsell= $this->upsellRepo->updateUpsellsProduct($request,$productId,$this->upsell);
     if(is_string($upsell)){
             return response()->json(['status'=>false,'message'=>$upsell],404);
         }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSell has been updated successfully',
-        'data'=> $upsell
-    ]);
-    
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsell],200);
+
+        
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        // } 
 
     }
 
-    public function inventory(){
-    $upsellsInInventory= $this->upsellRepo->upsellsInInventory($this->upsell);
-    if(empty($upsellsInInventory)){
-    if(is_string($upsell)){
-            return response()->json(['status'=>false,'message'=>$upsell],404);
-        }
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'UpSellsInInventory getting successfully',
-        'data'=> $upsellsInInventory
-    ]);
-     
-    }
-    }
 
     //methods for restoring
     public function restore($id){
+        try{
+            $upsell =  $this->upsellRepo->restore($id,$this->upsell);
+             if(is_string($upsell)){
+                    return response()->json(['status'=>false,'message'=>$upsell],404);
+                }
     
-    $upsell =  $this->upsellRepo->restore($id,$this->upsell);
-     if(is_string($upsell)){
-            return response()->json(['status'=>false,'message'=>$upsell],404);
-        }
-    
-            return response()->json([
-                'status'=>true,
-                'code' => 200,
-                'message' => 'UpSell has been restored',
-                'data'=> $upsell
-            ]);
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsell],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
         
 
     }
     public function restoreAll(){
+        try{
     $upsells =  $this->upsellRepo->restoreAll($this->upsell);
      if(is_string($upsells)){
             return response()->json(['status'=>false,'message'=>$upsells],404);
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsells],200);
         }
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'restored successfully',
-            'data'=> $upsells
-        ]);
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
@@ -247,33 +262,35 @@ class UpSellController extends Controller
     */
     public function destroy(DeleteUpSellRequest $request,$id)
     {
+        try{
     $upsell= $this->upsellRepo->destroy($id,$this->upsell);
      if(is_string($upsell)){
             return response()->json(['status'=>false,'message'=>$upsell],404);
         }
-  
-    return response()->json([
-        'status'=>true,
-        'code' => 200,
-        'message' => 'destroyed  successfully',
-        'data'=> $upsell
-    ]); 
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsell],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     public function forceDelete(DeleteUpSellRequest $request,$id)
     {
+        try{
     //to make force destroy for a UpSell must be this UpSell  not found in UpSells table  , must be found in trash UpSells
     $upsell=$this->upsellRepo->forceDelete($id,$this->upsell);
      if(is_string($upsell)){
             return response()->json(['status'=>false,'message'=>$upsell],404);
         }
+                 return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$upsell],200);
 
-        return response()->json([
-            'status'=>true,
-            'code' => 200,
-            'message' => 'destroyed forcely successfully ',
-            'data'=> null
-        ]); 
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     

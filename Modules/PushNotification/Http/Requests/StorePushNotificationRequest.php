@@ -52,7 +52,7 @@ class StorePushNotificationRequest extends FormRequest
     {
         return [
             'title' => ['required','max:255'],
-            'body' => ['max:255'],
+            'body' => ['required'],
             'users' => ['sometimes','array'],
             'users.*'=>['exists:users,id'],
             'status' => ['sometimes', 'in:1,0'],
@@ -77,6 +77,6 @@ class StorePushNotificationRequest extends FormRequest
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException(__('Only the superadministrator and admins can update this category'));
+        throw new AuthorizationException(__('Only the superadministrator and admins can make this action'));
     }
 }

@@ -29,7 +29,7 @@ class CreateSystemReviewsTable extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
-                $table->string('body');
+                $table->longText('body');
             $table->string('name');
             $table->string('email');
                         $table->tinyInteger('status')->default(1);

@@ -3,7 +3,6 @@
 namespace Modules\Search\Http\Controllers\API\Admin;
 
 use App\Repositories\BaseRepository;
-use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Search\Entities\Search;
@@ -54,29 +53,29 @@ class SearchController extends Controller
     * @return \Illuminate\Http\Response
     */
     public function index(){
-    
-    $searchs=$this->searchRepo->all($this->search);
-                if(is_string($searchs)){
+        try{
+            $searchs=$this->searchRepo->all($this->search);
+            if(is_string($searchs)){
             return response()->json(['status'=>false,'message'=>$searchs],400);
-        }
-    return response()->json([
-        'status'=>true,
-        'message' => 'تم ايجاد البيانات بنجاح',
-        'data'=> $searchs
-    ],200);
+            }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$searchs],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
     public function getAllPaginates(Request $request){
-    
-    $searchs=$this->searchRepo->getAllPaginates($this->search,$request);
+        try{
+        $searchs=$this->searchRepo->getAllPaginates($this->search,$request);
                 if(is_string($searchs)){
             return response()->json(['status'=>false,'message'=>$searchs],400);
         }
-    return response()->json([
-        'status'=>true,
-        'message' => 'تم ايجاد البيانات بنجاح',
-        'data'=> $searchs
-    ],200);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$searchs],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
 
 
@@ -84,16 +83,16 @@ class SearchController extends Controller
 
     // methods for trash
     public function trash(Request $request){
+        try{
     $searchs=$this->searchRepo->trash($this->search,$request);
                 if(is_string($searchs)){
             return response()->json(['status'=>false,'message'=>$searchs],400);
         }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$searchs],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-    return response()->json([
-        'status'=>true,
-        'message' => 'تم ايجاد البيانات بنجاح',
-        'data'=> $searchs
-    ],200);
+        } 
     }
 
 
@@ -105,15 +104,16 @@ class SearchController extends Controller
     */
     public function store(StoreSearchRequest $request)
     {
-    $search=$this->searchRepo->store($request,$this->search);
-            if(is_string($searchs)){
-            return response()->json(['status'=>false,'message'=>$searchs],400);
+        try{
+        $search=$this->searchRepo->store($request,$this->search);
+            if(is_string($search)){
+            return response()->json(['status'=>false,'message'=>$search],400);
         }
-    return response()->json([
-        'status'=>true,
-        'message' => 'تم التخزين بنجاح',
-        'data'=> $search
-    ],200);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$search],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     }
     
 
@@ -125,17 +125,18 @@ class SearchController extends Controller
     */
     public function show($id)
     {
+        try{
     $search=$this->searchRepo->find($id,$this->search);
 
         if(is_string($search)){
             return response()->json(['status'=>false,'message'=>$search],404);
         }
    
-        return response()->json([
-            'status'=>true,
-            'message' => 'تم ايجاد البيانات بنجاح',
-            'data'=> $search
-        ],200);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$search],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
 
@@ -150,17 +151,17 @@ class SearchController extends Controller
     */
     public function update(UpdateSearchRequest $request,$id)
     {
+        try{
     $search= $this->searchRepo->update($request,$id,$this->search);
 
     if(is_string($search)){
             return response()->json(['status'=>false,'message'=>$search],404);
         }
-    return response()->json([
-        'status'=>true,
-        'message' => 'تم التعديل بنجاح',
-        'data'=> $search
-    ],200);
-    
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$search],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
 
@@ -168,32 +169,31 @@ class SearchController extends Controller
 
     //methods for restoring
     public function restore($id){
-    
+        try{
     $search =  $this->searchRepo->restore($id,$this->search);
     
      if(is_string($search)){
             return response()->json(['status'=>false,'message'=>$search],404);
         }
-    
-            return response()->json([
-                'status'=>true,
-                'message' => 'تمت الاستعادة بنجاح',
-                'data'=> $search
-            ],200);
-        
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$search],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
 
     }
     public function restoreAll(){
-    $searchs =  $this->searchRepo->restoreAll($this->search);
-    // dd($searchs);
-     if(is_string($searchs)){
-            return response()->json(['status'=>false,'message'=>$searchs],404);
-        }
-        return response()->json([
-            'status'=>true,
-            'message' => 'تم استعادة الكل بنجاح',
-            'data'=> $searchs
-        ],200);
+        try{
+            $searchs =  $this->searchRepo->restoreAll($this->search);
+            
+             if(is_string($searchs)){
+                    return response()->json(['status'=>false,'message'=>$searchs],404);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$searchs],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
 
     }
@@ -206,31 +206,33 @@ class SearchController extends Controller
     */
     public function destroy(DeleteSearchRequest $request,$id)
     {
+        try{
     $search= $this->searchRepo->destroy($id,$this->search);
      if(is_string($search)){
             return response()->json(['status'=>false,'message'=>$search],404);
         }
   
-    return response()->json([
-        'status'=>true,
-            'message' => 'تم الحذف بنجاح',
-        'data'=> $search
-    ],200); 
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$search],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     public function forceDelete(DeleteSearchRequest $request,$id)
     {
+        try{
     //to make force destroy for a Search must be this Search  not found in Searchs table  , must be found in trash Searchs
     $search=$this->searchRepo->forceDelete($id,$this->search);
      if(is_string($search)){
             return response()->json(['status'=>false,'message'=>$search],404);
         }
 
-        return response()->json([
-            'status'=>true,
-            'message' => 'تم الحذف بنجاح',
-            'data'=> null
-        ],200); 
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$search],200);
+        }catch(\Exception $ex){
+             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
     
     }
     

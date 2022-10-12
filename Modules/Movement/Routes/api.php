@@ -25,5 +25,6 @@ Route::prefix('movements')->middleware(['auth:api'])->group(function(){
 
     Route::post('add-replaced-points', [MovementControllerUser::class,'addReplacedPoints'])->name('api.wallets.add-replaced-points');
     Route::get('movements-wallet-user', [MovementControllerUser::class,'getAllMovementsWalletUser'])->name('api.wallets.movements-wallet-wallet');
+    Route::get('movements-wallet-points-user', [MovementControllerUser::class,'getAllMovementsWalletPointsUser'])->name('api.wallets.movements-wallet-points-wallet');
     Route::get('delete-movement', [MovementControllerUser::class,'deleteMovement'])->name('api.wallets.delete-movement');
 });

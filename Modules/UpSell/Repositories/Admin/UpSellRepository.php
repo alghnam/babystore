@@ -15,84 +15,141 @@ use DB;
     use Illuminate\Support\Facades\Auth;
 use Modules\Product\Entities\Product;
 use App\Scopes\ActiveScope;
-
+use Modules\Upsell\Entities\Upsell;
 class UpSellRepository extends EloquentRepository implements UpSellRepositoryInterface
 {
-          public function getAllPaginates($model,$request){
-        $modelData=$model->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
-          return  $modelData;
-    }
+
      public function store($request,$model){
         $data=$request->validated();
-    //  $product= Product::where(['id'=>$productId])->first();
-      if(!empty($data['upsells'])){
-          foreach($data['upsells'] as $sell){
-                                  $upsellCount=$model->where(['product_id'=>$data['product_id'],'upsells'=>$sell])->count();
-                    if($upsellCount!==0){
-                        return 'لا يمكنك اضافة المنتج نفسه اكثر من مرة';
+        if(!empty($data['upsells'])){
+            $productUpsells= Upsell::where('product_id',$data['product_id'])->first();
+            if(!empty($productUpsells)){
+                $resultExistProduct=  in_array($data['product_id'], $productUpsells->upsells);
+                if($resultExistProduct==true){
+                    return 'من فضلك لا تضع المنتج نفسه ضمن مبيعاته';
+                }
+                foreach($data['upsells'] as $sell){
+                  $resultExistUpsells=  in_array($sell, $productUpsells->upsells);
+                   if($resultExistUpsells){
+                       return 'لا يمكنك اضافة مبيعات نفسها على المنتج نفسه اكثر من مرة ';
+                   }
+                }
+                // return 'هذا المنتج تابع اليه مبيعات بالفعل لذلك لا يمكنك الا التعديل عليها ولا يمكن لك ان تضيف ';
+                return 'لا يمكنك اضافة المنتج نفسه اكثر من مرة ';
+        
+            }
+
+            $upsell=new $model;
+            $upsell->product_id=$data['product_id'];
+            $upsell->upsells=$data['upsells'];
+            $upsell->name=$data['name'];
+            $upsell->description=$data['description'];
+            $upsell->footer=$data['footer'];
+            $upsell->save();
+            return $upsell;
+        }else{
+            return 'من فضلك اضف مبيعات لهذا المنتج';
+        }
+    
+    }
+         public function updateUpsellsPro($request,$id,$productId,$model){
+            $data=$request->validated();
+            if(!empty($data['upsells'])){
+                $upsell= $model->where('id',$id)->first();
+                if(!empty($upsell)){
+                    //  $upsellsWithoutThisPro = \array_filter($upsell->upsells, static function ($element) {
+                    //     return $element !== $productId;
+                    // });
+                    $resultExistProduct=  in_array($upsell->product_id, $upsell->upsells);
+                    if($resultExistProduct==true){
+                        return 'من فضلك لا تضع المنتج نفسه ضمن مبيعاته';
                     }
-              $upsell=new $model;
-              
-              $upsell->product_id=$data['product_id'];
-              $upsell->upsells=$sell;
-              $upsell->name=$data['name'];
-              $upsell->description=$data['description'];
-              $upsell->footer=$data['footer'];
+                    foreach($data['upsells'] as $sell){
+                      $resultExistUpsells=  in_array($sell, $upsell->upsells);
+                       if($resultExistUpsells){
+                           return 'لا يمكنك اضافة مبيعات نفسها على المنتج نفسه اكثر من مرة ';
+                       }
+                    //   dd($upsell->upsells);
+                    $upsells=$upsell->upsells;
+                    array_push($upsells,$sell);
+                        $upsell->upsells=$upsells;
+                    }
+                }
+    
+                $upsell->name=$data['name'];
+                $upsell->description=$data['description'];
+                $upsell->footer=$data['footer'];
                 $upsell->save();
-              
-          }
-         
-      //$product->similarProducts()->attach($data['similar']);
-      }
-      return 200;
+                return $upsell->upsells;
+                return $upsell;
+            }
     
     }
 
     
-     public function updateUpsellsProduct($request,$productId,$model){
-        $data=$request->validated();
-                  $product= Product::where(['id'=>$productId])->first();
-                foreach($data['upsells'] as $sell){
-                    $upsellCount=$model->where(['product_id'=>$productId,'upsells'=>$sell])->count();
-                    if($upsellCount!==0){
-                        return 'لا يمكنك اضافة المنتج نفسه اكثر من مرة';
-                    }
-                    $upsell=new $model;
-              $upsell->product_id=$productId;
-              $upsell->upsells=$sell;
-                $upsell->save();
-                     // $product->upsellsProduct()->saveMany($data['upsells']);
-    //   $product->upsellsProduct()->createMany([
-    // new $model(['name' => 'A new comment.','upsells'=>$sell])
-// ]);
-                }
-      
-     
-      return 200;
-    
-    }
+
     public function getUpsellsProduct($productId){
-        $product=Product::where(['id'=>$productId])->first();
+        $product=Product::where(['id'=>$productId])->first(); 
         if(empty($product)){
             return 'غير موجود بالنظام';
         }
-        $upsells=[];
-       foreach($product->upsellsProduct as $upsell){
-           $proSell= Product::where(['id'=>$upsell->upsells])->first();
-          array_push($upsells,$proSell);
-       }
-       return $upsells;
+        $upsellsProduct=[];
+        
+         //if this id in arr upsells not exist in products table , will delete it in all get for it , becuase not found in table products
+                             
+       $upsell= Upsell::where('product_id',$productId)->first();
+      $upsells= $upsell->upsells;
+        foreach( $upsells as $upsellId){
+          $proUpsell=  Product::where(['id'=>$upsellId])->first();
+        //   dd($proUpsell);
+          if(empty($proUpsell)){
+                                                    //   unset($upsellId);
+
+              array_splice($upsells, array_search($upsellId, $upsells ), 1);
+
+            $upsell->upsells=$upsells;
+            $upsell->save();
+          }else{
+              
+           array_push($upsellsProduct,$proUpsell);
+          }
+        }
+       return $upsellsProduct;
 
     }
    
-   public function deleteUpsellProduct($model,$productId,$upsellId){
-       $upsellPro=$model->where(['product_id'=>$productId,'upsells'=>$upsellId])->first();
-     if(empty($upsellPro)){
+   public function deleteUpsellProduct($model,$id,$upsellId){
+       $upsell=$model->where(['id'=>$id])->first();
+       if(empty($upsell)){
          return 'غير موجود بالنظام';
-     }
-          $r= $model->find($upsellPro->id);
+       }
+       $upsells=$upsell->upsells;
+      $result= in_array($upsellId,$upsells);
+      if(!$result){
+          return 'العنصر الذي تريد حذفه غير موجود بالفعل  هنا لحذفه';
+      }
+    //   dd($upsellId);
+     // array_diff( $upsells, [(int)$upsellId] );
+    //   if (($upsellId = array_search($element, $upsells)) !== false) {
+    //         unset($upsells[$upsellId]);
+    //     }
+        //         $upsells = array_filter($upsells, static function ($element) {
+        //          //   dd($upsellId);
+        //     return $element !== 159;
+        // }, ARRAY_FILTER_USE_BOTH);
+//         $upsells = array_flip($upsells);
+// unset($upsells[$upsellId]);
+// $upsells = array_flip($upsells);
+//array_splice($upsells, array_search($upsellId, $upsells ), 1);
+// foreach ($upsells as $key => $value){
+//     if ($value == $upsellId) {
+//         unset($upsells[$key]);
+//     }
+// }
+                                array_splice($upsells, array_search($upsellId, $upsells ), 1);
+                      $upsell->upsells=$upsells;
+                      $upsell->save();
 
-       $r->delete();
-       return 200;
+       return $upsells;
    }
 }
