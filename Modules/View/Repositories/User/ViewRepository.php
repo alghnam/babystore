@@ -10,6 +10,10 @@ use AmrShawky\LaravelCurrency\Facade\Currency;
 use App\Repositories\BaseRepository;
 class ViewRepository extends EloquentRepository implements ViewRepositoryInterface
 {
+            /**
+     * @var BaseRepository
+     */
+    protected $baseRepo;
         public function __construct(BaseRepository $baseRepo)
     {
         $this->baseRepo = $baseRepo;
@@ -21,16 +25,16 @@ class ViewRepository extends EloquentRepository implements ViewRepositoryInterfa
            if(count($views)==0){
                 return 'غير موجود';
            }
-            
+            $location = geoip(request()->ip());
             if($location->currency!==config('constants.currency_system')){
                 foreach($views as $view){
                     //convert this price that in dinar into currency user
-                    $view->currency_country=$this->baseRepo->countryCurrency;
-                    
+                    $view->currency_country=$this->baseRepo->countryCurrency();
+
                     $convertingOriginalPriceAttr =  $this->baseRepo->priceCalculation($view->product->original_price);
                     $view->product->original_price=$convertingOriginalPriceAttr;
                     
-                    $convertingPriceEndsAttr =  $this->priceCalculation($view->product->price_discount_ends);
+                    $convertingPriceEndsAttr =  $this->baseRepo->priceCalculation($view->product->price_discount_ends);
                     $view->product->price_discount_ends=$convertingPriceEndsAttr;
                 
             }

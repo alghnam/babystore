@@ -6,9 +6,9 @@ use Modules\Auth\Entities\User;
 use Modules\Auth\Repositories\User\UserRepository;
 use Modules\Auth\Repositories\Role\RoleRepository;
 use App\Providers\RouteServiceProvider;
-use App\Repositories\EloquentRepository;
 use Illuminate\Support\Facades\Storage;
-
+use AmrShawky\LaravelCurrency\Facade\Currency;
+use App\Repositories\EloquentRepository;
 class BaseRepository extends EloquentRepository implements BaseRepositoryInterface
 {
     /**
@@ -66,6 +66,16 @@ class BaseRepository extends EloquentRepository implements BaseRepositoryInterfa
             return false;
         }
     }
+        public function authorizeUser(){
+        $user= $this->find(auth()->user()->id,$this->user);
+        $rolesUser=$this->roleRepo->rolesUserByName($user);
+        $existRoleUser=  in_array('user',$rolesUser);
+        if($existRoleUser==true){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public function getStatuses(){
         $statusCollection=collect([
@@ -75,8 +85,23 @@ class BaseRepository extends EloquentRepository implements BaseRepositoryInterfa
         return $statusCollection->pluck('id');
     }
     
-
-
+    //convert this price that in dinar into currency user
+    public function countryCurrency(){
+        $location = geoip(request()->ip());
+        $currencyCountry=$location->currency;
+        return $currencyCountry;
+    }
+    public function priceCalculation($price){
+        $location = geoip(request()->ip());
+        $currencyCountry=$location->currency;
+        $convertingPrice=  Currency::convert()
+            ->from(config('constants.currency_system'))
+            ->to($currencyCountry)
+            ->amount($price)
+            ->get();
+        $roundConvertingPrice = round($convertingPrice,2);
+        return $roundConvertingPrice;
+    }
 
     
 }

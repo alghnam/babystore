@@ -14,12 +14,17 @@ use Modules\ProductAttribute\Entities\ProductArrayAttribute;
 use Modules\Product\Entities\Product;
 use DB;
 use Stevebauman\Location\Facades\Location;
-use AmrShawky\LaravelCurrency\Facade\Currency;
 use Modules\Order\Entities\Order;
 use Modules\Category\Entities\Category;
 use Modules\Search\Entities\Search;
+use AmrShawky\LaravelCurrency\Facade\Currency;
+use App\Repositories\BaseRepository;
 class ProductRepository extends EloquentRepository implements ProductRepositoryInterface
 {
+    public function __construct(BaseRepository $baseRepo)
+    {
+        $this->baseRepo = $baseRepo;
+    }
     public function getLocation(){
         $ip=request()->ip();
        $location= \Location::get($ip);
@@ -422,11 +427,32 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         }else{
               $item=  $model->where(['id'=>$id])
                 ->withCount(['reviews as reviews_avg' => function($query) {
-         $query->select(DB::raw('avg(rating)'));
-     }])->first();
-
+                $query->select(DB::raw('avg(rating)'));
+            }])->first();
+            $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
+                //convert this price that in dinar into currency user
+               
+                if($item->productArrayAttributes){
+                    foreach($item->productArrayAttributes as $attr){
+                         //convert this price that in dinar into currency user
+                        $attr->currency_country=$this->baseRepo->countryCurrency();
+                        if($attr->original_price){
+                            $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->original_price);
+                            $attr->original_price=$convertingOriginalPrice;
+                        }
+                        if($attr->price_discount_ends){
+                            $convertingPriceEnds =  $this->baseRepo->priceCalculation($attr->price_discount_ends);
+                            $attr->price_discount_ends=$convertingPriceEnds;
+                        }
+                    }
+                }
+            
+            }
+         
 
         }
+        
  
         return $item;
                 
@@ -533,6 +559,36 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
                 }])->paginate($request->total);
 
             }
+                     $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
+                foreach($modelData as $pro){
+                    //convert this price that in dinar into currency user
+                    $pro->currency_country=$this->baseRepo->countryCurrency();
+    
+                    if($pro->original_price){
+                        $convertingOriginalPrice =  $this->baseRepo->priceCalculation($pro->original_price);
+                        $pro->original_price=$convertingOriginalPrice;
+                    }
+                    if($pro->price_discount_ends){
+                        $convertingPriceEnds =  $this->baseRepo->priceCalculation($pro->price_discount_ends);
+                        $pro->price_discount_ends=$convertingPriceEnds;
+                    }
+                    if($pro->productArrayAttributes){
+                        foreach($pro->productArrayAttributes as $attr){
+                             //convert this price that in dinar into currency user
+                            $attr->currency_country=$this->baseRepo->countryCurrency();
+                            if($attr->original_price){
+                                $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->original_price);
+                                $attr->original_price=$convertingOriginalPrice;
+                            }
+                            if($attr->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($attr->price_discount_ends);
+                                $attr->price_discount_ends=$convertingPriceEnds;
+                            }
+                        }
+                    }
+                }
+            }
           return  $modelData;
     }
 
@@ -561,7 +617,36 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
                 $query->select(DB::raw('avg(rating)'));
             }])->paginate($request->total); 
         }
-
+         $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
+                foreach($modelData as $pro){
+                    //convert this price that in dinar into currency user
+                    $pro->currency_country=$this->baseRepo->countryCurrency();
+    
+                    if($pro->original_price){
+                        $convertingOriginalPrice =  $this->baseRepo->priceCalculation($pro->original_price);
+                        $pro->original_price=$convertingOriginalPrice;
+                    }
+                    if($pro->price_discount_ends){
+                        $convertingPriceEnds =  $this->baseRepo->priceCalculation($pro->price_discount_ends);
+                        $pro->price_discount_ends=$convertingPriceEnds;
+                    }
+                    if($pro->productArrayAttributes){
+                        foreach($pro->productArrayAttributes as $attr){
+                             //convert this price that in dinar into currency user
+                            $attr->currency_country=$this->baseRepo->countryCurrency();
+                            if($attr->original_price){
+                                $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->original_price);
+                                $attr->original_price=$convertingOriginalPrice;
+                            }
+                            if($attr->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($attr->price_discount_ends);
+                                $attr->price_discount_ends=$convertingPriceEnds;
+                            }
+                        }
+                    }
+                }
+            }
             return $modelData;
            
     }
@@ -582,6 +667,36 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
             }])->paginate($request->total);
             
         }
+         $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
+                foreach($modelData as $pro){
+                    //convert this price that in dinar into currency user
+                    $pro->currency_country=$this->baseRepo->countryCurrency();
+    
+                    if($pro->original_price){
+                        $convertingOriginalPrice =  $this->baseRepo->priceCalculation($pro->original_price);
+                        $pro->original_price=$convertingOriginalPrice;
+                    }
+                    if($pro->price_discount_ends){
+                        $convertingPriceEnds =  $this->baseRepo->priceCalculation($pro->price_discount_ends);
+                        $pro->price_discount_ends=$convertingPriceEnds;
+                    }
+                    if($pro->productArrayAttributes){
+                        foreach($pro->productArrayAttributes as $attr){
+                             //convert this price that in dinar into currency user
+                            $attr->currency_country=$this->baseRepo->countryCurrency();
+                            if($attr->original_price){
+                                $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->original_price);
+                                $attr->original_price=$convertingOriginalPrice;
+                            }
+                            if($attr->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($attr->price_discount_ends);
+                                $attr->price_discount_ends=$convertingPriceEnds;
+                            }
+                        }
+                    }
+                }
+            }
        return  $modelData;
    
     }
@@ -595,7 +710,36 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
                 $hasMany->where('user_id', auth()->guard('api')->user()->id);
             }])->paginate($request->total);
         }
-
+         $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
+                foreach($modelData as $pro){
+                    //convert this price that in dinar into currency user
+                    $pro->currency_country=$this->baseRepo->countryCurrency();
+    
+                    if($pro->original_price){
+                        $convertingOriginalPrice =  $this->baseRepo->priceCalculation($pro->original_price);
+                        $pro->original_price=$convertingOriginalPrice;
+                    }
+                    if($pro->price_discount_ends){
+                        $convertingPriceEnds =  $this->baseRepo->priceCalculation($pro->price_discount_ends);
+                        $pro->price_discount_ends=$convertingPriceEnds;
+                    }
+                    if($pro->productArrayAttributes){
+                        foreach($pro->productArrayAttributes as $attr){
+                             //convert this price that in dinar into currency user
+                            $attr->currency_country=$this->baseRepo->countryCurrency();
+                            if($attr->original_price){
+                                $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->original_price);
+                                $attr->original_price=$convertingOriginalPrice;
+                            }
+                            if($attr->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($attr->price_discount_ends);
+                                $attr->price_discount_ends=$convertingPriceEnds;
+                            }
+                        }
+                    }
+                }
+            }
            return  $modelData;
        
         }
@@ -610,6 +754,36 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
             }])->paginate($request->total);
                         
         }
+                 $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
+                foreach($modelData as $pro){
+                    //convert this price that in dinar into currency user
+                    $pro->currency_country=$this->baseRepo->countryCurrency();
+    
+                    if($pro->original_price){
+                        $convertingOriginalPrice =  $this->baseRepo->priceCalculation($pro->original_price);
+                        $pro->original_price=$convertingOriginalPrice;
+                    }
+                    if($pro->price_discount_ends){
+                        $convertingPriceEnds =  $this->baseRepo->priceCalculation($pro->price_discount_ends);
+                        $pro->price_discount_ends=$convertingPriceEnds;
+                    }
+                    if($pro->productArrayAttributes){
+                        foreach($pro->productArrayAttributes as $attr){
+                             //convert this price that in dinar into currency user
+                            $attr->currency_country=$this->baseRepo->countryCurrency();
+                            if($attr->original_price){
+                                $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->original_price);
+                                $attr->original_price=$convertingOriginalPrice;
+                            }
+                            if($attr->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($attr->price_discount_ends);
+                                $attr->price_discount_ends=$convertingPriceEnds;
+                            }
+                        }
+                    }
+                }
+            }
           return  $modelData;
     } 
 
@@ -624,10 +798,7 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         return $showAttributeIdForArray;
     }
 
-    public function productsInInventory($model){
-       $productsInInventory= $model->with('productAttributes')->get();
-       return $productsInInventory;
-    }
+
 
     public function deleteImage($idImage){
         

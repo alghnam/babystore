@@ -20,24 +20,10 @@ class Favorite extends Model
      protected $fillable = [
         'id',
         'user_id',
-        'product_id',
-        'status'
+        'product_id'
     ];
         
-    
-    
-     public function getStatusAttribute(){
-        return  $this->attributes['status'];
-        
-    }
-    public function getOriginalStatusAttribute(){
-        $value=$this->attributes['status'];
-        if($value==0){
-            return 'InActive';
-        }elseif($value==1) {
-            return 'Active';
-        }
-    } 
+   
     
     public function product(){
         return $this->belongsTo(Product::class,'product_id','id');

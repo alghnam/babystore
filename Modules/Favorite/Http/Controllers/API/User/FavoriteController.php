@@ -61,7 +61,7 @@ public function myFavorites(){
 }
 
 public function AddToFavorite($id){
-    try{
+    // try{
     $favorite=$this->favoriteRepo->AddToFavorite($this->favorite,$id);
                 if(is_string($favorite)){
             return response()->json(['status'=>false,'message'=>$favorite],400);
@@ -69,10 +69,10 @@ public function AddToFavorite($id){
             return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$favorite],200);
             
                 
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        } 
+        // } 
     
        
 }

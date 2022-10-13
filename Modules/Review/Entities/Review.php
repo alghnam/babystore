@@ -10,7 +10,6 @@ use Modules\Product\Entities\Product;
 class Review extends Model
 {
     use SoftDeletes;
-        protected $appends = ['original_status'];
 
     /**
   * The attributes that are mass assignable.
@@ -23,23 +22,8 @@ class Review extends Model
      'last_name',
      'product_id',
      'rating',
-     'description',
-     'status'
+     'description'
  ];    
-  public function getStatusAttribute(){
-        return  $this->attributes['status'];
-        
-    }
-    public function getOriginalStatusAttribute(){
-        $value=$this->attributes['status'];
-        if($value==0){
-            return 'InActive';
-        }elseif($value==1) {
-            return 'Active';
-        }
-    } 
-    
-    
     public function product(){
         return $this->belongsTo(Product::class,'product_id','id');
     }

@@ -323,57 +323,10 @@ class ProductController extends Controller
                         return response()->json(['status'=>false,'message'=>'غير موجود'],404);
 
         }
-        
-       
-         $userIp = request()->ip();
-                        $location = geoip($userIp);
-    
-            //convert this price that in dinar into currency user
-            $currencySystem='KWD';
-            $currencyCountry=$location->currency;
+        $showProductWithRelations->currency_country=$this->baseRepo->countryCurrency();
 
-              $convertingOriginalPrice=  Currency::convert()
-            ->from($currencySystem)
-            ->to($currencyCountry)
-            ->amount($showProductWithRelations->original_price)
-            ->get();
-            
-            $convertingPriceEnds=  Currency::convert()
-            ->from($currencySystem)
-            ->to($currencyCountry)
-            ->amount($showProductWithRelations->price_discount_ends)
-            ->get();
-                        // dd($showProductWithRelations->productArrayAttributes);
-            foreach($showProductWithRelations->productArrayAttributes as $attr){
-            // return $showProductWithRelations->productArrayAttributes;
-              $convertingOriginalPriceAttr=  Currency::convert()
-            ->from($currencySystem)
-            ->to($currencyCountry)
-            ->amount($attr->original_price)
-            ->get();
-            
-                $attr->original_price=$convertingOriginalPriceAttr;
-                              $convertingPriceEndsAttr=  Currency::convert()
-            ->from($currencySystem)
-            ->to($currencyCountry)
-            ->amount($attr->price_discount_ends)
-            ->get();
-            
-                $attr->price_discount_ends=round($convertingPriceEndsAttr,2);
-            }
-            // $convertingPriceEndsAttr=  Currency::convert()
-            // ->from($currencySystem)
-            // ->to($currencyCountry)
-            // ->amount($showProductWithRelations->productArrayAttributes->price_discount_ends)
-            // ->get();
-         
-            $showProductWithRelations->original_price=round($convertingOriginalPrice,2);
-            $showProductWithRelations->price_discount_ends=round($convertingPriceEnds,2);
-            // $showProductWithRelations->productArrayAttributes->original_price=$convertingOriginalPriceAttr;
-            // $showProductWithRelations->productArrayAttributes->price_discount_ends=$convertingPriceEndsAttr;
-            // return $showProductWithRelations;
             $data=[
-                    'currency_country'=>$currencyCountry,
+                    'currency_country'=>$showProductWithRelations->currency_country,
                 'product_details'=>$showProductWithRelations
                 ];
            

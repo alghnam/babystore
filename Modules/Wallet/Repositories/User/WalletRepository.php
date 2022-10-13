@@ -30,9 +30,9 @@ class WalletRepository extends EloquentRepository implements WalletRepositoryInt
             
             $headers= [
                 "Content-Type:application/json",
-                "Authorization:Bearer sk_test_pqcSor5QCF6k9JxhPfIeA0Ot",
+                config('constants.payment_method_link'),
                 // "Authorization:Bearer sk_live_q53ivUjyOs7V8WJmDPFxwatT",
-                
+                                
 
                 ];
                 
@@ -79,7 +79,7 @@ class WalletRepository extends EloquentRepository implements WalletRepositoryInt
         $input=$request->all();
                     $headers= [
                 "Content-Type:application/json",
-                "Authorization:Bearer sk_test_pqcSor5QCF6k9JxhPfIeA0Ot",
+                config('constants.payment_method_link')
                 ];
                 
             $ch=curl_init();

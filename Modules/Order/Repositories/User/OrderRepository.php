@@ -25,9 +25,16 @@ use Modules\BuyingSystemMount\Entities\BuyingSystemMount;
 use App\Models\TempDataUser;
 use Modules\ProductAttribute\Entities\ProductArrayAttribute;
 use AmrShawky\LaravelCurrency\Facade\Currency;
+use App\Repositories\BaseRepository;
 
 class OrderRepository extends EloquentRepository implements OrderRepositoryInterface
-{
+{       
+    
+    public function __construct(BaseRepository $baseRepo)
+    {
+        $this->baseRepo = $baseRepo;
+    }
+
 
 /* ------------------------ Functions --------------------------------------- */
 
@@ -61,7 +68,8 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
             
             $headers= [
                 "Content-Type:application/json",
-                "Authorization:Bearer sk_test_pqcSor5QCF6k9JxhPfIeA0Ot",
+                // "Authorization:Bearer sk_test_pqcSor5QCF6k9JxhPfIeA0Ot",
+                config('constants.payment_method_link'),
                 // "Authorization:Bearer sk_live_q53ivUjyOs7V8WJmDPFxwatT",
                 
 
@@ -102,7 +110,7 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
             
             $headers= [
                 "Content-Type:application/json",
-                "Authorization:Bearer sk_test_pqcSor5QCF6k9JxhPfIeA0Ot",
+                config('constants.payment_method_link'),
                 // "Authorization:Bearer sk_live_q53ivUjyOs7V8WJmDPFxwatT",
                 
 
@@ -128,7 +136,7 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         $input=$request->all();
                     $headers= [
                 "Content-Type:application/json",
-                "Authorization:Bearer sk_test_pqcSor5QCF6k9JxhPfIeA0Ot",
+                config('constants.payment_method_link'),
                 ];
                 
             $ch=curl_init();
@@ -861,53 +869,40 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
            if(count($myOrders)==0){
                return 'لا يوجد اي طلب لك لعرضه بقائمة طلباتك';
            }
-                       $location = geoip(request()->ip());
-            $currencyCountry=$location->currency;
-                $currencySystem='KWD';
-            if($location->currency!==$currencySystem){
+            $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
                 foreach($myOrders as $myOrder){
                 //convert this price that in dinar into currency user
-                    $convertingPrice=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($myOrder->price)
-                        ->get();
-                    $myOrder->price=round($convertingPrice,2);
-                $myOrder->currency_country=$location->currency;
+                $myOrder->currency_country=$this->baseRepo->countryCurrency();
+
+                if($myOrder->price){
+                    $convertingPrice =  $this->baseRepo->priceCalculation($myOrder->price);
+                    $myOrder->price=$convertingPrice;
+                }
+               
                 if($myOrder->productArrayAttributes){
                     foreach($myOrder->productArrayAttributes as $attr){
-                    $convertingOriginalPriceAttr=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($attr->original_price)
-                        ->get();
-                
-                    $attr->original_price=round($convertingOriginalPriceAttr,2);
-                    
-                    $convertingPriceEndsAttr=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($attr->price_discount_ends)
-                        ->get();
-                
-                    $attr->price_discount_ends=round($convertingPriceEndsAttr,2);
-                }
+                         //convert this price that in dinar into currency user
+                        $attr->currency_country=$this->baseRepo->countryCurrency();
+                        if($attr->original_price){
+                            $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->original_price);
+                            $attr->original_price=$convertingOriginalPrice;
+                        }
+                        if($attr->price_discount_ends){
+                            $convertingPriceEnds =  $this->baseRepo->priceCalculation($attr->price_discount_ends);
+                            $attr->price_discount_ends=$convertingPriceEnds;
+                        }
+                    }
                     if($myOrder->service){
-                        $convertingValueService=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($myOrder->service->value)
-                        ->get();
-                        $myOrder->service->value=round($convertingValueService,2);
+                        $convertingValueService =  $this->baseRepo->priceCalculation($myOrder->service->value);
+                        $myOrder->service->value=$convertingValueService;
                     }
                      if($myOrder->coupon){
-                        $convertingValueCoupon=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($myOrder->coupon->value)
-                        ->get();
-                        $myOrder->coupon->value=round($convertingValueCoupon,2);
-                    }
+                  
+                        $convertingValueCoupon =  $this->baseRepo->priceCalculation($myOrder->coupon->value);
+                        $myOrder->coupon->value=$convertingValueCoupon;
+                    
+                     }
                 }
             }
             }
@@ -930,25 +925,20 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
            if(empty($order)){
                return 'هذا الطلب غير موجود في النظام ';
            }else{
-                   //convert this price that in dinar into currency user
                 $location = geoip(request()->ip());
-                $currencyCountry=$location->currency;
-                $order->currency_country=$currencyCountry;
-                $currencySystem='KWD';
-                if($location->currency!==$currencySystem){
+                if($location->currency!==config('constants.currency_system')){
                     if($order->productArrayAttributes){
                       foreach($order->productArrayAttributes as $proAttr){
-                           
-                            if($proAttr->price_discount_ends){
-                                
-                                  $convertingCurrencies=  Currency::convert()
-                                ->from($currencySystem)
-                                ->to($currencyCountry)
-                                ->amount($proAttr->price_discount_ends)
-                                ->get();
-                          
-                                $proAttr->price_discount_ends=round($convertingCurrencies,2);
-                            }
+                        //convert this price that in dinar into currency user
+                        $proAttr->currency_country=$this->baseRepo->countryCurrency;
+                        if($proAttr->original_price){
+                            $convertingOriginalPriceAttr =  $this->baseRepo->priceCalculation($proAttr->original_price);
+                            $proAttr->original_price=$convertingOriginalPriceAttr;
+                        }
+                        if($proAttr->price_discount_ends){
+                            $convertingPriceEndsAttr =  $this->baseRepo->priceCalculation($proAttr->price_discount_ends);
+                            $proAttr->price_discount_ends=$convertingPriceEndsAttr;
+                        }
                       }
                        }
                
@@ -964,54 +954,38 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
        if(count($myOrders)==0){
          return 'لا يوجد اي طلب من طلباتك لها هذه الحالة ';
        }
-            $location = geoip(request()->ip());
-            $currencyCountry=$location->currency;
-                $currencySystem='KWD';
-            if($location->currency!==$currencySystem){
+                   $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
                 foreach($myOrders as $myOrder){
-                //convert this price that in dinar into currency user
-                    $convertingPrice=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($myOrder->price)
-                        ->get();
-                    $myOrder->price=round($convertingPrice,2);
-                $myOrder->currency_country=$location->currency;
-                if($myOrder->productArrayAttributes){
-                    foreach($myOrder->productArrayAttributes as $attr){
-                    $convertingOriginalPriceAttr=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($attr->original_price)
-                        ->get();
-                
-                    $attr->original_price=round($convertingOriginalPriceAttr,2);
-                    
-                    $convertingPriceEndsAttr=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($attr->price_discount_ends)
-                        ->get();
-                
-                    $attr->price_discount_ends=round($convertingPriceEndsAttr,2);
-                }
-                    if($myOrder->service){
-                        $convertingValueService=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($myOrder->service->value)
-                        ->get();
-                        $myOrder->service->value=round($convertingValueService,2);
+                 //convert this price that in dinar into currency user
+                    $myOrder->currency_country=$this->baseRepo->countryCurrency();
+                    if($myOrder->price){
+                        $convertingPrice =  $this->baseRepo->priceCalculation($myOrder->price);
+                        $myOrder->price=$convertingPrice;
                     }
-                     if($myOrder->coupon){
-                        $convertingValueCoupon=  Currency::convert()
-                        ->from($currencySystem)
-                        ->to($currencyCountry)
-                        ->amount($myOrder->coupon->value)
-                        ->get();
-                        $myOrder->coupon->value=round($convertingValueCoupon,2);
+                    if($myOrder->productArrayAttributes){
+                        foreach($myOrder->productArrayAttributes as $attr){
+                            if($attr->original_price){
+                                $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->original_price);
+                                $attr->original_price=$convertingOriginalPrice;
+                                
+                            }
+                            if($attr->price_discount_ends){
+                                $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->price_discount_ends);
+                                $attr->price_discount_ends=$convertingOriginalPrice;
+                                
+                            }
                     }
-                }
+                        if($myOrder->service){
+                            $convertingValueService =  $this->baseRepo->priceCalculation($myOrder->service->value);
+                            $myOrder->service->value=$convertingValueService;
+                        }
+                        if($myOrder->coupon){
+                            $convertingValueCoupon =  $this->baseRepo->priceCalculation($myOrder->coupon->value);
+                            $myOrder->coupon->value=$convertingValueCoupon;
+                        
+                        }
+                    }
             }
             }
          
