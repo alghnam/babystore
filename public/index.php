@@ -6,6 +6,17 @@ use Illuminate\Http\Request;
 define('LARAVEL_START', microtime(true));
 
 /*
+ * --------------------------------------------------------------------
+ * REMOVE index.php from URI
+ * --------------------------------------------------------------------
+ */
+if (strpos($_SERVER['REQUEST_URI'], 'index.php') !== FALSE) {
+    $new_uri = preg_replace('#index\.php\/?#', '', $_SERVER['REQUEST_URI']);
+    header('Location: ' . $new_uri, TRUE, 301);
+    die();
+}
+
+/*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance
 |--------------------------------------------------------------------------
@@ -16,7 +27,7 @@ define('LARAVEL_START', microtime(true));
 |
 */
 
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+if (file_exists($maintenance = __DIR__.'/../babystore/storage/framework/maintenance.php')) {
     require $maintenance;
 }
 
@@ -31,7 +42,7 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
 |
 */
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/../babystore/vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +55,7 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../bootstrap/app.php';
+$app = require_once __DIR__.'/../babystore/bootstrap/app.php';
 
 $kernel = $app->make(Kernel::class);
 

@@ -4,9 +4,14 @@ namespace App\Repositories;
 
 use Illuminate\Support\Facades\Storage;
 use App\Scopes\ActiveScope;
+use App\Repositories\BaseRepository;
 
 class EloquentRepository
 {
+    public function countData($model){
+    $modelData=$model->count();
+       return  $modelData;
+   }
               public function getAllPaginates($model,$request){
         $modelData=$model->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
           return  $modelData;
@@ -20,37 +25,32 @@ class EloquentRepository
        $modelData=$this->findAllItemsOnlyTrashed($model);
     //   dd($modelData);
         if(is_string($modelData)){
-                            return trans('messages.there is not found any items in trash');
-
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
         }
-    //   $modelData=$this->findAllItemsOnlyTrashed($model)->where('locale',config('app.locale'))->paginate($request->total);
        $modelData=$this->findAllItemsOnlyTrashed($model)->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
         return $modelData;
     }
     public function find($id,$model){
-        // $item=$model->withoutGlobalScope(ActiveScope::class)->withTrashed()->where('id',$id)->first();
-        $item=$model->withoutGlobalScope(ActiveScope::class)->where('id',$id)->first();
-            //  dd($item);
-                if(empty($item)){
-            return trans('messages.this item not found in system');
-
+        $item=$model->withoutGlobalScope(ActiveScope::class)->withTrashed()->where('id',$id)->first();
+        if(empty($item)){
+            return 'هذا العنصر غير موجود بالنظام';
         }
         return $item;
     }
     public function findItemOnlyTrashed($id,$model){     
-        // dd(6);
+        // dd($model);
         $itemInTrash=$model->onlyTrashed()->where('id',$id)->first();//item in trash
         // dd($itemInTrash);
         if(empty($itemInTrash)){
-                return trans('messages.this item not exist in trash');
+            return 'هذا العنصر غير موجود في سلة المحذوفات';
         }else{
             $item=$model->onlyTrashed()->findOrFail($id);//find this item from trash
             return $item;
        }
     }
     public function findAllItemsOnlyTrashed($model){      
-        $itemsInTrash=$model->onlyTrashed()->get();//items in trash
-        // dd($itemsInTrash);
+               $itemsInTrash=$model->onlyTrashed()->get();//items in trash
+        //  dd($itemsInTrash);
        if(count($itemsInTrash)==0){
                 return trans('messages.there is not found any items in trash');
        }else{
@@ -116,8 +116,7 @@ class EloquentRepository
         }
         //this item not found in table items
         if($item->deleted_at!==null){
-
-            return trans('messages.this item already deleted permenetly');
+            return 'هذا العنصر بالفعل تم حذفه من قبل بشكل مؤقت';
         }
         $item->delete($item);
         
@@ -133,7 +132,7 @@ class EloquentRepository
         
         $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
         if(is_string($itemInTrash)){//this item not found in trash items table
-            return trans('messages.this item not found in trash');
+            return 'هذا العنصر غير موجود في سلة المحذوفات';
         }
             $itemInTrash->forceDelete();
             return 200;

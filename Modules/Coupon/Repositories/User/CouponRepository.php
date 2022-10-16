@@ -31,7 +31,8 @@ class CouponRepository extends EloquentRepository implements CouponRepositoryInt
     }
 
     public function getCoupons($status,$model,$request){
-       $getCoupons = $model->where(['is_used'=>$status])->take(8)->paginate($request->total);//get coupon used or not used and not reach into end date
+            $getCoupons = $model->where(['is_used'=>$status])->where('end_date','>',now()->addHour())->take(8)->paginate($request->total);//get coupon  not used and not reach into end date
+        
        return $getCoupons;
     }
         public function getEndedCoupons($model,$request){

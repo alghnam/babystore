@@ -75,7 +75,11 @@ class ViewController extends Controller
 
         } 
     }
-
+  public function countData(){
+        $countData=$this->viewRepo->countData($this->view);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countData],200);
+          
+     }
 
 
 

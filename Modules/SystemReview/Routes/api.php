@@ -9,6 +9,7 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
     Route::prefix('system-reviews')->group(function(){
         Route::get('/', [SystemReviewControllerAdmin::class,'index'])->name('api.admin.system-reviews.index');    
         Route::get('/get-all-paginates', [SystemReviewControllerAdmin::class,'getAllPaginates'])->name('api.admin.system-reviews.get-all-system-reviews-paginate');
+        Route::get('/count-data', [SystemReviewControllerAdmin::class,'countData'])->name('api.admin.system-reviews.count-data');
             
         Route::get('trash', [SystemReviewControllerAdmin::class,'trash'])->name('api.admin.system-reviews.trash');
         Route::get('restore-all', [SystemReviewControllerAdmin::class,'restoreAll'])->name('api.admin.system-reviews.restore-all');

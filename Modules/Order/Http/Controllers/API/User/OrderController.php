@@ -448,7 +448,7 @@ class OrderController extends Controller
     }
     
     public function finishingOrder(FinishingOrderRequest $request){
-        try{
+        // try{
 
        $data=$request->validated();
         $order=$this->orderRepo->finishingOrder($this->order,$this->wallet,$this->movement,$request);
@@ -464,10 +464,53 @@ class OrderController extends Controller
         $arrUpsellsPro=[];
         $productsOrder=[];
         $orderFinished=Order::where(['id'=>$data['order_id']])->first();
+        $orderFinished->currency_country=$this->baseRepo->countryCurrency();
+        $location = geoip(request()->ip());
+        if($location->currency!==config('constants.currency_system')){
+
+            if($orderFinished->price){
+                $convertingPrice =  $this->baseRepo->priceCalculation($orderFinished->price);
+                $orderFinished->price=$convertingPrice;
+            }
+           
+            if($orderFinished->service){
+                $convertingValueService =  $this->baseRepo->priceCalculation($orderFinished->service->value);
+                $orderFinished->service->value=$convertingValueService;
+            }
+             if($orderFinished->coupon){
+                $convertingValueCoupon =  $this->baseRepo->priceCalculation($orderFinished->coupon->value);
+                $orderFinished->coupon->value=$convertingValueCoupon;
+            
+             }
+        }
         if(count($orderFinished->productArrayAttributes)){
             $productsOrder=$orderFinished->productArrayAttributes()->with('product')->get();
+            $productsOrder->currency_country=$this->baseRepo->countryCurrency();
+                if($location->currency!==config('constants.currency_system')){
+                  //convert this price that in dinar into currency user
+                        
+                        foreach($productsOrder as $proo){
+                            if($proo->original_price){
+                                    $convertingOriginalPrice =  $this->baseRepo->priceCalculation($proo->original_price);
+                                    $proo->original_price=$convertingOriginalPrice;
+                                }
+                            if($proo->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($proo->price_discount_ends);
+                                $proo->price_discount_ends=$convertingPriceEnds;
+                            }
+                             if($proo->product->original_price){
+                                    $convertingOriginalPrice =  $this->baseRepo->priceCalculation($proo->product->original_price);
+                                    $proo->product->original_price=$convertingOriginalPrice;
+                                }
+                            if($proo->product->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($proo->product->price_discount_ends);
+                                $proo->product->price_discount_ends=$convertingPriceEnds;
+                            }
+                        }
 
+                }
            foreach($orderFinished->productArrayAttributes as $productOrder){
+
                 if($productOrder->pivot->quantity!==0){
                   $upsellsPro= UpSell::where(['product_id'=>$productOrder->product_id])->first();
                     if(!empty($upsellsPro)){
@@ -495,14 +538,14 @@ class OrderController extends Controller
             
        $coupon= Coupon::where(['id'=>$data['coupon_id']])->first();
         $data=[
-            'order'=>$orderFinished->load(['payment','service']),
+            'order'=>$orderFinished->load(['payment']),
             'coupon'=>$coupon,
             'products'=>$productsOrder,
             'upsells'=>$arrUpsellsPro
             ];
         }else{
              $data=[
-            'order'=>$orderFinished->load(['payment','service']),
+            'order'=>$orderFinished->load(['payment']),
             'coupon'=>null,
             'products'=>$productsOrder,
             'upsells'=>$arrUpsellsPro
@@ -511,10 +554,10 @@ class OrderController extends Controller
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
 
         
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        } 
+        // } 
     }
 
 
@@ -539,7 +582,18 @@ class OrderController extends Controller
                     $payment_id= Storage::get($userId.'-payment_id-re');
                     $product_array_attributes= Storage::get($userId.'-product_array_attributes-re');
                     $productsOrder=$order->productArrayAttributes()->with('product')->get();
-
+                        if($productsOrder->products){
+                            foreach($productsOrder->products as $proo){
+                             if($proo->original_price){
+                                    $convertingOriginalPrice =  $this->baseRepo->priceCalculation($proo->original_price);
+                                    $proo->original_price=$convertingOriginalPrice;
+                                }
+                            if($proo->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($proo->price_discount_ends);
+                                $proo->price_discount_ends=$convertingPriceEnds;
+                            }
+                        }
+                    }
                     $this->orderRepo->processAfterPaymentForRefinishing($wallet,$order,$totalPrice,$payment_id,$product_array_attributes,$status=1,$type=3);
                    
                     $data=[
@@ -575,10 +629,53 @@ class OrderController extends Controller
                     return response()->json(['status'=>false,'message'=>$order],400);
                 }
                         $orderFinished=Order::where(['id'=>$orderId])->first();
+                                $orderFinished->currency_country=$this->baseRepo->countryCurrency();
+        $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
+
+            if($orderFinished->price){
+                $convertingPrice =  $this->baseRepo->priceCalculation($orderFinished->price);
+                $orderFinished->price=$convertingPrice;
+            }
+            if($orderFinished->service){
+                $convertingValueService =  $this->baseRepo->priceCalculation($orderFinished->service->value);
+                $orderFinished->service->value=$convertingValueService;
+            }
+             if($orderFinished->coupon){
+                $convertingValueCoupon =  $this->baseRepo->priceCalculation($orderFinished->coupon->value);
+                $orderFinished->coupon->value=$convertingValueCoupon;
+            
+             }
+        }
                 $productsOrder=$order->productArrayAttributes()->with('product')->get();
 
+                  if($location->currency!==config('constants.currency_system')){
+                  //convert this price that in dinar into currency user
+                        foreach($productsOrder as $proo){
+                            if($proo->original_price){
+                                    $convertingOriginalPrice =  $this->baseRepo->priceCalculation($proo->original_price);
+                                    $proo->original_price=$convertingOriginalPrice;
+                                }
+                            if($proo->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($proo->price_discount_ends);
+                                $proo->price_discount_ends=$convertingPriceEnds;
+                            }
+                             if($proo->product->original_price){
+                                    $convertingOriginalPrice =  $this->baseRepo->priceCalculation($proo->product->original_price);
+                                    $proo->product->original_price=$convertingOriginalPrice;
+                                }
+                            if($proo->product->price_discount_ends){
+                                $convertingPriceEnds =  $this->baseRepo->priceCalculation($proo->product->price_discount_ends);
+                                $proo->product->price_discount_ends=$convertingPriceEnds;
+                            }
+                        }
+
+                            
+                           
+                        
+                }
                 $data=[
-                    'order'=>$orderFinished->load(['payment','service']),
+                    'order'=>$orderFinished->load(['payment']),
                     'products'=>$productsOrder
                 ];
                     return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);

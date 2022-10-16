@@ -4,9 +4,14 @@ use Modules\Order\Http\Controllers\API\Admin\OrderController as OrderControllerA
 use Modules\Order\Http\Controllers\API\User\OrderController as OrderControllerUser;
 /**************************Routes Admin***************************** */
 Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(function(){
+    Route::get('/counts-all-data', [OrderControllerAdmin::class,'countsAllData'])->name('api.admin.counts-all-data');    
     Route::prefix('orders')->group(function(){
         Route::get('/', [OrderControllerAdmin::class,'index'])->name('api.admin.orders.index');    
         Route::get('/count', [OrderControllerAdmin::class,'countData'])->name('api.admin.orders.count-data');    
+        Route::get('/prices-sent-delivered-orders', [OrderControllerAdmin::class,'pricesSentDeliveredOrders'])->name('api.admin.orders.prices-sent-delivered');    
+        Route::get('/sent-delivered', [OrderControllerAdmin::class,'sentDeliveredOrders'])->name('api.admin.orders.sent-delivered');    
+        Route::get('/shipping', [OrderControllerAdmin::class,'shippingOrders'])->name('api.admin.orders.shipping');    
+        Route::get('/get-orders-group-month', [OrderControllerAdmin::class,'getOrdersGroupMonth'])->name('api.admin.orders.get-orders-group-month');    
         Route::get('/get-all-paginates', [OrderControllerAdmin::class,'getAllPaginates'])->name('api.admin.orders.get-all-orders-paginate');
         Route::get('/latest', [OrderControllerAdmin::class,'getLatestOrders'])->name('api.admin.orders.get-latest-orders');
             

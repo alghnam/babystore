@@ -31,8 +31,7 @@ class WalletRepository extends EloquentRepository implements WalletRepositoryInt
             $headers= [
                 "Content-Type:application/json",
                 config('constants.payment_method_link'),
-                // "Authorization:Bearer sk_live_q53ivUjyOs7V8WJmDPFxwatT",
-                                
+
 
                 ];
                 

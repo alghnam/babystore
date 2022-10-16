@@ -51,7 +51,6 @@ class UpdateTownRequest extends FormRequest
         $data=$this->request->all();
         return [
             'name' => ['required','max:225',Rule::unique('towns')->ignore($this->id)],
-            'status' => ['required'max:100'],
             'status' => ['sometimes', 'in:1,0'],
             'city_id' => ['numeric','exists:cities,id'],
 

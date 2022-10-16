@@ -23,6 +23,8 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
 
 /**************************Routes user***************************** */
 Route::prefix('services')->middleware(['auth:api'])->namespace('API')->group(function(){
-      Route::get('get-services', [ServiceControllerUser::class,'getServices'])->name('api.orders.get-services');
+      Route::get('get-services', function(){
+          dd(6);
+          })->name('api.orders.get-services');
       Route::get('show-service/{id}', [ServiceControllerUser::class,'showService'])->name('api.orders.show-service');
 });

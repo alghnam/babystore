@@ -36,7 +36,6 @@ class ServiceController extends Controller
 
     }
     public function getServices(){
-
         $services=$this->serviceRepo->getServices($this->service);
             return response()->json(['status'=>true,'message'=>'تم ايجاد الخدمات بنجاح','data'=>$services],200);
 

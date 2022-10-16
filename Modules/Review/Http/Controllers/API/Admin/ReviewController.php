@@ -79,6 +79,11 @@ class ReviewController extends Controller
 
         } 
     }
+      public function countData(){
+        $countData=$this->reviewRepo->countData($this->review);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countData],200);
+          
+     }
         public function getReviewsProduct(Request $request,$productId){
         
           try{

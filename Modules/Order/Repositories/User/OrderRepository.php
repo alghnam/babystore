@@ -40,12 +40,14 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
 
     public function changeStatusOrder($userId,$order,$cart,$totalPriceBill,$payment_id,$service_id,$address_id){
         $productCartCount = DB::table('product_cart')->where(['cart_id'=>$cart->id])->count();
+        
         $order->user_id=$userId;
         $order->products_count=$productCartCount;
         $order->price=$totalPriceBill;
-        $order->service_id=$service_id;
+
         $order->address_id=$address_id;
         $order->payment_id=$payment_id;
+        $order->service_id=$service_id;
         $order->status=1;//'Shipping'
         $order->save();
     }
@@ -264,6 +266,7 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
              if($order->status=="1"){
                  return 'هذا الطلب تم انهاؤه بالفعل , قم باضافة طلب اخر وانهاؤه هنا';
              }
+               
 
     //check if address confirmed or not
          $user=auth()->guard('api')->user();
@@ -385,7 +388,9 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
 
                 return ['url'=>$url];
             }
-               
+  
+
+
             return $order;
 
     }
@@ -737,15 +742,10 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     //check if address confirmed or not
     $user=auth()->guard('api')->user();
         $phone_no_address=Storage::get($user->id.'-phone_no_address');
-        if($phone_no_address){
+        if(!$phone_no_address){
 
-       $address= Address::where(['phone_no'=>$phone_no_address,'confirmed'=>1])->first();
-        if(!$address){
-            return 'لا يمكنك اضافة طلبك لانك لم تعمل تاكيد لرقم موبايلك';
-        }
-        
-        }else{
             return 'يجب عليك اضافة عنوان قبل انهاء طلبك';
+    
         }
        
 
@@ -928,6 +928,7 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
                 $location = geoip(request()->ip());
                 if($location->currency!==config('constants.currency_system')){
                     if($order->productArrayAttributes){
+                        
                       foreach($order->productArrayAttributes as $proAttr){
                         //convert this price that in dinar into currency user
                         $proAttr->currency_country=$this->baseRepo->countryCurrency;

@@ -63,7 +63,11 @@ class SystemReviewController extends Controller
 
         } 
     }
-
+  public function countData(){
+        $countData=$this->systemReviewRepo->countData($this->systemReview);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countData],200);
+          
+     }
     public function getAllPaginates(Request $request){
         try{
             $systemReviews=$this->systemReviewRepo->getAllPaginates($this->systemReview,$request);

@@ -20,30 +20,28 @@ use Modules\Cart\Entities\Cart;
 use Modules\Coupon\Entities\Coupon;
 use Modules\Service\Entities\Service;
 use AmrShawky\LaravelCurrency\Facade\Currency;
+use App\Repositories\BaseRepository;
+
 
 class ServiceRepository extends EloquentRepository implements ServiceRepositoryInterface
 {
+        public function __construct(BaseRepository $baseRepo)
+    {
+        $this->baseRepo = $baseRepo;
+    }
 
       public function getServices(){
         $services = Service::get();
-        
-         $userIp = request()->ip();
-            $location = geoip($userIp);
-    
-           
-    //convert this price that in dinar into currency user
+        //convert this price that in dinar into currency user
         $location = geoip(request()->ip());
-        $currencySystem='KWD';
-        $services->currency_country=$currencyCountry;
-
-        if($location->currency!==$currencySystem){
+       if($location->currency!==config('constants.currency_system')){
         foreach($services as $service){
-         $convertingCurrenciesValue=  Currency::convert()
-            ->from($currencySystem)
-            ->to($currencyCountry)
-            ->amount($service->value)
-            ->get();
-            $service->value=round($convertingCurrenciesValue, 2);
+            //convert this price that in dinar into currency user
+            $service->currency_country=$this->baseRepo->countryCurrency();
+            
+            $convertingCurrenciesValue =  $this->baseRepo->priceCalculation($service->value);
+            $service->value=$convertingCurrenciesValue;
+            
             
         }
         return $services;
@@ -54,6 +52,14 @@ class ServiceRepository extends EloquentRepository implements ServiceRepositoryI
 
         if(empty($service)){
             return 'غير موجود بالنظام';
+        }
+        $location = geoip(request()->ip());
+        if($location->currency!==config('constants.currency_system')){
+            //convert this price that in dinar into currency user
+            $service->currency_country=$this->baseRepo->countryCurrency();
+            
+            $convertingCurrenciesValue =  $this->baseRepo->priceCalculation($service->value);
+            $service->value=$convertingCurrenciesValue;
         }
         return $service;
       }

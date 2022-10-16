@@ -17,6 +17,8 @@ use Modules\Order\Http\Requests\AddReviewOrderRequest;
 use Modules\Order\Entities\Address;
 use Modules\Order\Http\Requests\FinishingOrderRequest;
 use Modules\Order\Entities\AddressCodeNum;
+use Modules\Auth\Entities\User;
+use Modules\Product\Entities\Product;
 class OrderController extends Controller
 {
     
@@ -50,7 +52,7 @@ class OrderController extends Controller
      */
     public function __construct(BaseRepository $baseRepo, Order $order, Address $address,OrderRepository $orderRepo,AddressCodeNum $addressCodeNum)
     {
-        $this->middleware(['permission:orders_read'])->only(['index','getAllPaginates']);
+        $this->middleware(['permission:orders_read'])->only(['index','getAllPaginates','countData','finishedOrders']);
         $this->middleware(['permission:orders_trash'])->only('trash');
         $this->middleware(['permission:orders_restore'])->only('restore');
         $this->middleware(['permission:orders_restore-all'])->only('restore-all');
@@ -92,6 +94,37 @@ class OrderController extends Controller
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countData],200);
           
      }
+    public function countsAllData(){
+      $countsAllData=$this->orderRepo->countsAllData($this->order);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countsAllData],200);
+          
+   }
+    //  public function countData(){
+    //     $countData=$this->orderRepo->countData($this->order);
+    //       return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$countData],200);
+          
+    //  }
+         public function pricesSentDeliveredOrders(){
+         $pricesSentDeliveredOrders=$this->orderRepo->pricesSentDeliveredOrders($this->order);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pricesSentDeliveredOrders],200);
+          
+     }
+
+     public function sentDeliveredOrders(){
+         $sentDeliveredOrders=$this->orderRepo->sentDeliveredOrders($this->order);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$sentDeliveredOrders],200);
+          
+     }
+          public function shippingOrders(){
+         $shippingOrders=$this->orderRepo->shippingOrders($this->order);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$shippingOrders],200);
+          
+     }
+         public function getOrdersGroupMonth(){
+            $getOrdersGroupMonth=$this->orderRepo->getOrdersGroupMonth($this->order);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$getOrdersGroupMonth],200);
+          
+        }
         public function getAllPaginates(Request $request){
             // try{
                 

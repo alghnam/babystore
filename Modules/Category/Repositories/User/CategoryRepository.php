@@ -8,9 +8,15 @@ use Modules\Category\Entities\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Modules\Category\Repositories\User\CategoryRepositoryInterface;
+use App\Repositories\BaseRepository;
+
 class CategoryRepository extends EloquentRepository implements CategoryRepositoryInterface
 {
+     public function __construct(BaseRepository $baseRepo)
+     {
 
+         $this->baseRepo = $baseRepo;
+     }
 
     public function getMainCategoriesPaginate($model,$request){
           $mainCategories=$model->where(['parent_id'=>null])->paginate($request->total);
@@ -19,6 +25,22 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
 
         public function getSubCategoriesForMainCategoryPaginate($model,$request){
         $modelData=$model->where('parent_id','!=',null)->with(['image','products','products.productImages'])->paginate($request->total);
+                             $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
+                foreach($modelData as $pro){
+                    //convert this price that in dinar into currency user
+                    $pro->currency_country=$this->baseRepo->countryCurrency();
+    
+                    if($pro->original_price){
+                        $convertingOriginalPrice =  $this->baseRepo->priceCalculation($pro->original_price);
+                        $pro->original_price=$convertingOriginalPrice;
+                    }
+                    if($pro->price_discount_ends){
+                        $convertingPriceEnds =  $this->baseRepo->priceCalculation($pro->price_discount_ends);
+                        $pro->price_discount_ends=$convertingPriceEnds;
+                    }
+                }
+            }
           return  $modelData;
     }     
     public function getSubCategoriesForSubCategoryPaginate($model,$request,$categoryId){

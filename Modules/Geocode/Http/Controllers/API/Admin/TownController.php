@@ -120,7 +120,7 @@ class TownController extends Controller
     {
          try{
             $town= $this->townRepo->store($request,$this->town);
-            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town],200);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town->load('city')],200);
 
         
         }catch(\Exception $ex){
@@ -142,7 +142,7 @@ class TownController extends Controller
                           if(is_string($town)){
             return response()->json(['status'=>false,'message'=>$town],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town->load('city')],200);
 
         
         }catch(\Exception $ex){
@@ -168,7 +168,7 @@ class TownController extends Controller
                                  if(is_string($town)){
             return response()->json(['status'=>false,'message'=>$town],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town->load('city')],200);
 
         
         }catch(\Exception $ex){
@@ -185,7 +185,7 @@ class TownController extends Controller
                                   if(is_string($town)){
             return response()->json(['status'=>false,'message'=>$town],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town->load('city')],200);
 
         
         }catch(\Exception $ex){
@@ -223,7 +223,7 @@ class TownController extends Controller
             if(is_string($town)){
             return response()->json(['status'=>false,'message'=>$town],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$town->load('city')],200);
 
         
         }catch(\Exception $ex){

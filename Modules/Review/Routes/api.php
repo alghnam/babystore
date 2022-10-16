@@ -10,6 +10,7 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
     Route::prefix('reviews')->group(function(){
         Route::get('/', [ReviewControllerAdmin::class,'index'])->name('api.admin.reviews.index');    
         Route::get('/get-all-paginates', [ReviewControllerAdmin::class,'getAllPaginates'])->name('api.admin.reviews.get-all-reviews-paginate');
+        Route::get('/count-data', [ReviewControllerAdmin::class,'countData'])->name('api.admin.reviews.count-data');
         Route::get('/get-reviews-product/{productId}', [ReviewControllerAdmin::class,'getReviewsProduct'])->name('api.admin.reviews.get-reviews-product');
         Route::get('trash', [ReviewControllerAdmin::class,'trash'])->name('api.admin.reviews.trash');
         Route::get('restore-all', [ReviewControllerAdmin::class,'restoreAll'])->name('api.admin.reviews.restore-all');

@@ -182,14 +182,14 @@ class ProductController extends Controller
 
 
     public function search($word,Request $request){
-        try{
+     //   try{
         $data=$this->productRepo->search($this->product,$word,$request);
        
             return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        } 
+        // } 
     }
 
     public function searchMoreSale($word,Request $request){

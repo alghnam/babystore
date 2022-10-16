@@ -57,7 +57,7 @@ class CategoryController extends Controller
      }
      public function getSubCategories(Request $request){
          try{
-                 $subCategories=$this->categoryRepo->getSubCategories($this->category);
+                 $subCategories=$this->categoryRepo->getSubCategories($this->category,$request);
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategories],200);
 
         
@@ -67,16 +67,16 @@ class CategoryController extends Controller
         } 
      } 
      public function getSubCategoriesForMainCategoryPaginate(Request $request){
-         try{
+        //  try{
                  $subCategories=$this->categoryRepo->getSubCategoriesForMainCategoryPaginate($this->category,$request);
          
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$subCategories],200);
 
         
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        } 
+        // } 
          
          
      }  

@@ -51,7 +51,6 @@ class UpdateCityRequest extends FormRequest
         $data=$this->request->all();
         return [
             'name' => ['required','max:225',Rule::unique('cities')->ignore($this->id)],
-            'status' => ['required'max:100'],
             'status' => ['sometimes', 'in:1,0'],
                         'country_id' => ['numeric','exists:countries,id'],
 
@@ -64,7 +63,7 @@ class UpdateCityRequest extends FormRequest
     public function messages()
     {
         return [ 
-            'countries.*.exists' => __('One or more countries were not found or are not allowed to be associated with this Role type.')
+            'countries.*.exists' => __('One or more countries were not found')
 
         ];
     }

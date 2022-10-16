@@ -8,6 +8,7 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
     Route::prefix('views')->group(function(){
         Route::get('/', [ViewControllerAdmin::class,'index'])->name('api.admin.views.index');    
         Route::get('/get-all-paginates', [ViewControllerAdmin::class,'getAllPaginates'])->name('api.admin.views.get-all-views-paginate');
+        Route::get('/count-data', [ViewControllerAdmin::class,'countData'])->name('api.admin.views.count-data');
             
         Route::get('trash', [ViewControllerAdmin::class,'trash'])->name('api.admin.views.trash');
         Route::get('restore-all', [ViewControllerAdmin::class,'restoreAll'])->name('api.admin.views.restore-all');
