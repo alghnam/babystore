@@ -52,7 +52,8 @@ class EloquentRepository
                $itemsInTrash=$model->onlyTrashed()->get();//items in trash
         //  dd($itemsInTrash);
        if(count($itemsInTrash)==0){
-                return trans('messages.there is not found any items in trash');
+           return 'لا يوجد اي عناصر في سلة المحذوفات';
+                // return trans('messages.there is not found any items in trash');
        }else{
 
            $items=$model->onlyTrashed();//get items from trash

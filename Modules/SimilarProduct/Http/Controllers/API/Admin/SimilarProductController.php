@@ -110,7 +110,7 @@ class SimilarProductController extends Controller
      public function show($id)
      {
          try{
-         $similarProduct=$this->baseRepo->find($id,$this->product);
+         $similarProduct=$this->similarProductRepo->find($id,$this->product);
                  if(is_string($similarProduct)){
             return response()->json(['status'=>false,'message'=>$similarProduct],404);
         }

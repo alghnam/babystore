@@ -24,8 +24,15 @@ use Modules\Order\Entities\AddressCodeNum;
 use Modules\Order\Entities\Address;
 use App\Notifications\OrderPendingNotification;
 use App\Scopes\ActiveScope;
+use AmrShawky\LaravelCurrency\Facade\Currency;
+use App\Repositories\BaseRepository;
 class OrderRepository extends EloquentRepository implements OrderRepositoryInterface
 {
+        public function __construct(BaseRepository $baseRepo)
+    {
+        $this->baseRepo = $baseRepo;
+    }
+
     public function all($model){
     $modelData=$model->get();
     
@@ -67,11 +74,15 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         return $modelData;
     }
     public function pricesSentDeliveredOrders($model){
-        $modelData=$model->where('status',2)->get();
+        $modelData=$model->where('status',3)->get();
         $totalPrices=0;
         foreach($modelData as $order){
             $totalPrices=$totalPrices+$order->price;    
         }
+        $location = geoip(request()->ip());
+            if($location->currency!==config('constants.currency_system')){
+                $totalPrices =  $this->baseRepo->priceCalculation($totalPrices);
+            }
         return $totalPrices;
     }
     public function getLatestOrders($model){
@@ -81,11 +92,21 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
     
     public function getOrdersGroupMonth($model){
         $months=[1,2,3,4,5,6,7,8,9,10,11,12];
-        $monthsNames=["Jan","Feb","March","April","May","June","July","Aug","Sep","Oct","Nov","Dec"];
+       // $monthsNames=["Jan","Feb","March","April","May","June","July","Aug","Sep","Oct","Nov","Dec"];
          $arrOrdersGroupMonth=[];
+         $total=0;
+        $location = geoip(request()->ip());
         foreach($months as $month){
+         $totalPrices=0;
             $getOrdersGroupMonth= $model->whereMonth('created_at', '=', $month)->get();
-            array_push($arrOrdersGroupMonth,['month'=>$month,'orders'=>$getOrdersGroupMonth]);
+            foreach($getOrdersGroupMonth as $order){
+                $totalPrices=$totalPrices+$order->price;
+                if($location->currency!==config('constants.currency_system')){
+                    $totalPrices =  $this->baseRepo->priceCalculation($totalPrices);
+                }
+            }
+        //    array_push($arrOrdersGroupMonth,['month'=>$month,'prices'=>$totalPrices]);
+            array_push($arrOrdersGroupMonth,$totalPrices);
         }
 
        return  $arrOrdersGroupMonth;

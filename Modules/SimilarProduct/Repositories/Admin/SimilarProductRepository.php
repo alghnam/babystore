@@ -17,6 +17,13 @@ use App\Scopes\ActiveScope;
 
 class SimilarProductRepository extends EloquentRepository implements SimilarProductRepositoryInterface
 {
+     public function find($id,$model){
+        $item=$model->withoutGlobalScope(ActiveScope::class)->withTrashed()->where('id',$id)->with(['productImages'])->first();
+        if(empty($item)){
+            return 'هذا العنصر غير موجود بالنظام';
+        }
+        return $item;
+    }
         public function similarsProduct($productId,$model){
       $similarsProduct=  $model->where('product_id',$productId)->withoutGlobalScope(ActiveScope::class)->get();
         return $similarsProduct;
@@ -28,10 +35,9 @@ class SimilarProductRepository extends EloquentRepository implements SimilarProd
       if(!empty($data['similar'])){
           foreach($data['similar'] as $simi){
                  $similarCount=$model->where(['product_id'=>$productId,'similar'=>$simi])->count();
-                    if($similarCount!==0){
-                        return 'لا يمكنك اضافة المنتج نفسه اكثر من مرة';
-                    }
-               //  dd($similarCount);
+                    // if($similarCount!==0){
+                    //     return 'لا يمكنك اضافة المنتج نفسه اكثر من مرة';
+                    // }
               $similar=new $model;
               $similar->product_id=$productId;
               $similar->similar=$simi;

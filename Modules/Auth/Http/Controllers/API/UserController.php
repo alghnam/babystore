@@ -211,7 +211,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request,$id)
     {
-        //  try{
+         try{
         $user= $this->userRepo->update($request,$id,$this->user);
           if(is_string($user)){
             return response()->json(['status'=>false,'message'=>$user],404);
@@ -219,10 +219,10 @@ class UserController extends Controller
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$user->load('roles')],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
         
 
     }
@@ -248,13 +248,13 @@ class UserController extends Controller
     }
     public function restoreAll(){
          try{
-        $users =  $this->userRepo->restoreAll($this->user);
-   if(is_string($user)){
-            return response()->json(['status'=>false,'message'=>$user],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$users],200);
-
-        
+            $users =  $this->userRepo->restoreAll($this->user);
+            if(is_string($users)){
+                return response()->json(['status'=>false,'message'=>$users],404);
+            }
+              return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$users],200);
+    
+            
         }catch(\Exception $ex){
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 

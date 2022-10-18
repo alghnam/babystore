@@ -20,7 +20,9 @@ use App\Http\Controllers\API\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 // define("success", "تمت العملية بنجاح");
-
+Route::get('alaa',function(){
+   dd(7);
+});
 Route::get('/auth', [RegisterController::class, 'authLogin'])
                 ->middleware('guest')
                 ->name('auth-login');

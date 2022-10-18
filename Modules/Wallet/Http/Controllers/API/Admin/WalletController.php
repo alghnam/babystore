@@ -1,250 +1,185 @@
 <?php
 
-namespace Modules\Wallet\Http\Controllers\API\Admin;
+namespace Modules\Wallet\Http\Controllers\API\User;
 
 use App\Repositories\BaseRepository;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Wallet\Entities\Wallet;
-use Modules\Wallet\Http\Requests\StoreWalletRequest;
-use Modules\Wallet\Http\Requests\UpdateWalletRequest;
-use Modules\Wallet\Http\Requests\DeleteWalletRequest;
-use Modules\Wallet\Repositories\Admin\WalletRepository;
-
+use Modules\Movement\Entities\Movement;
+use Modules\Coupon\Entities\Coupon;
+use Modules\Wallet\Http\Requests\AddToWalletRequest;
+use Modules\Wallet\Repositories\User\WalletRepository;
+// use Modules\Movement\Repositories\MovementRepository;
 class WalletController extends Controller
-{    
-        /**
-    * @var BaseRepository
-    */
+{
+  /**
+     * @var BaseRepository
+     */
     protected $baseRepo;
     /**
-    * @var WalletRepository
-    */
+     * @var WalletRepository
+     */
     protected $walletRepo;
     /**
-    * @var Wallet
-    */
+     * @var Wallet
+     */
     protected $wallet;
-
-
-    /**
-    * WalletsController constructor.
-    *
-    * @param WalletRepository $wallets
-    */
-    public function __construct(BaseRepository $baseRepo, Wallet $wallet,WalletRepository $walletRepo)
-    {
-    $this->middleware(['permission:wallets_read'])->only(['index','getAllPaginates']);
-    $this->middleware(['permission:wallets_trash'])->only('trash');
-    $this->middleware(['permission:wallets_restore'])->only('restore');
-    $this->middleware(['permission:wallets_restore-all'])->only('restore-all');
-    $this->middleware(['permission:wallets_show'])->only('show');
-    $this->middleware(['permission:wallets_store'])->only('store');
-    $this->middleware(['permission:wallets_update'])->only('update');
-    $this->middleware(['permission:wallets_destroy'])->only('destroy');
-    $this->middleware(['permission:wallets_destroy-force'])->only('destroy-force');
-    $this->baseRepo = $baseRepo;
-    $this->wallet = $wallet;
-    $this->walletRepo = $walletRepo;
-    }
-    /**
-    * Display a listing of the resource.
-    *
-    * @return \Illuminate\Http\Response
-    */
-    public function index(){
-        try{
-            $wallets=$this->walletRepo->all($this->wallet);
-          
-         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallets],200);
-
-        
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
-    }
-
-    public function getAllPaginates(Request $request){
-        try{
-            $wallets=$this->walletRepo->getAllPaginates($this->wallet,$request);
-         return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallets],200);
-
-        
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
-    }
-
-
-
-
-    // methods for trash
-    public function trash(Request $request){
-        try{
-    $wallets=$this->walletRepo->trash($this->wallet,$request);
-
-        if(is_string($wallets)){
-            return response()->json(['status'=>false,'message'=>$wallets],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallets],200);
-
-        
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
-    }
-
-
-    /**
-    * Store a newly created resource in storage.
-    *
-    * @param  \Illuminate\Http\Request  $request
-    * @return \Illuminate\Http\Response
-    */
-    public function store(StoreWalletRequest $request)
-    {
-        try{
-        $wallet=$this->walletRepo->store($request,$this->wallet);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
-
-        
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
-    }
-    
-
-    /**
-    * Display the specified resource.
-    *
-    * @param  int  $id
-    * @return \Illuminate\Http\Response
-    */
-    public function show($id)
-    {
-        try{
-    $wallet=$this->walletRepo->find($id,$this->wallet);
-    
-        if(is_string($wallet)){
-            return response()->json(['status'=>false,'message'=>$wallet],404);
-        }
    
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
-
-        
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
-    
-    }
-
-
+    /**
+     * @var Movement
+     */
+    protected $movement;
+   
 
     /**
-    * Update the specified resource in storage.
-    *
-    * @param  int  $id
-    * @param  \Illuminate\Http\Request  $request
-    * @return \Illuminate\Http\Response
-    */
-    public function update(UpdateWalletRequest $request,$id)
+     * WalletsController constructor.
+     *
+     * @param WalletRepository $wallets
+     */
+    public function __construct(BaseRepository $baseRepo, Wallet $wallet,WalletRepository $walletRepo, Movement $movement)
     {
-        try{
-    $wallet= $this->walletRepo->update($request,$id,$this->wallet);
-    if(is_string($wallet)){
-            return response()->json(['status'=>false,'message'=>$wallet],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
+     $this->middleware(['permission:wallets_add'])->only('addToWallet');
+     $this->middleware(['permission:wallets_balance'])->only('balanceWallet');
 
         
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
-
+        $this->baseRepo = $baseRepo;
+        $this->wallet = $wallet;
+        $this->movement = $movement;
+        $this->walletRepo = $walletRepo;
     }
 
-
-
-    //methods for restoring
-    public function restore($id){
-    try{
-    $wallet =  $this->walletRepo->restore($id,$this->wallet);
-     if(is_string($wallet)){
-            return response()->json(['status'=>false,'message'=>$wallet],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
-
-        
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
-        
-
-    }
-    public function restoreAll(){
-        try{
-    $wallets =  $this->walletRepo->restoreAll($this->wallet);
-     if(is_string($wallets)){
-            return response()->json(['status'=>false,'message'=>$wallets],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallets],200);
-
-        
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
-
-        } 
+    ///for user
+    public function addToWallet(AddToWalletRequest $request){
+        // try{
+            $movementWallet=$this->walletRepo->AddToWallet($this->wallet,$this->movement,$request);
+            if(is_string($movementWallet)){
+                return response()->json(['status'=>false,'message'=>$movementWallet],400);
+            }
     
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$movementWallet],200);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-    }
-
-    /**
-    * Remove the specified resource from storage.
-    *
-    * @param  int  $id
-    * @return \Illuminate\Http\Response
-    */
-    public function destroy(DeleteWalletRequest $request,$id)
-    {
-        try{
-    $wallet= $this->walletRepo->destroy($id,$this->wallet);
-     if(is_string($wallet)){
-            return response()->json(['status'=>false,'message'=>$wallet],404);
-        }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
-
+        // } 
         
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+    }
+    public function makeReplacingPoints($points){
+        try{
+            $makeReplacingPoints=$this->walletRepo->makeReplacingPoints($this->wallet,$this->movement,$points);
+           if(is_string($makeReplacingPoints)){
+                return response()->json(['status'=>false,'message'=>$makeReplacingPoints],400);
+            }
 
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$makeReplacingPoints],200);
+        }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+    
         } 
     }
-    public function forceDelete(DeleteWalletRequest $request,$id)
-    {
-        try{
-            //to make force destroy for a Wallet must be this Wallet  not found in Wallets table  , must be found in trash Wallets
-            $wallet=$this->walletRepo->forceDelete($id,$this->wallet);
-             if(is_string($wallet)){
-                    return response()->json(['status'=>false,'message'=>$wallet],404);
+        public function pointsWallet(){
+          try{
+                $pointsWallet=$this->walletRepo->pointsWallet($this->wallet);
+
+       
+                $data=[
+                    'count'=>$pointsWallet
+                    ];
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
+            }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+            
+            } 
+    }
+    public function countData(){
+         try{
+            $user=auth()->guard('api')->user();
+            $wallet=Wallet::where(['user_id'=>$user->id])->first();
+            $couponsCount=Coupon::where(['is_used'=>0])->count();
+            $location = geoip(request()->ip());
+            $currencyCountry=$location->currency;
+            $data=[
+                    'points_wallet'=>$wallet->points,
+                    'amount_wallet'=>$wallet->amount,
+                    'coupons_count'=>$couponsCount,
+                    'currency_country'=>$currencyCountry
+                    
+                ];
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
+         }catch(\Exception $ex){
+                return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+            
+        } 
+    }
+ 
+    public function paymentCallbackWallet(Request $request,$amount,$userId,$paymentId){
+        // try{
+            $result=$this->walletRepo->paymentCallbackWallet($request);
+            if($result&&isset($result->errors)){
+                return response()->json(['status'=>false,'message'=>$result],400);
+            }
+            // $cardName=null;
+            if($result->status=="CAPTURED"){
+                // if(isset($paymentProcess->card)){
+                //     $cardName='فيزا';
+                // }else{
+                //     $cardName='كي نت';
+                // }
+
+                $wallet=Wallet::where('user_id',$userId)->first();
+                if(empty($wallet)){// 
+                    $wallet=new $this->wallet;
+                    $wallet->user_id=$userId;
+                    $wallet->save();
+                }        
+                    //increase this value into wallet this user
+                    $wallet->amount=$wallet->amount+$amount;
+                    $wallet->save();
+                    $movementName=null;
+                    if($paymentId==3){
+                        $movementName='ايداع بالمحفظة من خلال وسيلة دفع الكي نت';
+                        
+                    }
+                    if($paymentId==4){
+                        
+                        $movementName='ايداع بالمحفظة من خلال وسيلة دفع الفيزا';
+                    }
+                    $movementWallet=new $this->movement;
+                
+                    $movementWallet->payment_id=$paymentId;
+                    $movementWallet->remaining_wallet_points=$wallet->amount-$amount;
+                    $movementWallet->wallet_id=$wallet->id; 
+                    $movementWallet->status=1;
+                    $movementWallet->name=$movementName;
+                    $movementWallet->value=$amount;
+                    $movementWallet->type=2; 
+                    $movementWallet->save();  
+                    return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$result],200);
+                }else{
+                   
+                    return response()->json(['status'=>false,'message'=>'فشلت العملية'],400);
+
                 }
 
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
+            
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
+        // } 
         
+    }
+
+    public function balanceWallet(){
+        try{
+            $wallet=$this->walletRepo->balanceWallet($this->wallet);
+            $currency=$this->baseRepo->countryCurrency();
+            $wallet->currency=$currency;
+            
+                    return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
         }catch(\Exception $ex){
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
         } 
-    
     }
     
-    
-   
 }

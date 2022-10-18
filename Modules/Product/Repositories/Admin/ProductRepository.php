@@ -87,7 +87,7 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
     public function find($id,$model){
       $item=  $model->find($id);
       if($item){
-       $item->load(['category.mainCategory','category','subCategory','productAttributes','productArrayAttributes','productImages']);
+       $item->load(['category.mainCategory','category','subCategory','productAttributes','productArrayAttributes.image','productImages']);
      
       }else{
             // return __('not found');

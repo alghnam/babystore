@@ -39,10 +39,29 @@ class MovementController extends Controller
         $wallet->save();
       }
         $Movements=Movement::where(['wallet_id'=>$wallet->id])->where('type','!=',0)->latest()->paginate($request->total);
-        
+                      $currency=$this->baseRepo->countryCurrency();
+             $location = geoip(request()->ip());
+             
+        if($location->currency!==config('constants.currency_system')){
+            foreach($Movements as $movement){
+                if($movement->remaining_wallet_points=="0"){
+                    if($movement->value){
+                        $convertingvalue =  $this->baseRepo->priceCalculation($movement->value);
+                        $movement->value=$convertingvalue;
+                    }
+                    if($movement->remaining_wallet_amounts){
+                        $convertingamount =  $this->baseRepo->priceCalculation($movement->remaining_wallet_amounts);
+                        $movement->remaining_wallet_amounts=$convertingamount;
+                    }
+                    
+                }
+                
+            }
+        }
         $data=[
             'points_wallet'=>$wallet->amount,
             'movements'=>$Movements,
+            'currency'=>$currency
             ];
                        return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$data],200);
             

@@ -30,14 +30,15 @@ class SaveArrayProductAttributesRequest extends FormRequest
      */
     public function authorize()
     {
+        return true;
         //update ProductAttribute for only superadministrator  and admins
-        $authorizeRes= $this->baseRepo->authorize();
-        if($authorizeRes==true){  
-                return true;
+        // $authorizeRes= $this->baseRepo->authorize();
+        // if($authorizeRes==true){  
+        //         return true;
             
-        }else{
-            return $this->failedAuthorization();
-        }
+        // }else{
+        //     return $this->failedAuthorization();
+        // }
     }
 
     /**
