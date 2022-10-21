@@ -1,40 +1,55 @@
 <template>
   <v-container fluid>
     <v-layout column>
-      <v-card>
-        5555555555user.image.url {{ user.image.url }}
-        <v-avatar size="96" class="mr-4" v-if="user.image">
-          jjjj
-          <img :src="$store.state.baseURL + '/storage/' + trimAttribute(user.image.url, '(S)')" alt="product image" />
-        </v-avatar>
-        <v-avatar size="96" class="mr-4" v-else>
-          <img
-            src="https://e7.pngegg.com/pngimages/492/286/png-clipart-computer-icons-user-profile-avatar-avatar-heroes-monochrome.png"
-            alt="Avatar"
-          />
-        </v-avatar>
+      <h1 style="margin-top: 43px; margin-bottom: 43px; margin-right: 394px">الصفحة الشخصية</h1>
+      <v-card class="mx-auto">
+        <v-card-text class="margin-top: 74px;">
+          <v-avatar size="96" class="mr-4" v-if="user.image">
+            <img :src="$store.state.baseURL + '/storage/' + trimAttribute(user.image.url, '(S)')" alt="product image" />
+          </v-avatar>
+          <v-avatar size="96" class="mr-4" v-else>
+            <img
+              src="https://e7.pngegg.com/pngimages/492/286/png-clipart-computer-icons-user-profile-avatar-avatar-heroes-monochrome.png"
+              alt="Avatar"
+            />
+          </v-avatar>
+          <div style="margin-top: -116px; margin-right: 196px">
+            <v-col class="md-5">
+              <h3>الاسم الأول</h3>
+              <p>{{ user.first_name }}</p>
+            </v-col>
+            <v-col class="md-5">
+              <h3>الاسم الأخير</h3>
 
-        <v-card-text>
-          <label for="">Phone No.: {{ user.phone_no }}</label>
-          <label for="">First name : {{ user.first_name }}</label>
-          <label for="">Last name : {{ user.last_name }}</label>
-          <label for="">email : {{ user.email }}</label>
+              <p>{{ user.last_name }}</p>
+            </v-col>
+            <div style="margin-right: 209px; margin-top: -168px">
+              <v-col class="md-5">
+                <h3>رقم الجوال</h3>
+                <p>{{ user.phone_no }}</p>
+              </v-col>
+              <v-col class="md-5">
+                <h3>الايميل</h3>
+                <p>{{ user.email }}</p>
+              </v-col>
+            </div>
+          </div>
+          <v-col style="margin-top: -4px; margin-right: 618px">
+            <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" outlined @click="editPassword">
+              <v-icon color="black" class="white--text">mdi-pencil</v-icon>
+              تعديل كلمة المرور
+            </v-btn>
+
+            <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="edit">
+              <v-icon color="black" class="white--text">mdi-pencil</v-icon>
+              تعديل البيانات
+            </v-btn>
+          </v-col>
         </v-card-text>
 
-        <v-card-actions>
-          <v-btn color="primary" @click="editPassword">
-            <v-icon left dark>check</v-icon>
-            Edit Password
-          </v-btn>
-          <v-btn color="primary" @click="edit">
-            <v-icon left dark>check</v-icon>
-            Save Changes
-          </v-btn>
-        </v-card-actions>
+        <v-card-actions> </v-card-actions>
       </v-card>
       <v-dialog v-model="dialog">
-      
-
         <template v-slot:expanded-item="{ headers, item }">
           <td :colspan="headers.length">More info about {{ item.first_name }}</td>
         </template>
@@ -117,7 +132,6 @@
         </div>
       </v-dialog>
       <v-dialog v-model="dialogPassword">
-        
         <template v-slot:expanded-item="{ headers, item }">
           <td :colspan="headers.length">More info about {{ item.first_name }}</td>
         </template>
@@ -131,39 +145,36 @@
               </v-card-title>
               <v-card-text>
                 <div class="row">
-
-                 
-              <v-text-field
-              v-model="user.old_password"
-              outlined
-              :type="isPasswordVisible1 ? 'text' : 'password'"
-              label="كلمة المرور القديمة"
-              placeholder="············"
-              :append-icon="isPasswordVisible1 ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
-              hide-details
-              @click:append="isPasswordVisible1 = !isPasswordVisible1"
-            ></v-text-field>
-              <v-text-field
-              v-model="user.new_password"
-              outlined
-              :type="isPasswordVisible2 ? 'text' : 'password'"
-              label="كلمة المرور الجديدة"
-              placeholder="············"
-              :append-icon="isPasswordVisible2 ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
-              hide-details
-              @click:append="isPasswordVisible2 = !isPasswordVisible2"
-            ></v-text-field>
-                          <v-text-field
-              v-model="user.confirmation_new_password"
-              outlined
-              :type="isPasswordVisible3 ? 'text' : 'password'"
-              label="تاكيد كلمة المرور "
-              placeholder="············"
-              :append-icon="isPasswordVisible3 ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
-              hide-details
-              @click:append="isPasswordVisible3 = !isPasswordVisible3"
-            ></v-text-field>
-
+                  <v-text-field
+                    v-model="user.old_password"
+                    outlined
+                    :type="isPasswordVisible1 ? 'text' : 'password'"
+                    label="كلمة المرور القديمة"
+                    placeholder="············"
+                    :append-icon="isPasswordVisible1 ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
+                    hide-details
+                    @click:append="isPasswordVisible1 = !isPasswordVisible1"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="user.new_password"
+                    outlined
+                    :type="isPasswordVisible2 ? 'text' : 'password'"
+                    label="كلمة المرور الجديدة"
+                    placeholder="············"
+                    :append-icon="isPasswordVisible2 ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
+                    hide-details
+                    @click:append="isPasswordVisible2 = !isPasswordVisible2"
+                  ></v-text-field>
+                  <v-text-field
+                    v-model="user.confirmation_new_password"
+                    outlined
+                    :type="isPasswordVisible3 ? 'text' : 'password'"
+                    label="تاكيد كلمة المرور "
+                    placeholder="············"
+                    :append-icon="isPasswordVisible3 ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
+                    hide-details
+                    @click:append="isPasswordVisible3 = !isPasswordVisible3"
+                  ></v-text-field>
 
                   <div class="col-sm-5 mx-auto row">
                     <v-btn
@@ -194,16 +205,16 @@
 </template>
 
 <script>
-import {  mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
+import { mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 import { ref } from '@vue/composition-api'
 
 export default {
   pageTitle: 'My Profile',
-    setup() {
+  setup() {
     const isPasswordVisible1 = ref(false)
     const isPasswordVisible2 = ref(false)
     const isPasswordVisible3 = ref(false)
-        return {
+    return {
       isPasswordVisible1,
       isPasswordVisible2,
       isPasswordVisible3,
@@ -213,7 +224,7 @@ export default {
         mdiEyeOffOutline,
       },
     }
-    },
+  },
   data() {
     return {
       dialog: false,
@@ -334,16 +345,16 @@ export default {
           },
         })
         .then(res => {
-          // this.user = Object.assign({}, this.res.data.data.user)
           Object.assign(this.user, res.data.data.user)
 
-          console.log('4444', this.user)
           this.close()
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -354,26 +365,25 @@ export default {
         this.user = Object.assign({}, this.defaultUser)
       })
     },
-  savePassword() {
-    console.log('this.user.old_password', this.user)
-        //edit route
-        this.$http
-          .post('profile/update-password', {
-            old_password: this.user.old_password,
-            new_password: this.user.new_password,
-            confirmation_new_password: this.user.confirmation_new_password,
+    savePassword() {
+      //edit route
+      this.$http
+        .post('profile/update-password', {
+          old_password: this.user.old_password,
+          new_password: this.user.new_password,
+          confirmation_new_password: this.user.confirmation_new_password,
+        })
+        .then(res => {
+          this.closePassword()
+          this.$http.get('logout').then(() => {
+            localStorage.removeItem('token')
+            this.$router.push('/login')
           })
-          .then(res => {
-              this.closePassword()
-              this.$http.get("logout").then(()=>{
-        localStorage.removeItem("token");
-        this.$router.push("/login")
-      })
-          })
-          },
-  closePassword() {
-    this.dialogPassword = false
-  },
+        })
+    },
+    closePassword() {
+      this.dialogPassword = false
+    },
   },
 }
 </script>

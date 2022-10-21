@@ -230,7 +230,8 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -256,11 +257,13 @@ export default {
             this.dialog = false
             Object.assign(this.coupons[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -276,11 +279,13 @@ export default {
 
             this.coupons.push(res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -305,11 +310,13 @@ export default {
 
           .then(res => {
             this.coupons.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

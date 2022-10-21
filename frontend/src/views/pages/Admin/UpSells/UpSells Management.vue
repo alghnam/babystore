@@ -1,112 +1,110 @@
 <template>
   <div>
- 
-    <v-btn color="primary" class="mt-6" outlined @click="createItem()"> انشاء </v-btn>
-      <v-col cols="12" class="pb-3">
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="showTrash()">
+      سلة المحذوفات
+      <v-icon class="mr-3">mdi-delete</v-icon>
+    </v-btn>
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" outlined @click="createItem()">
+      انشاء
+      <v-icon class="mr-3">mdi-plus-circle</v-icon>
+    </v-btn>
+    <v-col cols="12" class="pb-3">
+      <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th class="text-right text-uppercase">title</th>
+              <th class="text-right text-uppercase">description</th>
+              <th class="text-right text-uppercase">footer</th>
+              <th class="text-right text-uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in upsells" :key="item.id">
+              <td class="text-right">{{ item.name }}</td>
+              <td v-html="item.description"></td>
+              <td class="text-right">{{ item.footer }}</td>
 
-    <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th class="text-right text-uppercase">title</th>
-            <th class="text-right text-uppercase">description</th>
-            <th class="text-right text-uppercase">footer</th>
-            <th class="text-right text-uppercase">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in upsells" :key="item.id">
-            <td class="text-right">{{ item.name }}</td>
-            <td class="text-right">{{ item.product_id }}</td>
-            <td v-html="item.description"></td>
-            <td class="text-right">{{ item.footer }}</td>
+              <td class="text-right">
+                <div>
+                  <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editUpsellProdItem(item)">
+                    <v-icon color="black" class="white--text">mdi-pencil</v-icon>
+                  </v-btn>
 
-    
-            <td class="text-right">
-              <div>
+                  <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
+                    <v-icon color="black" class="">mdi-delete</v-icon>
+                  </v-btn>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </template>
 
-                <v-btn color="primary" class="mt-6" @click="editUpsellProdItem(item)">
-                  <v-icon color="black">mdi-pencil</v-icon> تعديل المبيعات
-                </v-btn>
-
-                <v-btn color="default" class="mt-6" @click="deleteItem(item)"> Delete </v-btn>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </template>
-
-            <template v-slot:top>
-        <v-toolbar flat color="white">
-          ادارة البانرز
-          <v-dialog v-model="dialog">
-            <template v-slot:activator="{ on, attrs }">
-                <v-btn color="primary" dark class="rounded-lg mr-auto" v-bind="attrs" v-on="on" fab tile x-small
-                  ><v-icon>mdi-plus-circle</v-icon></v-btn
-                >
+        <template v-slot:top>
+          <v-toolbar flat color="white">
+            ادارة المبيعات
+            <v-dialog v-model="dialog">
+              <template v-slot:expanded-item="{ headers, item }">
+                <td :colspan="headers.length">More info about {{ item.user_id }}</td>
               </template>
+              <div class="container">
+                <div class="row">
+                  <v-card class="col-sm-7 mx-auto">
+                    <v-card-title>
+                      <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
+                        <v-icon dark large>mdi-account-circle</v-icon> ادارة البانرز
+                      </v-alert>
+                    </v-card-title>
+                    <v-card-text>
+                      <div class="row">
+                        <v-text-field
+                          class="col-sm-5 mx-auto"
+                          outlined
+                          dense
+                          label="العنوان"
+                          v-model="editedItem.name"
+                        ></v-text-field>
+                        <v-text-field
+                          class="col-sm-5 mx-auto"
+                          outlined
+                          dense
+                          label="الفوتر"
+                          v-model="editedItem.footer"
+                        ></v-text-field>
 
-            <template v-slot:expanded-item="{ headers, item }">
-              <td :colspan="headers.length">More info about {{ item.user_id }}</td>
-            </template>
-            <div class="container">
-              <div class="row">
-                <v-card class="col-sm-7 mx-auto">
-                  <v-card-title>
-                    <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
-                      <v-icon dark large>mdi-account-circle</v-icon> ادارة البانرز
-                    </v-alert>
-                  </v-card-title>
-                  <v-card-text>
-                    <div class="row">
-                      <v-text-field
-                        class="col-sm-5 mx-auto"
-                        outlined
-                        dense
-                        label="العنوان"
-                        v-model="editedItem.name"
-                      ></v-text-field>
-                      <v-text-field
-                        class="col-sm-5 mx-auto"
-                        outlined
-                        dense
-                        label="الفوتر"
-                        v-model="editedItem.footer"
-                      ></v-text-field>
+                        <vue-editor
+                          class="col-sm-12 mx-auto"
+                          v-model="editedItem.description"
+                          :editorToolbar="customToolbar"
+                        ></vue-editor>
 
-                      <vue-editor
-                        class="col-sm-12 mx-auto"
-                        v-model="editedItem.description"
-                        :editorToolbar="customToolbar"
-                      ></vue-editor>
-
-                      <div class="col-sm-5 mx-auto row" style="margin-top: 40px">
-                         <v-btn
-                              color="primary lighten-1 rounded-tr-xl rounded-bl-xl"
-                              class="col-sm-5 mx-auto"
-                              @click="save()"
-                              dark
-                              >حفظ <i class="fas fa-file mr-3"></i
-                            ></v-btn>
-                            <v-btn
-                              color="white"
-                              light
-                              class="col-sm-5 mx-auto black--text rounded-tr-xl rounded-bl-xl"
-                              @click="close()"
-                              dark
-                              >رجوع
-                              <v-icon class="mr-3">mdi-reply-all</v-icon>
-                            </v-btn>
+                        <div class="col-sm-5 mx-auto row" style="margin-top: 40px">
+                          <v-btn
+                            color="primary lighten-1 rounded-tr-xl rounded-bl-xl"
+                            class="col-sm-5 mx-auto"
+                            @click="save()"
+                            dark
+                            >حفظ <i class="fas fa-file mr-3"></i
+                          ></v-btn>
+                          <v-btn
+                            color="white"
+                            light
+                            class="col-sm-5 mx-auto black--text rounded-tr-xl rounded-bl-xl"
+                            @click="close()"
+                            dark
+                            >رجوع
+                            <v-icon class="mr-3">mdi-reply-all</v-icon>
+                          </v-btn>
+                        </div>
                       </div>
-                    </div>
-                  </v-card-text>
-                </v-card>
+                    </v-card-text>
+                  </v-card>
+                </div>
               </div>
-            </div>
-          </v-dialog>
-        </v-toolbar>
-      </template>
-    </v-simple-table>
+            </v-dialog>
+          </v-toolbar>
+        </template>
+      </v-simple-table>
     </v-col>
     <template>
       <v-pagination v-model="page" :length="pageInfo && pageInfo.last_page" @input="getupsells()" circle></v-pagination>
@@ -118,12 +116,10 @@
 import { VueEditor } from 'vue2-editor'
 
 export default {
-    components: {
+  components: {
     VueEditor,
   },
-  computed: {
- 
-  },
+  computed: {},
   data() {
     return {
       dialog: false,
@@ -249,6 +245,9 @@ export default {
       this.snackbar = true
       this.text = message
     },
+    showTrash() {
+      this.$router.push('/trash-upsells-management')
+    },
     createItem() {
       this.$router.push('/create-upsell')
     },
@@ -279,7 +278,7 @@ export default {
         this.users = item.name
       }
     },
- 
+
     getuser(item) {
       this.user_id = item.value
       //    this.usersSimilar.push(item)
@@ -297,7 +296,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -313,12 +313,12 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
     async save() {
-   
       if (this.editedIndex > -1) {
         //edit route
         this.$http
@@ -330,28 +330,27 @@ export default {
 
           .then(res => {
             Object.assign(this.upsells[this.editedIndex], {
-                name: this.editedItem.name,
-                description: this.editedItem.description,
-                footer: this.editedItem.footer
-              })
-              this.callMessage(res.data.message)
-              this.dialog=false
-
+              name: this.editedItem.name,
+              description: this.editedItem.description,
+              footer: this.editedItem.footer,
+            })
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
+            this.dialog = false
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
-      } 
+      }
     },
     editItem(item) {
       this.editedIndex = this.upsells.indexOf(item)
       Object.assign(this.editedItem, {
         ...item,
       })
-
-
 
       this.dialog = true
     },
@@ -369,10 +368,12 @@ export default {
           const index = this.imgs.indexOf(img)
           this.imgs.splice(index, 1)
           this.base_imgs.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     deleteImageNotStore(index) {
@@ -388,11 +389,13 @@ export default {
 
           .then(res => {
             this.upsells.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

@@ -17,16 +17,21 @@
           </thead>
           <tbody>
             <tr v-for="item in chats" :key="item.id">
-              {{
-                item.client ? item.client.first_name : null
-              }}
+              <td class="text-right">{{ item.client ? item.client.first_name : null }}</td>
 
               <td class="text-center" v-html="item.message"></td>
 
               <td class="text-right">
-                <v-btn color="primary" class="mt-6" @click="editItem(item)">
-                  <v-icon color="black">mdi-pencil</v-icon> رسالة اخرى
+                <v-btn
+                  color="primary"
+                  class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl"
+                  outlined
+                  @click="editItem(item)"
+                >
+                  <v-icon color="black" class="white--text">mdi-pencil</v-icon>
+                  رسالة أخرى
                 </v-btn>
+
                 <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
                   <v-icon color="black" class="">mdi-delete</v-icon>
                 </v-btn>
@@ -163,7 +168,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -179,18 +185,15 @@ export default {
 
         .then(res => {
           this.dialog = false
+          this.chats.push(res.data.data)
 
-          this.chats.push({
-            id: res.data.data.id,
-            message: this.editedItem.message,
-            user_id: 1,
-            client_id: this.editedItem.client.id,
-          })
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -213,12 +216,14 @@ export default {
           .then(res => {
             if (res.data.message != null) {
               this.chats.splice(index, 1)
-              this.callMessage(res.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = res.data.message
             }
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

@@ -9,47 +9,24 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-right text-uppercase">رقم الطلب</th>
+                <th class="text-right text-uppercase">رقم الطلب</th>
               <th class="text-right text-uppercase">المستحدم</th>
-              <th class="text-right text-uppercase">الخدمة</th>
-              <th class="text-right text-uppercase">وسيلة الدفع</th>
-              <th class="text-right text-uppercase">العناوين</th>
-              <th class="text-right text-uppercase">الكوبون</th>
-              <th class="text-right text-uppercase">الشحن</th>
-              <th class="text-right text-uppercase">عدد المنتجات</th>
-              <th class="text-right text-uppercase">السعر</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
+
+              <th class="text-right text-uppercase">حالة الطلب</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in orders" :key="item.id">
-              <td class="text-right">{{ item.order_num }}</td>
+                          <td class="text-right">{{ item.order_num }}</td>
               <td class="text-right">
-                {{ item.user ? item.user.first_name : '-' }} . ' '. {{ item.user ? item.user.last_name : '-' }}
+                {{ item.user ? item.user.first_name : null }}
               </td>
 
-              <td class="text-center">
-                {{ item.service ? item.service.period : '-' }} . 'vlaue:' .
-                {{ item.service ? item.service.value : '-' }}
-              </td>
-              <td class="text-right">
-                {{ item.payment ? item.payment.name : '-' }}
-              </td>
-              <td class="text-right">
-                {{ item.addresses ? item.addresses : '-' }}
-              </td>
-              <td class="text-right">
-                {{ item.couponcode ? item.couponcode.name : '-' }}
-              </td>
-              <td class="text-right">{{ item.shipping }}</td>
-              <td class="text-right">{{ item.products_count }}</td>
-              <td class="text-right">{{ item.price }}</td>
-
+             
               <td class="text-right">
                 {{ item.original_status }}
               </td>
-
               <td>
                 <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="restoreItem(item)">
                   <v-icon class="mr-3">mdi-reply-all</v-icon>
@@ -110,11 +87,13 @@ export default {
         .then(res => {
           this.orders = res.data.data.data
           this.pageInfo = res.data.data
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -127,12 +106,14 @@ export default {
           if (res.data.message != null) {
             const index = this.orders.indexOf(item)
             this.orders.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           }
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -142,12 +123,14 @@ export default {
         .then(res => {
           if (res.data.message != null) {
             this.orders = []
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           }
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -159,11 +142,13 @@ export default {
           .get(`admin/orders/force-delete/${item.id}`)
           .then(res => {
             this.orders.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

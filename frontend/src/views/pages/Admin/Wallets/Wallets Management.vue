@@ -1,41 +1,35 @@
 <template>
   <div>
- 
+    <v-col cols="12" class="pb-3">
+      <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th class="text-right text-uppercase">المبلغ</th>
+              <th class="text-right text-uppercase">المستخدم</th>
+              <!-- <th class="text-right text-uppercase">الاحداث</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in wallets" :key="item.id">
+              <td class="text-right">{{ item.amount }}</td>
 
-      <v-col cols="12" class="pb-3">
+              <td class="text-right">
+                {{ item.user ? item.user.first_name : null }}
+              </td>
 
-    <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th class="text-right text-uppercase">المبلغ</th>
-            <th class="text-right text-uppercase">المستخدم</th>
-            <th class="text-right text-uppercase">الاحداث</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in wallets" :key="item.id">
-            <td class="text-right">{{ item.amount }}</td>
-
-            <td class="text-right">
-              {{ item.user ? item.user.first_name : '-' }} .' '. {{ item.user ? item.user.last_name : '-' }}
-            </td>
-
-   
-
-            <td>
-                  <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
-                    <v-icon color="black" class="white--text">mdi-pencil</v-icon>
-                  </v-btn>
-                  <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
-                    <v-icon color="black" class="">mdi-delete</v-icon>
-                  </v-btn>
-                </td>
-          </tr>
-        </tbody>
-      </template>
-
-    </v-simple-table>
+              <!-- <td>
+                <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
+                  <v-icon color="black" class="">mdi-delete</v-icon>
+                </v-btn>
+              </td> -->
+            </tr>
+          </tbody>
+        </template>
+           <template v-slot:top>
+          <v-toolbar flat color="white"> ادارة المحافظ</v-toolbar>
+        </template>
+      </v-simple-table>
     </v-col>
     <template>
       <v-pagination v-model="page" :length="pageInfo && pageInfo.last_page" @input="getwallets()" circle></v-pagination>
@@ -61,7 +55,7 @@ export default {
           first_name: null,
           last_name: null,
         },
-        status:null
+        status: null,
       },
       defaultItem: {},
       status: 0,
@@ -102,31 +96,30 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
-   
 
     save() {
-         //edit route
-        this.$http
-          .post(`admin/wallets/update/${this.editedItem.id}`, {
-            status: this.editedItem.status,
-          })
-          .then(res => {
-              this.dialog = false
-              Object.assign(this.wallets[this.editedIndex], res.data.data)
-           
+      //edit route
+      this.$http
+        .post(`admin/wallets/update/${this.editedItem.id}`, {
+          status: this.editedItem.status,
+        })
+        .then(res => {
+          this.dialog = false
+          Object.assign(this.wallets[this.editedIndex], res.data.data)
 
-              this.callMessage(res.data.message)
-        
-          })
-          .catch(error => {
-            if (error && error.response) {
-              this.callMessage(error.response.data.message)
-            }
-          })
-      
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
+        })
+        .catch(error => {
+          if (error && error.response) {
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
+          }
+        })
     },
     editItem(item) {
       this.dialog = true
@@ -135,8 +128,6 @@ export default {
       })
 
       this.editedIndex = this.wallets.indexOf(item)
-
-    
     },
     createItem() {
       this.dialog = true
@@ -149,13 +140,14 @@ export default {
           .get(`admin/wallets/destroy/${item.id}`)
 
           .then(res => {
-              this.wallets.splice(index, 1)
-              this.callMessage(res.data.message)
-            
+            this.wallets.splice(index, 1)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

@@ -7,7 +7,9 @@
         <v-btn color="pink" text v-bind="attrs" @click="$store.state.snackbar = false"> اغلاق </v-btn>
       </template>
     </v-snackbar>
-    <router-view></router-view>
+
+  
+      <router-view></router-view>
   </component>
   <!--<v-app>
     <AppBarUserMenu />
@@ -42,6 +44,8 @@ export default {
       name: 'app',
       content: '<h2>Example</h2>',
       editorOption: {},
+      snackbar:false,
+      text:null
     }
   },
   setup() {
@@ -69,3 +73,33 @@ export default {
   },
 }
 </script>
+<style lang="scss">
+@font-face {
+  font-family: gs;
+  src: url('./assets/fonts/ArbFONTS-GE_SS_TWO_MEDIUM_5.otf');
+}
+#app {
+  font-family: gs;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 20px ;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: grey ; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: grey; 
+}
+</style>

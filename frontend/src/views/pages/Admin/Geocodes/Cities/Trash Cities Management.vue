@@ -13,9 +13,7 @@
           <tr>
             <th class="text-right text-uppercase">الاسم </th>
             <th class="text-right text-uppercase">الكود</th>
-            <th class="text-right text-uppercase">الدولة</th>
 
-            <th class="text-right text-uppercase">حالة الظهور</th>
             <th class="text-right text-uppercase">الاحداث</th>
           </tr>
         </thead>
@@ -23,13 +21,7 @@
           <tr v-for="item in cities" :key="item.id">
             <td class="text-right">{{ item.name }}</td>
             <td class="text-right">{{ item.code }}</td>
-            <td class="text-center" v-if="item.parent_id!==null">
-             {{item.country ? item.country.name : "-"}}
-            </td>
-            <td class="text-right">
-              {{ item.status}}
-            </td>
-
+           
             <td>
 
                 <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="restoreItem(item)">
@@ -99,11 +91,13 @@ export default {
         .then(res => {
           this.cities = res.data.data.data
           this.pageInfo = res.data.data
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
         })
                         .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },
@@ -117,12 +111,14 @@ export default {
             if (res.data.message != null) {
               const index = this.cities.indexOf(item)
               this.cities.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
             }
         })
                         .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },
@@ -133,13 +129,15 @@ export default {
         
             if (res.data.message != null) {
               this.cities = []
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
             }
           
         })
                          .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },
@@ -151,12 +149,14 @@ export default {
           .get(`admin/cities/force-delete/${item.id}`)
           .then(res => {
             this.cities.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
 
           })
                  .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },

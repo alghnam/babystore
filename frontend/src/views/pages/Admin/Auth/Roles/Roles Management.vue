@@ -1,17 +1,18 @@
 <template>
   <div>
-    <v-btn color="primary" class="mt-6" @click="showTrash()"> Trash </v-btn>
-
-    <v-btn color="primary" class="mt-6" outlined @click="createItem()"> Create </v-btn>
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="showTrash()">
+      سلة المحذوفات
+      <v-icon class="mr-3">mdi-delete</v-icon>
+    </v-btn>
     <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
       <template v-slot:default>
         <thead>
           <tr>
-            <th class="text-right text-uppercase">Name</th>
-            <th class="text-right text-uppercase">Display Name</th>
-            <th class="text-right text-uppercase">Description</th>
-            <th class="text-right text-uppercase">Status</th>
-            <th class="text-right text-uppercase">Actions</th>
+            <th class="text-right text-uppercase">الاسم</th>
+            <th class="text-right text-uppercase">الاسم المعروض</th>
+            <th class="text-right text-uppercase">الوصف</th>
+            <th class="text-right text-uppercase">الحالة</th>
+            <th class="text-right text-uppercase">الأحداث</th>
           </tr>
         </thead>
         <tbody>
@@ -30,10 +31,12 @@
             </td>
             <td class="text-right">
               <div v-if="item.id !== 1">
-                <v-btn color="primary" class="mt-6" @click="editItem(item)">
-                  <v-icon color="black">mdi-pencil</v-icon> Edit
+                <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
+                  <v-icon color="black" class="white--text">mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn color="default" class="mt-6" @click="deleteItem(item)"> Delete </v-btn>
+                <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
+                  <v-icon color="black" class="">mdi-delete</v-icon>
+                </v-btn>
               </div>
             </td>
           </tr>
@@ -42,7 +45,7 @@
 
       <template v-slot:top>
         <v-toolbar flat color="white">
-          Roles Management
+          ادارة الأدوار
           <v-dialog v-model="dialog">
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="primary" dark class="rounded-lg mr-auto" v-bind="attrs" v-on="on" fab tile x-small
@@ -58,7 +61,7 @@
                 <v-card class="col-sm-7 mx-auto">
                   <v-card-title>
                     <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
-                      <v-icon dark large>mdi-account-circle</v-icon> roles Management
+                      <v-icon dark large>mdi-account-circle</v-icon> ادارة الأدوار
                     </v-alert>
                   </v-card-title>
                   <v-card-text>
@@ -67,14 +70,14 @@
                         class="col-sm-5 mx-auto"
                         outlined
                         dense
-                        label="name"
+                        label="الاسم"
                         v-model="editedItem.name"
                       ></v-text-field>
                       <v-text-field
                         class="col-sm-5 mx-auto"
                         outlined
                         dense
-                        label="display_name"
+                        label="الاسم المعروض"
                         v-model="editedItem.display_name"
                       ></v-text-field>
 
@@ -88,7 +91,7 @@
                         class="col-sm-5 mx-auto"
                         outlined
                         dense
-                        label="permissions"
+                        label="الصلاحيات"
                         :items="permissions"
                         v-model="editedItem.permissions"
                         multiple
@@ -98,7 +101,7 @@
                         class="col-sm-5 mx-auto"
                         outlined
                         dense
-                        label="status"
+                        label="الحالة"
                         :items="statuses"
                         v-model="editedItem.status"
                       ></v-select>
@@ -163,7 +166,7 @@ export default {
         ['link', 'code-block'],
       ],
       defaultItem: {
-         name: null,
+        name: null,
         display_name: null,
         description: null,
         status: null,
@@ -197,7 +200,6 @@ export default {
     dialog(val) {
       val || this.close()
     },
-
   },
   created() {
     this.getRoles()
@@ -210,7 +212,7 @@ export default {
     },
 
     showTrash() {
-      this.$router.push('/trash-roles-managment')
+      this.$router.push('/trash-roles-management')
     },
 
     getRoles() {
@@ -222,7 +224,8 @@ export default {
         })
 
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     getPermissions() {
@@ -237,7 +240,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     save() {
@@ -270,13 +274,15 @@ export default {
             this.dialog = false
             Object.assign(this.roles[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
 
           .catch(error => {
             this.dialog = false
 
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
       } else {
         //add (save) route
@@ -294,12 +300,14 @@ export default {
 
             Object.assign(this.roles[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             this.dialog = false
 
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
       }
     },
@@ -307,7 +315,7 @@ export default {
       this.editedIndex = this.roles.indexOf(item)
       this.editedItem = Object.assign({}, item)
 
-       //get permissions for this role id
+      //get permissions for this role id
       let permissionso = []
       this.$http
         .get(`admin/permissions/permissions-role-by-name/${item.id}`)
@@ -320,7 +328,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
       this.editedItem.permissions = permissionso
       this.dialog = true
@@ -338,10 +347,12 @@ export default {
 
           .then(res => {
             this.roles.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
     },
 

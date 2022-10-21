@@ -25,7 +25,7 @@
               <v-card-text>
                 <div class="row">
                   <!-- left section -->
-                  <v-col xs="12" sm="12" md="8" lg="8" xl="8">
+                  <v-col xs="12" sm="12" md="8" lg="8" xl="8" class="mx-auto">
                     <v-card outlined>
                       <v-card-text>
                         <v-row>
@@ -59,7 +59,7 @@
                         </v-row>
                       </v-card-text>
 
-                      <v-btn color="blue lighten-1" style="margin-left: 612px; margin-bottom: 10px" @click="save()" dark
+                      <v-btn color="blue lighten-1" class="mx-auto" @click="save()" dark
                         >حفظ <i class="fas fa-file mr-3"></i
                       ></v-btn>
                     </v-card>
@@ -169,7 +169,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -192,11 +193,13 @@ export default {
         })
 
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },

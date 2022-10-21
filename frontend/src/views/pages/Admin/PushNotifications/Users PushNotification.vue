@@ -9,8 +9,6 @@
               <th class="text-right text-uppercase">last Name</th>
 
               <th class="text-right text-uppercase">Phone No.</th>
-
-              <th class="text-right text-uppercase">Status</th>
             </tr>
           </thead>
 
@@ -24,10 +22,6 @@
 
               <td class="text-right">
                 {{ item.phone_no }}
-              </td>
-
-              <td class="text-right">
-                {{ item.original_status }}
               </td>
             </tr>
           </tbody>
@@ -142,7 +136,8 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 

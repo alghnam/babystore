@@ -1,9 +1,6 @@
 <template>
   <div>
-    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="showTrash()">
-      سلة المحذوفات
-      <v-icon class="mr-3">mdi-delete</v-icon>
-    </v-btn>
+ 
 
     <v-col cols="12" class="pb-3">
       <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
@@ -146,7 +143,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -170,10 +168,12 @@ export default {
                 mount: this.editedItem.mount,
               })
             }
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
       }
     },

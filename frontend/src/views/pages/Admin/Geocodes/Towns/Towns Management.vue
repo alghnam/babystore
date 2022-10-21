@@ -15,7 +15,6 @@
             <th class="text-right text-uppercase">الاسم </th>
             <th class="text-right text-uppercase">الكود</th>
             <th class="text-right text-uppercase">الدولة</th>
-            <th class="text-right text-uppercase">حالة الظهور</th>
             <th class="text-right text-uppercase">الاحداث</th>
           </tr>
         </thead>
@@ -27,14 +26,12 @@
               {{ item.city.name.text ?  item.city.name.text : item.city.name  }}
 
             </td>
-            <td class="text-right">
-              {{ item.original_status}}
-            </td>
+           
 
             <td class="text-right">
 
-                <v-btn color="primary" class="mt-6" @click="editItem(item)">
-                  <v-icon color="black">mdi-pencil</v-icon> تعديل
+                <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
+                  <v-icon color="black" class="white--text">mdi-pencil</v-icon>
                 </v-btn>
                 <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
                   <v-icon color="black" class="">mdi-delete</v-icon>
@@ -67,7 +64,7 @@
                     </v-alert>
                   </v-card-title>
                   <v-card-text>
-                    <div class="row">000
+                    <div class="row">
 
 <v-text-field
                         class="col-sm-5 mx-auto"
@@ -89,7 +86,7 @@
                         dense
                         label="اختر المدينة"
                         :items="citieso"
-                        v-model="editedItem.city.name"
+                        v-model="editedItem.city.id"
                       ></v-select>
                       <v-select v-else
                         class="col-sm-5 mx-auto"
@@ -99,15 +96,7 @@
                         :items="citieso"
                         v-model="editedItem.city"
                       ></v-select>
-                      <v-select
-                        class="col-sm-5 mx-auto"
-                        outlined
-                        dense
-                        label="حالة الظهور"
-                        :items="statuses"
-                        v-model="editedItem.status"
-                      ></v-select>
-
+                    
                      
                       <div class="col-sm-5 mx-auto row">
                         <v-btn
@@ -196,7 +185,7 @@ computed:{
     dialog(val) {
       val || this.close()
     },
-"editedItem.city.name":{
+"editedItem.city.id":{
       handler: function (val) {
         this.editedItem.city.id=val
         
@@ -230,7 +219,8 @@ computed:{
         })
                  .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },
@@ -248,16 +238,14 @@ computed:{
           })
         })
       .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
         })
     },
 
 
  save() {
 
-      if(this.editedItem.city.id==undefined){
-        this.editedItem.city.id=  this.editedItem.parent_id
-      }
       if (this.editedIndex > -1) {
         //edit route
         this.$http
@@ -266,24 +254,23 @@ computed:{
             code: this.editedItem.code,
             city_id: this.editedItem.city.id,
           
-          status: this.editedItem.status,
+          status: 1,
           })
 
           .then(res => {
 
-                this.dialog = false
-              Object.assign(this.towns[this.editedIndex], {
-                name: this.editedItem.name,
-                code: this.editedItem.code,
-                city_id: this.editedItem.city.id,
-                original_status: res.data.data.original_status,
-              })
+              this.close()
+            this.dialog = false
+            Object.assign(this.towns[this.editedIndex], res.data.data)
+
            
-this.callMessage(res.data.message)
+this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
             
           })
       .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
         })
       } else{
         this.$http
@@ -292,36 +279,42 @@ this.callMessage(res.data.message)
             code: this.editedItem.code,
             city_id: this.editedItem.city.id,
           
-          status: this.editedItem.status,
+          status: 1,
           })
 
           .then(res => {
 
-                this.dialog = false
-                this.towns.push({
-                            id: res.data.data.id,
-                            name: this.editedItem.name,
-                              code: this.editedItem.code,
-                             city: this.editedItem.city,
-                original_status: res.data.data.original_status,
-                          })
-this.callMessage(res.data.message)
+          this.close()
+            this.dialog = false
+            this.towns.push(res.data.data)
+this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
             
           })
       .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
         })
       }
     },
 
     editItem(item) {
       this.dialog=true
-      Object.assign(this.editedItem, {
-        ...item,
-      })
+      // Object.assign(this.editedItem, {
+      //   ...item,
+      // })
 
       this.editedIndex = this.towns.indexOf(item)
+     let id = Number(item.city.id)
      
+this.editedItem = {}
+      this.editedItem =  Object.assign({}, {
+          ...item,
+        })
+        setTimeout(()=>{
+        this.editedItem.city.id = id
+
+        }, 1000)
     },
     createItem() {
       this.dialog = true
@@ -336,12 +329,14 @@ this.callMessage(res.data.message)
           .then(res => {
               if (res.data.message != null) {
                 this.towns.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
               }
           })
                    .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },

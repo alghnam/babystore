@@ -136,13 +136,15 @@ export default {
           code: this.code,
         })
         .then(res => {
-this.callMessage(res.data.message)
+this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
               //go into page write a code
               this.$router.push('/reset-password')
            
         })
       .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
         })
     },
 

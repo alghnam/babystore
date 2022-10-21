@@ -1,14 +1,8 @@
 <template>
   <div>
-    <v-snackbar v-model="snackbar" :color="color">
-      {{ text }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false"> اغلاق </v-btn>
-      </template>
-    </v-snackbar>
-        <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="restoreAll()">
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="restoreAll()">
       استعادة الكل
-     <v-icon class="mr-3">mdi-reply-all</v-icon>
+      <v-icon class="mr-3">mdi-reply-all</v-icon>
     </v-btn>
 
     <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
@@ -23,19 +17,20 @@
         </thead>
         <tbody>
           <tr v-for="item in categories" :key="item.id">
-          <td >{{ item.name }}</td>
-                        <td class="text-center" v-if="item.parent_id!==null">
+            <td>{{ item.name }}</td>
+            <td class="text-center" v-if="item.parent_id !== null">
               {{ item.main_category.name.text ? item.main_category.name.text : item.main_category.name }}
-
             </td>
             <td class="text-right">
               {{ item.original_status }}
             </td>
             <td class="text-right">
-              <v-btn color="primary" class="mt-6" @click="restoreItem(item)"> استعادة </v-btn>
+              <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="restoreItem(item)">
+                <v-icon class="mr-3">mdi-reply-all</v-icon>
+              </v-btn>
               <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
-                  <v-icon color="black" class="">mdi-delete</v-icon>
-                </v-btn>
+                <v-icon color="black" class="">mdi-delete</v-icon>
+              </v-btn>
             </td>
           </tr>
         </tbody>
@@ -46,7 +41,12 @@
       </template>
     </v-simple-table>
     <template>
-      <v-pagination v-model="page" :length="pageInfo && pageInfo.last_page" @input="getCategories()" circle></v-pagination>
+      <v-pagination
+        v-model="page"
+        :length="pageInfo && pageInfo.last_page"
+        @input="getCategories()"
+        circle
+      ></v-pagination>
     </template>
   </div>
 </template>
@@ -70,32 +70,26 @@ export default {
   data() {
     return {
       categories: [],
-    
+
       editedIndex: -1,
-      editedItem: {
-     
-      },
-      defaultItem: {        
-     
-      },
+      editedItem: {},
+      defaultItem: {},
       snackbar: false,
       text: null,
       color: null,
-    
+
       total: 0,
       pageInfo: null,
       page: 1,
     }
   },
 
-  watch: {
- 
-  },
+  watch: {},
   created() {
     this.getCategories()
   },
   methods: {
-       callMessage(message) {
+    callMessage(message) {
       this.snackbar = true
       this.text = message
     },
@@ -106,38 +100,39 @@ export default {
           this.categories = res.data.data.data
           this.pageInfo = res.data.data
         })
-      .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
-   
     restoreItem(item) {
       //  this.editedIndex = this.categories.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.$http
         .get(`admin/categories/restore/${this.editedItem.id}`)
         .then(res => {
-       
-              const index = this.categories.indexOf(item)
-              this.categories.splice(index, 1)
- this.callMessage(res.data.message)
-           
+          const index = this.categories.indexOf(item)
+          this.categories.splice(index, 1)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
-      .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     restoreAll() {
       this.$http
         .get('admin/categories/restore-all')
         .then(res => {
-
-              this.categories = []
- this.callMessage(res.data.message)      
+          this.categories = []
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
-      .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -148,11 +143,13 @@ export default {
           .get(`admin/categories/force-delete/${item.id}`)
           .then(res => {
             this.categories.splice(index, 1)
- this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
-      .catch(error => {
-            this.callMessage(error.response.data.message)
-        })
+          .catch(error => {
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
+          })
     },
 
     close() {

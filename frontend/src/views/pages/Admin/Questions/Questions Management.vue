@@ -12,7 +12,6 @@
               <th class="text-right text-uppercase">اسم الفئة</th>
               <th class="text-right text-uppercase">السؤال</th>
               <th class="text-right text-uppercase">الجواب</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
@@ -29,10 +28,6 @@
               </td>
               <td class="text-right">{{ item.question }}</td>
               <td class="text-center" v-html="item.answer"></td>
-
-              <td class="text-right">
-                {{ item.original_status }}
-              </td>
 
               <td>
                 <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
@@ -68,8 +63,6 @@
                       </v-alert>
                     </v-card-title>
                     <v-card-text>
-                      editedItemId {{ editedItem.question_category.id }} editedItemName
-                      {{ editedItem.question_category.name }}
                       <div class="row">
                         <v-select
                           v-if="editedItem.question_category"
@@ -87,7 +80,7 @@
                           dense
                           label="اختر الفئة"
                           :items="questionCategorieso"
-                          v-model="editedItem.question_category.name"
+                          v-model="editedItem.question_category"
                         ></v-select>
                         <v-text-field
                           class="col-sm-5 mx-auto"
@@ -101,15 +94,6 @@
                           v-model="editedItem.answer"
                           :editorToolbar="customToolbar"
                         ></vue-editor>
-
-                        <v-select
-                          class="col-sm-5 mx-auto"
-                          outlined
-                          dense
-                          label="حالة الظهور"
-                          :items="statuses"
-                          v-model="editedItem.status"
-                        ></v-select>
 
                         <div class="col-sm-5 mx-auto row">
                           <v-btn
@@ -244,7 +228,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -261,7 +246,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -273,18 +259,20 @@ export default {
             question: this.editedItem.question,
             question_category_id: this.editedItem.question_category.id,
             answer: this.editedItem.answer,
-            status: this.editedItem.status,
+            status: 1,
           })
           .then(res => {
             this.dialog = false
 
             Object.assign(this.questions[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -294,23 +282,26 @@ export default {
             question_category_id: this.editedItem.question_category.id,
 
             answer: this.editedItem.answer,
-            status: this.editedItem.status,
+            status: 1,
           })
 
           .then(res => {
             this.dialog = false
             this.questions.push(res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
     },
     editItem(item) {
+      this.dialog = true
       this.editedIndex = this.questions.indexOf(item)
       // Object.assign(this.editedItem, {
       //   ...item,
@@ -327,7 +318,6 @@ export default {
       setTimeout(() => {
         this.editedItem.question_category.id = id
       }, 1000)
-      this.dialog = true
     },
     createItem() {
       this.dialog = true
@@ -341,11 +331,13 @@ export default {
 
           .then(res => {
             this.questions.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

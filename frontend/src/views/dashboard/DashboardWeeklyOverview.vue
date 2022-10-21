@@ -1,44 +1,14 @@
 <template>
-  <v-card>
+  <v-card class="pl-15 pr-15">
     <v-card-title class="align-start">
-      <span>Weekly Overview</span>
+      <span>الملخص الشهري</span>
 
       <v-spacer></v-spacer>
-
-      <v-btn
-        icon
-        small
-        class="mt-n2 me-n3"
-      >
-        <v-icon size="22">
-          {{ icons.mdiDotsVertical }}
-        </v-icon>
-      </v-btn>
     </v-card-title>
 
     <v-card-text>
       <!-- Chart -->
-      <vue-apex-charts
-        :options="chartOptions"
-        :series="chartData"
-        height="210"
-      ></vue-apex-charts>
-
-      <div class="d-flex align-center">
-        <h3 class="text-2xl font-weight-semibold me-4">
-          45%
-        </h3>
-        <span>Your sales perfomance in 45% 🤩 better compare to last month</span>
-      </div>
-
-      <v-btn
-        block
-        color="primary"
-        class="mt-6"
-        outlined
-      >
-        Details
-      </v-btn>
+      <vue-apex-charts :options="chartOptions" :series="chartData" height="210"></vue-apex-charts>
     </v-card-text>
   </v-card>
 </template>
@@ -53,94 +23,105 @@ export default {
   components: {
     VueApexCharts,
   },
-  setup() {
-    const ins = getCurrentInstance()?.proxy
-    const $vuetify = ins && ins.$vuetify ? ins.$vuetify : null
-    const customChartColor = $vuetify.theme.isDark ? '#3b3559' : '#f5f5f5'
 
-    const chartOptions = {
-      colors: [
-        customChartColor,
-        customChartColor,
-        customChartColor,
-        customChartColor,
-        $vuetify.theme.currentTheme.primary,
-        customChartColor,
-        customChartColor,
-      ],
-      chart: {
-        type: 'bar',
-        toolbar: {
-          show: false,
+  data() {
+    return {
+      customChartColor: this.$vuetify.theme.isDark ? '#3b3559' : '#f5f5f5',
+      arr: [],
+    }
+  },
+  computed: {
+    chartOptions() {
+      return {
+        colors: [this.$vuetify.theme.currentTheme.primary],
+        chart: {
+          type: 'bar',
+          toolbar: {
+            show: false,
+          },
+          offsetX: -15,
         },
-        offsetX: -15,
-      },
-      plotOptions: {
-        bar: {
-          columnWidth: '40%',
-          distributed: true,
-          borderRadius: 8,
-          startingShape: 'rounded',
-          endingShape: 'rounded',
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      legend: {
-        show: false,
-      },
-      xaxis: {
-        categories: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-        axisBorder: {
-          show: false,
-        },
-        axisTicks: {
-          show: false,
-        },
-        tickPlacement: 'on',
-        labels: {
-          show: false,
-          style: {
-            fontSize: '12px',
+        plotOptions: {
+          bar: {
+            columnWidth: '40%',
+            distributed: true,
+            borderRadius: 8,
+            startingShape: 'rounded',
+            endingShape: 'rounded',
           },
         },
-      },
-      yaxis: {
-        show: true,
-        tickAmount: 4,
-        labels: {
-          offsetY: 3,
-          formatter: value => `$${value}`,
+        dataLabels: {
+          enabled: false,
         },
-      },
-      stroke: {
-        width: [2, 2],
-      },
-      grid: {
-        strokeDashArray: 12,
-        padding: {
-          right: 0,
+        legend: {
+          show: false,
         },
-      },
-    }
+        xaxis: {
+          categories: ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july', 'aug', 'sep', 'oct', 'nov', 'dec'],
+          axisBorder: {
+            show: false,
+          },
+          axisTicks: {
+            show: false,
+          },
+          tickPlacement: 'on',
+          labels: {
+            show: false,
+            style: {
+              fontSize: '12px',
+            },
+          },
+        },
+        yaxis: {
+          show: true,
+          tickAmount: 4,
+          labels: {
+            offsetY: 3,
+            formatter: value => `${value}`,
+          },
+        },
+        stroke: {
+          width: [2, 2],
+        },
+        grid: {
+          strokeDashArray: 12,
+          padding: {
+            right: 0,
+          },
+        },
+      }
+    },
+    chartData() {
+      return [
+        {
+          data: this.arr,
+        },
+      ]
+    },
+  },
+  created() {
+    this.getOrdersGroupMonth()
+  },
+  methods: {
+    getOrdersGroupMonth() {
+      this.$http
+        .get('admin/orders/get-orders-group-month')
+        .then(res => {
+          this.arr = res.data.data
 
-    const chartData = [
-      {
-        data: [40, 60, 50, 60, 75, 60, 50, 65],
-      },
-    ]
-
-    return {
-      chartOptions,
-      chartData,
-
-      icons: {
-        mdiDotsVertical,
-        mdiTrendingUp,
-        mdiCurrencyUsd,
-      },
-    }
+          // this.arr.forEach(item => {
+          //   setTimeout(() => {
+          //     this.chartData[0].data.push(item)
+          //   }, 1000)
+          // })
+        })
+        .catch(error => {
+          if (error && error.response) {
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
+          }
+        })
+    },
   },
 }
 </script>

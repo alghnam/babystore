@@ -1,5 +1,9 @@
 <template>
   <div>
+      <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="showTrash()">
+      سلة المحذوفات
+      <v-icon class="mr-3">mdi-delete</v-icon>
+    </v-btn>
     <v-col cols="12" class="pb-3">
       <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
         <template v-slot:default>
@@ -10,14 +14,13 @@
               <th class="text-right text-uppercase">الاسم</th>
               <th class="text-right text-uppercase">المحتوى</th>
               <th class="text-right text-uppercase">الايميل</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in reviews" :key="item.id">
-              <td class="text-right">{{ item.user ? item.user.first_name : '-' }}</td>
-              <td class="text-right">{{ item.system_review_type ? item.system_review_type.name : '-' }}</td>
+              <td class="text-right">{{ item.user ? item.user.first_name : null }}</td>
+              <td class="text-right">{{ item.system_review_type ? item.system_review_type.name : null }}</td>
 
               <td class="text-right">
                 {{ item.name ? item.name : null }}
@@ -31,13 +34,9 @@
                 {{ item.email ? item.email : null }}
               </td>
 
-              <td class="text-right">
-                {{ item.original_status }}
-              </td>
+    
               <td>
-                <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
-                  <v-icon color="black" class="white--text">mdi-pencil</v-icon>
-                </v-btn>
+
                 <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
                   <v-icon color="black" class="">mdi-delete</v-icon>
                 </v-btn>
@@ -45,59 +44,10 @@
             </tr>
           </tbody>
         </template>
-
-        <template v-slot:top>
-          <v-toolbar flat color="white">
-            ادارة تقييمات على النظام
-            <v-dialog v-model="dialog">
-              <template v-slot:expanded-item="{ headers, item }">
-                <td :colspan="headers.length">More info about {{ item.user_id }}</td>
-              </template>
-              <div class="container">
-                <div class="row">
-                  <v-card class="col-sm-7 mx-auto">
-                    <v-card-title>
-                      <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
-                        <v-icon dark large>mdi-account-circle</v-icon> ادارة تقييمات على النظام
-                      </v-alert>
-                    </v-card-title>
-                    <v-card-text>
-                      <div class="row">
-                        <v-select
-                          class="col-sm-5 mx-auto"
-                          outlined
-                          dense
-                          label="حالة الظهور"
-                          :items="statuses"
-                          v-model="editedItem.status"
-                        ></v-select>
-
-                        <div class="col-sm-5 mx-auto row">
-                          <v-btn
-                            color="primary lighten-1 rounded-tr-xl rounded-bl-xl"
-                            class="col-sm-5 mx-auto"
-                            @click="save()"
-                            dark
-                            >حفظ <i class="fas fa-file mr-3"></i
-                          ></v-btn>
-                          <v-btn
-                            color="white"
-                            light
-                            class="col-sm-5 mx-auto black--text rounded-tr-xl rounded-bl-xl"
-                            @click="close()"
-                            dark
-                            >رجوع
-                            <v-icon class="mr-3">mdi-reply-all</v-icon>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-card-text>
-                  </v-card>
-                </div>
-              </div>
-            </v-dialog>
-          </v-toolbar>
+<template v-slot:top>
+          <v-toolbar flat color="white">ادارة تقييمات النظام </v-toolbar>
         </template>
+  
       </v-simple-table>
     </v-col>
     <template>
@@ -157,6 +107,9 @@ export default {
       this.snackbar = true
       this.text = message
     },
+            showTrash() {
+      this.$router.push('/trash-system-reviews-management')
+    },
 
     getproduct(item) {
       this.product_id = item.value
@@ -172,7 +125,8 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -190,10 +144,12 @@ export default {
               original_status: res.data.data.original_status,
             })
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
           })
       }
     },
@@ -216,10 +172,12 @@ export default {
 
           .then(res => {
             this.reviews.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
           })
     },
 

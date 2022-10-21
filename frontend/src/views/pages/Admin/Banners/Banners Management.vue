@@ -1,15 +1,19 @@
 <template>
   <div>
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="showTrash()">
+      سلة المحذوفات
+      <v-icon class="mr-3">mdi-delete</v-icon>
+    </v-btn>
     <v-col cols="12" class="pb-3">
       <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-right text-uppercase">title</th>
-              <th class="text-right text-uppercase">description</th>
-              <th class="text-right text-uppercase">product name</th>
-              <th class="text-right text-uppercase">Status</th>
-              <th class="text-right text-uppercase">Actions</th>
+              <th class="text-right text-uppercase">العنوان</th>
+              <th class="text-right text-uppercase">الوصف</th>
+              <th class="text-right text-uppercase">اسم المنتج</th>
+              <th class="text-right text-uppercase">الحالة</th>
+              <th class="text-right text-uppercase">الأحداث</th>
             </tr>
           </thead>
           <tbody>
@@ -18,7 +22,6 @@
               <td class="text-right">{{ item.description }}</td>
               <td class="text-right">
                 {{ item.product.name.text ? item.product.name.text : item.product.name }}
-                kkkkkkkk {{ item.image ? item.image : null }}
                 <div v-if="item.image">
                   <img
                     :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')"
@@ -63,8 +66,9 @@
                       </v-alert>
                     </v-card-title>
                     <v-card-text>
-                      <div class="row">
-                        <v-col xs="12" sm="12" md="5" lg="5" xl="5">
+                      <v-row>
+                        <v-col cols="12" xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"></v-col>
+                        <v-col cols="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
                           <v-img
                             :src="
                               editedItem.image
@@ -72,34 +76,35 @@
                                 : ''
                             "
                             v-if="!editedItem.photo_url"
+                            contain
+                            width="200px"
+                            class="mx-auto"
                           ></v-img>
                           <img
                             :src="editedItem.photo_url"
                             v-if="editedItem.photo_url"
-                            style="height: 118px; width: 84px"
+                            contain
+                            width="200px"
+                            class="mx-auto"
                           />
                         </v-col>
-                        <v-col xs="12" sm="12" md="12" lg="12" xl="12">
+                        <v-col cols="12" xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"></v-col>
+                        <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6" class="">
                           <!-- image choose section -->
                           <v-file-input
                             truncate-length="15"
                             outlined
                             dense
+                            prepend-icon=""
+                            prepend-inner-icon="mdi-file"
                             label="صورة المنتج"
-                            class="col-sm-5 mx-auto"
                             v-model="photo"
                           ></v-file-input>
                         </v-col>
-                        <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
-                          <v-text-field
-                            class="col-sm-5 mx-auto"
-                            outlined
-                            dense
-                            label="العنوان"
-                            v-model="editedItem.title"
-                          ></v-text-field>
+                        <v-col cols="12" md="6" lg="6" xl="6" class="">
+                          <v-text-field outlined dense label="العنوان" v-model="editedItem.title"></v-text-field>
                         </v-col>
-                        <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
+                        <v-col cols="12" md="6" lg="6" xl="6" class="">
                           <v-menu rounded offset-y>
                             <template v-slot:activator="{ attrs, on }">
                               <v-text-field
@@ -133,9 +138,8 @@
                             </v-list>
                           </v-menu>
                         </v-col>
-                        <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
+                        <v-col cols="12" md="6" lg="6" xl="6" class="">
                           <v-select
-                            class="col-sm-5 mx-auto"
                             outlined
                             dense
                             label="حالة الظهور"
@@ -167,7 +171,7 @@
                             <v-icon class="mr-3">mdi-reply-all</v-icon>
                           </v-btn>
                         </div>
-                      </div>
+                      </v-row>
                     </v-card-text>
                   </v-card>
                 </div>
@@ -287,8 +291,6 @@ export default {
     dialog(val) {
       val || this.close()
     },
-
-
   },
   created() {
     this.getbanners()
@@ -308,6 +310,9 @@ export default {
       }
     },
 
+    showTrash() {
+      this.$router.push('/trash-banners-management')
+    },
     getproduct(item) {
       this.product_id = item.value
       this.editedItem.product.name = item.text
@@ -325,7 +330,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -339,13 +345,13 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
 
     async save() {
-      console.log('this.editedItem.image', this.editedItem.image)
       if (this.product_id === null || this.product_id === undefined) {
         this.product_id = this.editedItem.product_id
       }
@@ -371,11 +377,13 @@ export default {
             this.close()
             Object.assign(this.banners[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -391,11 +399,13 @@ export default {
             this.close()
             this.banners.push(res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -421,11 +431,13 @@ export default {
           const index = this.imgs.indexOf(img)
           this.imgs.splice(index, 1)
           this.base_imgs.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -437,11 +449,13 @@ export default {
 
           .then(res => {
             this.banners.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

@@ -11,7 +11,6 @@
             <tr>
               <th class="text-right text-uppercase">السؤال</th>
               <th class="text-right text-uppercase">الجواب</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
@@ -20,10 +19,6 @@
               <td class="text-right">{{ item.question }}</td>
               <td class="text-right">
                 {{ item.answer }}
-              </td>
-
-              <td class="text-right">
-                {{ item.original_status }}
               </td>
 
               <td class="text-right">
@@ -92,11 +87,13 @@ export default {
         .then(res => {
           this.questions = res.data.data.data
           this.pageInfo = res.data.data
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -109,12 +106,14 @@ export default {
           if (res.data.message != null) {
             const index = this.questions.indexOf(item)
             this.questions.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           }
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -124,12 +123,14 @@ export default {
         .then(res => {
           if (res.data.message != null) {
             this.questions = []
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           }
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -141,11 +142,13 @@ export default {
           .get(`admin/questions/force-delete/${item.id}`)
           .then(res => {
             this.questions.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

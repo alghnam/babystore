@@ -67,25 +67,55 @@
                 <template v-slot:expanded-item="{ headers, item }">
                   <td :colspan="headers.length">More info about {{ item.name }}</td>
                 </template>
+
                 <div class="container">
                   <div class="row">
                     <v-card class="col-sm-7 mx-auto">
                       <v-card-title>
-                        <v-alert
-                          class="col-sm-12 mx-auto font-2 text-center pr-0 pl-0 rounded-tr-xl rounded-bl-xl"
-                          dark
-                          color="primary"
-                        >
-                          <v-icon large>mdi-account-circle</v-icon> ادارة الفئات
+                        <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
+                          <v-icon dark large>mdi-account-circle</v-icon> ادارة الفئات الفرعية
                         </v-alert>
                       </v-card-title>
                       <v-card-text>
                         <v-row>
-                          <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
+                          <v-col cols="12" xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"></v-col>
+                          <v-col cols="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
+                            <v-img
+                              :src="
+                                editedItem.image
+                                  ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
+                                  : ''
+                              "
+                              v-if="!editedItem.photo_url"
+                              contain
+                              width="200px"
+                              class="mx-auto"
+                            ></v-img>
+                            <img
+                              :src="editedItem.photo_url"
+                              v-if="editedItem.photo_url"
+                              contain
+                              width="200px"
+                              class="mx-auto"
+                            />
+                          </v-col>
+                          <v-col cols="12" xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"></v-col>
+                          <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6" class="">
+                            <!-- image choose section -->
+                            <v-file-input
+                              truncate-length="15"
+                              outlined
+                              dense
+                              prepend-icon=""
+                              prepend-inner-icon="mdi-file"
+                              label="صورة الفئة"
+                              v-model="photo"
+                            ></v-file-input>
+                          </v-col>
+                          <v-col cols="12" md="6" lg="6" xl="6" class="">
                             <v-text-field outlined dense label="الاسم" v-model="editedItem.name"></v-text-field>
                           </v-col>
-                          <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
-                          editedItem.main_category {{editedItem.main_category}}
+                          <v-col cols="12" md="6" lg="6" xl="6" class="">
                             <v-select
                               v-if="editedItem.main_category"
                               outlined
@@ -95,44 +125,7 @@
                               v-model="editedItem.main_category.id"
                             ></v-select>
                           </v-col>
-
-                                              <v-col xs="12" sm="12" md="5" lg="5" xl="5">
-                          
-                        <v-img
-                          :src="
-                            editedItem.image
-                              ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
-                              : ''
-                          "
-                          v-if="!editedItem.photo_url"
-                        ></v-img>
-                        <img
-                          :src="editedItem.photo_url"
-                          v-if="editedItem.photo_url"
-                          style="height: 118px; width: 84px"
-                        />
-                      </v-col>
-                      <v-col xs="12" sm="12" md="12" lg="12" xl="12">
-                        <!-- image choose section -->
-                        <v-file-input
-                          truncate-length="15"
-                          outlined
-                          dense
-                          label="صورة المنتج"
-                          class="col-sm-5 mx-auto"
-                          v-model="photo"
-                        ></v-file-input>
-                      </v-col>
-                          <!-- <v-select
-                            v-else
-                            class="col-sm-5 mx-auto"
-                            outlined
-                            dense
-                            label="الفئة الرئيسية"
-                            :items="mainCategorieso"
-                            v-model="editedItem.main_category"
-                          ></v-select> -->
-                          <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
+                          <v-col cols="12" md="6" lg="6" xl="6" class="">
                             <v-select
                               outlined
                               dense
@@ -141,8 +134,8 @@
                               v-model="editedItem.status"
                             ></v-select>
                           </v-col>
-                          <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto"> </v-col>
-                          <div class="col-sm-5 mx-auto row">
+
+                          <div class="col-sm-5 mx-auto row" style="margin-top: 40px">
                             <v-btn
                               color="primary lighten-1 rounded-tr-xl rounded-bl-xl"
                               class="col-sm-5 mx-auto"
@@ -205,7 +198,7 @@ export default {
           value: '0',
         },
       ],
-      photo:null,
+      photo: null,
       editedIndex: -1,
       editedItem: {
         id: null,
@@ -215,11 +208,11 @@ export default {
         },
         status: null,
         photo_url: null,
-       // photo: null,
+        // photo: null,
         image: null,
       },
       defaultItem: {
-                id: null,
+        id: null,
         main_category: {
           id: 0,
           name: null,
@@ -289,7 +282,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -306,7 +300,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -335,11 +330,13 @@ export default {
           .then(res => {
             this.close()
             Object.assign(this.sub_categories[this.editedIndex], res.data.data)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -354,11 +351,13 @@ export default {
             this.close()
             this.sub_categories.push(res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -367,36 +366,39 @@ export default {
     editItem(item) {
       console.log('wwwwwwwwwwwwww', item)
       this.editedIndex = this.sub_categories.indexOf(item)
-       let id = Number(item.main_category.id)
-     
-this.editedItem = {}
-      this.editedItem =  Object.assign({}, {
-          ...item,
-        })
-        setTimeout(()=>{
-        this.editedItem.main_category.id = id
+      let id = Number(item.main_category.id)
 
-        }, 1000)
-        this.dialog = true
-    
+      this.editedItem = {}
+      this.editedItem = Object.assign(
+        {},
+        {
+          ...item,
+        },
+      )
+      setTimeout(() => {
+        this.editedItem.main_category.id = id
+      }, 1000)
+      this.dialog = true
     },
     createItem() {
       this.dialog = true
     },
 
     deleteItem(item) {
-      const index = this.subcategories.indexOf(item)
+      const index = this.sub_categories.indexOf(item)
       confirm('هل أنت متأكد من حذف هذا العنصر؟') &&
         this.$http
           .get(`admin/categories/destroy/${item.id}`)
 
           .then(res => {
-            this.subcategories.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.sub_categories.splice(index, 1)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

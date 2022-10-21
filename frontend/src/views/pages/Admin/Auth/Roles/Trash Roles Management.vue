@@ -1,8 +1,9 @@
 <template>
   <div>
- 
-    <v-btn color="primary" class="mt-6" @click="restoreAll()"> Restore All </v-btn>
-
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="restoreAll()">
+      استعادة الكل
+      <v-icon class="mr-3">mdi-reply-all</v-icon>
+    </v-btn>
     <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
       <template v-slot:default>
         <v-btn icon small @click="createItem()">
@@ -10,11 +11,11 @@
         </v-btn>
         <thead>
           <tr>
-            <th class="text-right text-uppercase">Name</th>
-            <th class="text-right text-uppercase">Display Name</th>
-            <th class="text-right text-uppercase">Description</th>
-            <th class="text-right text-uppercase">Status</th>
-            <th class="text-right text-uppercase">Actions</th>
+            <th class="text-right text-uppercase">الاسم</th>
+            <th class="text-right text-uppercase">الاسم المعروض</th>
+            <th class="text-right text-uppercase">الوصف</th>
+            <th class="text-right text-uppercase">الحالة</th>
+            <th class="text-right text-uppercase">الأحداث</th>
           </tr>
         </thead>
         <tbody>
@@ -32,14 +33,21 @@
               {{ item.original_status }}
             </td>
             <td class="text-right">
-              <v-btn color="primary" class="mt-6" @click="restoreItem(item)"> Restore </v-btn>
-              <v-btn color="default" class="mt-6" @click="deleteItem(item)"> Delete </v-btn>
+              <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="restoreItem(item)">
+                <v-icon class="mr-3">mdi-reply-all</v-icon>
+              </v-btn>
+
+              <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
+                <v-icon color="black" class="">mdi-delete</v-icon>
+              </v-btn>
             </td>
           </tr>
         </tbody>
       </template>
-
-
+      
+      <template v-slot:top>
+        <v-toolbar flat color="white">سلة المحذوفات</v-toolbar>
+      </template>
     </v-simple-table>
     <template>
       <v-pagination v-model="page" :length="pageInfo && pageInfo.last_page" @input="getRoles()" circle></v-pagination>
@@ -49,7 +57,6 @@
 
 <script>
 export default {
-
   data() {
     return {
       roles: [],
@@ -71,7 +78,6 @@ export default {
       snackbar: false,
       text: null,
       color: null,
-      
 
       total: 0,
       pageInfo: null,
@@ -79,19 +85,15 @@ export default {
     }
   },
 
-  watch: {
-
-  },
+  watch: {},
   created() {
     this.getRoles()
     this.getPermissions()
   },
   methods: {
-    
     callMessage(message) {
-      this.snackbar=true
-      this.text=message
-     
+      this.snackbar = true
+      this.text = message
     },
 
     getRoles() {
@@ -100,11 +102,12 @@ export default {
         .then(res => {
           this.roles = res.data.data.data
           this.pageInfo = res.data.data
-            this.callMessage(res.data.message)
-
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
-      .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     getPermissions() {
@@ -118,8 +121,9 @@ export default {
             })
           })
         })
-      .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -129,45 +133,46 @@ export default {
       this.$http
         .get(`admin/roles/restore/${this.editedItem.id}`)
         .then(res => {
-
-              const index = this.roles.indexOf(item)
-              this.roles.splice(index, 1)
-             this.callMessage(res.data.message)
-          
+          const index = this.roles.indexOf(item)
+          this.roles.splice(index, 1)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
-      .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     restoreAll() {
       this.$http
         .get('admin/roles/restore-all')
         .then(res => {
-              this.roles = []
-           this.callMessage(res.data.message)
+          this.roles = []
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
-      .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
-        deleteItem(item) {
-      const index = this.cities.indexOf(item)
+    deleteItem(item) {
+      const index = this.roles.indexOf(item)
       confirm('هل أنت متأكد من حذف هذا العنصر؟') &&
         this.$http
-          .get(`admin/cities/force-delete/${item.id}`)
+          .get(`admin/roles/force-delete/${item.id}`)
           .then(res => {
-            this.cities.splice(index, 1)
-            this.callMessage(res.data.message)
-
+            this.roles.splice(index, 1)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
-                 .catch(error => {
+          .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },
-
-
   },
 }
 </script>

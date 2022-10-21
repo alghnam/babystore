@@ -153,12 +153,14 @@ export default {
         })
         .then(res => {
          
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
           this.$router.push('/login')
 
         })
       .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
         })
     },
   },

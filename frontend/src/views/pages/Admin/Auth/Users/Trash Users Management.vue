@@ -1,48 +1,48 @@
 <template>
   <div>
-    <v-btn color="primary" class="mt-6" @click="restoreAll()"> Restore All </v-btn>
- 
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="restoreAll()">
+      استعادة الكل
+      <v-icon class="mr-3">mdi-reply-all</v-icon>
+    </v-btn>
     <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
       <template v-slot:default>
         <thead>
           <tr>
-             <th class="text-right text-uppercase">First Name</th>
-            <th class="text-right text-uppercase">last Name</th>
+            <th class="text-right text-uppercase">الاسم الأول</th>
+            <th class="text-right text-uppercase">الاسم الأخير</th>
 
-            <th class="text-right text-uppercase">Phone No.</th>
+            <th class="text-right text-uppercase">رقم الهاتف</th>
 
-            <th class="text-right text-uppercase">Status</th>
-
-            <th class="text-right text-uppercase">Actions</th>
+            <th class="text-right text-uppercase">الأحداث</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in users" :key="item.id">
-             <td class="text-right">{{ item.first_name }}</td>
+            <td class="text-right">{{ item.first_name }}</td>
 
             <td class="text-right">
               {{ item.last_name }}
             </td>
-
-            
 
             <td class="text-right">
               {{ item.phone_no }}
             </td>
 
             <td class="text-right">
-              {{ item.original_status }}
-            </td>
-            <td class="text-right">
-              <v-btn color="primary" class="mt-6" @click="restoreItem(item)"> Restore </v-btn>
-              <v-btn color="default" class="mt-6" @click="deleteItem(item)"> Delete </v-btn>
+              <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="restoreItem(item)">
+                <v-icon class="mr-3">mdi-reply-all</v-icon>
+              </v-btn>
+
+              <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
+                <v-icon color="black" class="">mdi-delete</v-icon>
+              </v-btn>
             </td>
           </tr>
         </tbody>
       </template>
 
       <template v-slot:top>
-        <v-toolbar flat color="white"> Trash Users Management </v-toolbar>
+        <v-toolbar flat color="white">سلة المحذوفات</v-toolbar>
       </template>
     </v-simple-table>
     <template>
@@ -53,7 +53,6 @@
 
 <script>
 export default {
-
   data() {
     return {
       users: [],
@@ -68,7 +67,7 @@ export default {
         roles: [],
       },
       defaultItem: {
-       first_name: null,
+        first_name: null,
         last_name: null,
         phone_no: null,
         status: null,
@@ -78,7 +77,6 @@ export default {
       snackbar: false,
       text: null,
       color: null,
-    
 
       total: 0,
       pageInfo: null,
@@ -86,19 +84,14 @@ export default {
     }
   },
 
-  watch: {
-
-
-
-  },
+  watch: {},
   created() {
     this.getUsers()
   },
   methods: {
-        callMessage(message) {
-      this.snackbar=true
-      this.text=message
-     
+    callMessage(message) {
+      this.snackbar = true
+      this.text = message
     },
     getUsers() {
       this.$http
@@ -106,11 +99,12 @@ export default {
         .then(res => {
           this.users = res.data.data.data
           this.pageInfo = res.data.data
-            this.callMessage(res.data.message)
-
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
-          .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -125,8 +119,9 @@ export default {
             })
           })
         })
-          .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -135,44 +130,46 @@ export default {
       this.$http
         .get(`admin/users/restore/${this.editedItem.id}`)
         .then(res => {
-
-              const index = this.users.indexOf(item)
-              this.users.splice(index, 1)
- this.callMessage(res.data.message)    
+          const index = this.users.indexOf(item)
+          this.users.splice(index, 1)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
-          .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     restoreAll() {
       this.$http
         .get('admin/users/restore-all')
         .then(res => {
-          
-              this.users = []
- this.callMessage(res.data.message)          
+          this.users = []
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
-          .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     deleteItem(item) {
-      const index = this.cities.indexOf(item)
+      const index = this.users.indexOf(item)
       confirm('هل أنت متأكد من حذف هذا العنصر؟') &&
         this.$http
-          .get(`admin/cities/force-delete/${item.id}`)
+          .get(`admin/users/force-delete/${item.id}`)
           .then(res => {
-            this.cities.splice(index, 1)
-            this.callMessage(res.data.message)
-
+            this.users.splice(index, 1)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
-                 .catch(error => {
+          .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },
-
   },
 }
 </script>

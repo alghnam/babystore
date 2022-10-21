@@ -10,7 +10,6 @@
               <th class="text-right text-uppercase">اسم المنتج</th>
               <th class="text-right text-uppercase">الوصف</th>
               <th class="text-right text-uppercase">التقييم</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
@@ -37,13 +36,7 @@
                   large
                 ></v-rating>
               </td>
-              <td class="text-right">
-                {{ item.original_status }}
-              </td>
               <td>
-                <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
-                  <v-icon color="black" class="white--text">mdi-pencil</v-icon>
-                </v-btn>
                 <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
                   <v-icon color="black" class="">mdi-delete</v-icon>
                 </v-btn>
@@ -320,7 +313,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     getreviews() {
@@ -331,7 +325,8 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -362,10 +357,12 @@ export default {
               original_status: res.data.data.original_status,
             })
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
       } else {
         this.$http
@@ -390,10 +387,12 @@ export default {
               original_status: res.data.data.original_status,
             })
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
       }
     },
@@ -417,10 +416,12 @@ export default {
 
           .then(res => {
             this.reviews.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
     },
 

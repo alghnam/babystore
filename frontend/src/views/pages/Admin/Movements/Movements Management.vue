@@ -12,9 +12,9 @@
               <th class="text-right text-uppercase">الاسم</th>
               <th class="text-right text-uppercase">القيمة</th>
               <th class="text-right text-uppercase">رقم المحفظة</th>
-              <th class="text-right text-uppercase">المتبقي بالمحفظة </th>
+              <th class="text-right text-uppercase">المتبقي بالمحفظة</th>
               <th class="text-right text-uppercase">النوع</th>
-              <th class="text-right text-uppercase">الاحداث</th>
+              <!-- <th class="text-right text-uppercase">الاحداث</th> -->
             </tr>
           </thead>
           <tbody>
@@ -23,20 +23,19 @@
               <td class="text-right">{{ item.value }}</td>
 
               <td class="text-right">
-                {{ item.wallet ? item.wallet.id : '-' }}
+                {{ item.wallet ? item.wallet.id : null }}
               </td>
               <td class="text-right">{{ item.remaining_wallet_points }}</td>
 
               <td class="text-right">
                 {{ item.original_type }}
               </td>
-       
 
-              <td class="text-right">
+              <!-- <td class="text-right">
                 <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
                   <v-icon color="black" class="">mdi-delete</v-icon>
                 </v-btn>
-              </td>
+              </td> -->
             </tr>
           </tbody>
         </template>
@@ -61,7 +60,6 @@ export default {
       dialog: false,
       wallets: [],
       movements: [],
-
 
       types: [
         {
@@ -133,7 +131,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -150,7 +149,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -167,11 +167,13 @@ export default {
 
           .then(res => {
             this.movements.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

@@ -75,10 +75,12 @@ export default {
         .then(res => {
           this.carts = res.data.data.data
           this.pageInfo = res.data.data
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     restoreItem(item) {
@@ -88,10 +90,12 @@ export default {
         .then(res => {
           const index = this.carts.indexOf(item)
           this.carts.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     restoreAll() {
@@ -99,10 +103,12 @@ export default {
         .get('admin/carts/restore-all')
         .then(res => {
           this.carts = []
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -113,11 +119,13 @@ export default {
           .get(`admin/cities/force-delete/${item.id}`)
           .then(res => {
             this.cities.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

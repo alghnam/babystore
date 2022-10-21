@@ -1,56 +1,21 @@
 <template>
   <v-row>
-    <v-col
-      cols="12"
-      md="4"
-    >
-      <dashboard-congratulation-john></dashboard-congratulation-john>
-    </v-col>
-    <v-col
-      cols="12"
-      md="8"
-    >
+    <v-col cols="12" md="12">
       <dashboard-statistics-card></dashboard-statistics-card>
     </v-col>
 
-    <v-col
-      cols="12"
-      sm="6"
-      md="4"
-    >
+    <v-col cols="12" sm="12" md="8" class="pr-5 pl-5">
       <dashboard-weekly-overview></dashboard-weekly-overview>
     </v-col>
 
-    <v-col
-      cols="12"
-      md="4"
-      sm="6"
-    >
-      <dashboard-card-total-earning></dashboard-card-total-earning>
-    </v-col>
-
-    <v-col
-      cols="12"
-      md="4"
-    >
+    <v-col cols="12" md="4">
       <v-row class="match-height">
-        <v-col
-          cols="12"
-          sm="6"
-        >
-          <statistics-card-vertical
-            :change="totalProfit.change"
-            :color="totalProfit.color"
-            :icon="totalProfit.icon"
-            :statistics="totalProfit.statistics"
-            :stat-title="totalProfit.statTitle"
-            :subtitle="totalProfit.subtitle"
-          ></statistics-card-vertical>
+        <v-col cols="12" sm="6">
+          <v-card class="mx-auto">
+            <h1 style="padding-top: 64px; padding-right: 50px">{{ currency }}</h1>
+          </v-card>
         </v-col>
-        <v-col
-          cols="12"
-          sm="6"
-        >
+        <v-col cols="12" sm="6">
           <statistics-card-vertical
             :change="totalSales.change"
             :color="totalSales.color"
@@ -60,48 +25,30 @@
             :subtitle="totalSales.subtitle"
           ></statistics-card-vertical>
         </v-col>
-        <v-col
-          cols="12"
-          sm="6"
-        >
+        <v-col cols="12" sm="6">
           <statistics-card-vertical
-            :change="newProject.change"
-            :color="newProject.color"
-            :icon="newProject.icon"
-            :statistics="newProject.statistics"
-            :stat-title="newProject.statTitle"
-            :subtitle="newProject.subtitle"
+            :change="totalViews.change"
+            :color="totalViews.color"
+            :icon="totalViews.icon"
+            :statistics="totalViews.statistics"
+            :stat-title="totalViews.statTitle"
+            :subtitle="totalViews.subtitle"
           ></statistics-card-vertical>
         </v-col>
 
-        <v-col
-          cols="12"
-          sm="6"
-        >
+        <v-col cols="12" sm="6">
           <statistics-card-vertical
-            :change="salesQueries.change"
-            :color="salesQueries.color"
-            :icon="salesQueries.icon"
-            :statistics="salesQueries.statistics"
-            :stat-title="salesQueries.statTitle"
-            :subtitle="salesQueries.subtitle"
+            :change="totalReviews.change"
+            :color="totalReviews.color"
+            :icon="totalReviews.icon"
+            :statistics="totalReviews.statistics"
+            :stat-title="totalReviews.statTitle"
+            :subtitle="totalReviews.subtitle"
           ></statistics-card-vertical>
         </v-col>
       </v-row>
     </v-col>
 
-    <v-col
-      cols="12"
-      md="4"
-    >
-      <dashboard-card-sales-by-countries></dashboard-card-sales-by-countries>
-    </v-col>
-    <v-col
-      cols="12"
-      md="8"
-    >
-      <dashboard-card-deposit-and-withdraw></dashboard-card-deposit-and-withdraw>
-    </v-col>
     <v-col cols="12">
       <dashboard-datatable></dashboard-datatable>
     </v-col>
@@ -114,7 +61,6 @@ import { mdiPoll, mdiLabelVariantOutline, mdiCurrencyUsd, mdiHelpCircleOutline }
 import StatisticsCardVertical from '@/components/statistics-card/StatisticsCardVertical.vue'
 
 // demos
-import DashboardCongratulationJohn from './DashboardCongratulationJohn.vue'
 import DashboardStatisticsCard from './DashboardStatisticsCard.vue'
 import DashboardCardTotalEarning from './DashboardCardTotalEarning.vue'
 import DashboardCardDepositAndWithdraw from './DashboardCardDepositAndWithdraw.vue'
@@ -125,7 +71,6 @@ import DashboardDatatable from './DashboardDatatable.vue'
 export default {
   components: {
     StatisticsCardVertical,
-    DashboardCongratulationJohn,
     DashboardStatisticsCard,
     DashboardCardTotalEarning,
     DashboardCardDepositAndWithdraw,
@@ -133,50 +78,95 @@ export default {
     DashboardWeeklyOverview,
     DashboardDatatable,
   },
-  setup() {
-    const totalProfit = {
-      statTitle: 'Total Profit',
-      icon: mdiPoll,
-      color: 'success',
-      subtitle: 'Weekly Project',
-      statistics: '$25.6k',
-      change: '+42%',
-    }
 
-    const totalSales = {
-      statTitle: 'Refunds',
-      icon: mdiCurrencyUsd,
-      color: 'secondary',
-      subtitle: 'Past Month',
-      statistics: '$78',
-      change: '-15%',
-    }
-
-    // vertical card options
-    const newProject = {
-      statTitle: 'New Project',
-      icon: mdiLabelVariantOutline,
-      color: 'primary',
-      subtitle: 'Yearly Project',
-      statistics: '862',
-      change: '-18%',
-    }
-
-    const salesQueries = {
-      statTitle: 'Sales Quries',
-      icon: mdiHelpCircleOutline,
-      color: 'warning',
-      subtitle: 'Last week',
-      statistics: '15',
-      change: '-18%',
-    }
-
+  data() {
     return {
-      totalProfit,
-      totalSales,
-      newProject,
-      salesQueries,
+      currency: null,
+      totalSales: {
+        statTitle: 'الربح الكلي',
+        icon: 'mdi-chart-line',
+        color: 'primary',
+        subtitle: '',
+        statistics: 0,
+        change: '',
+      },
+      totalViews: {
+        statTitle: 'المشاهدات',
+        icon: 'mdi-eye',
+        color: 'success',
+        subtitle: '',
+        statistics: 0,
+        change: '',
+      },
+      totalReviews: {
+        statTitle: 'إجمالي التقييمات',
+        icon: 'mdi-account-edit',
+        color: 'warning',
+        subtitle: '',
+        statistics: 0,
+        change: '',
+      },
     }
+  },
+  created() {
+    this.gettotalProfit()
+    this.getViews()
+    this.getReviews()
+    this.showCurrency()
+  },
+  methods: {
+    showCurrency() {
+      this.$http
+        .get('admin/show-currency')
+        .then(res => {
+          this.currency = res.data.data
+        })
+        .catch(error => {
+          if (error && error.response) {
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
+          }
+        })
+    },
+    gettotalProfit() {
+      this.$http
+        .get('admin/orders/prices-sent-delivered-orders')
+        .then(res => {
+          this.totalSales.statistics = res.data.data
+        })
+        .catch(error => {
+          if (error && error.response) {
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
+          }
+        })
+    },
+    getViews() {
+      this.$http
+        .get('admin/views/count-data')
+        .then(res => {
+          this.totalViews.statistics = res.data.data
+        })
+        .catch(error => {
+          if (error && error.response) {
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
+          }
+        })
+    },
+    getReviews() {
+      this.$http
+        .get('admin/reviews/count-data')
+        .then(res => {
+          this.totalReviews.statistics = res.data.data
+        })
+        .catch(error => {
+          if (error && error.response) {
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
+          }
+        })
+    },
   },
 }
 </script>

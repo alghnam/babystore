@@ -13,7 +13,9 @@
               <th class="text-right text-uppercase">المستحدم</th>
               <th class="text-right text-uppercase">الخدمة</th>
               <th class="text-right text-uppercase">وسيلة الدفع</th>
-              <th class="text-right text-uppercase">العنوان</th>
+              <th class="text-right text-uppercase">الدولة</th>
+              <th class="text-right text-uppercase">المدينة</th>
+              <th class="text-right text-uppercase">المنطقة</th>
               <th class="text-right text-uppercase">الكوبون</th>
               <th class="text-right text-uppercase">السعر</th>
               <th class="text-right text-uppercase">حالة الطلب</th>
@@ -24,24 +26,26 @@
             <tr v-for="item in orders" :key="item.id">
               <td class="text-right">{{ item.order_num }}</td>
               <td class="text-right">
-                {{ item.user ? item.user.first_name : '-' }} . ' '. {{ item.user ? item.user.last_name : '-' }}
+                {{ item.user ? item.user.first_name : null }}
               </td>
 
               <td class="text-right">
-                {{ item.service ? item.service.period : '-' }} . 'vlaue:' .
-                {{ item.service ? item.service.value : '-' }}
+                {{ item.service ? item.service.period : null }}
               </td>
               <td class="text-right">
-                {{ item.payment ? item.payment.name : '-' }}
+                {{ item.payment ? item.payment.name : null }}
               </td>
               <td class="text-right">
-                piece_number-> {{ item.address ? item.address.piece_number : '-' }}, street_number->
-                {{ item.address ? item.address.street_number : '-' }}, jada_number->
-                {{ item.address ? item.address.jada_number : '-' }}, home_no->
-                {{ item.address ? item.address.home_no : '-' }}
+                {{ item.address ? item.address.country.name : null }}
+              </td>
+                            <td class="text-right">
+                {{ item.address ? item.address.city.name : null }}
+              </td>
+                            <td class="text-right">
+                {{ item.address ? item.address.town.name : null }}
               </td>
               <td class="text-right">
-                {{ item.couponcode ? item.couponcode.name : '-' }}
+                {{ item.couponcode ? item.couponcode.name : null }}
               </td>
               <td class="text-right">{{ item.price }}</td>
 
@@ -207,7 +211,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -226,14 +231,16 @@ export default {
                 original_status: res.data.data.original_status,
               })
 
-              this.callMessage(res.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
             } else {
               this.noDataInYourEntering()
             }
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -256,12 +263,14 @@ export default {
           .then(res => {
             if (res.data.message != null) {
               this.orders.splice(index, 1)
-              this.callMessage(res.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
             }
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },

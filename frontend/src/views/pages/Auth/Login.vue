@@ -1,6 +1,5 @@
 <template>
   <div class="auth-wrapper auth-v1">
- 
     <div class="auth-inner">
       <v-card class="auth-card">
         <!-- logo -->
@@ -21,7 +20,7 @@
 
         <!-- title -->
         <v-card-text>
-          <p class="text-2xl font-weight-semibold text--primary mb-2">أهلا وسهلا بك في  BABY STORE APP! 👋🏻</p>
+          <p class="text-2xl font-weight-semibold text--primary mb-2">أهلا وسهلا بك في BABY STORE APP! 👋🏻</p>
           <p class="mb-2">سجل دخولك لتبدا عملية الادارة في موقعك</p>
         </v-card-text>
 
@@ -57,7 +56,7 @@
           </v-form>
         </v-card-text>
       </v-card>
-    </div> 
+    </div>
 
     <!-- background triangle shape  -->
     <img
@@ -126,18 +125,16 @@ export default {
       snackbar: false,
       text: null,
       color: null,
-     
     }
   },
-  watch: {
-  
-  },
+  watch: {},
   methods: {
     //methods for handle errors
     callMessage(message) {
-      this.snackbar=true
-      this.text=message
-     
+      this.snackbar = true
+      this.text = message
+      this.$store.state.snackbar = true
+      this.$store.state.text = message
     },
 
     //for login
@@ -148,20 +145,22 @@ export default {
           password: this.password,
         })
         .then(res => {
-              localStorage.setItem('token', res.data.data.token)
-              localStorage.setItem("user", JSON.stringify(res.data.data.user))
-              localStorage.setItem("userId", JSON.stringify(res.data.data.user.id))
-              this.$http.defaults.headers.authorization = `Bearer ${res.data.data}`
-              this.$store.state.token = res.data.data
-              this.$store.state.user = res.data.user
-this.callMessage(res.data.message)
-              setTimeout(()=>{
-                this.$router.push('/dashboard')
-              },1000)
-           
+          localStorage.setItem('token', res.data.data.token)
+          localStorage.setItem('user', JSON.stringify(res.data.data.user))
+          localStorage.setItem('userId', JSON.stringify(res.data.data.user.id))
+          this.$http.defaults.headers.authorization = `Bearer ${res.data.data.token}`
+
+          this.$store.state.token = res.data.data
+          this.$store.state.user = res.data.user
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
+          setTimeout(() => {
+            this.$router.push('/dashboard')
+          }, 5000)
         })
-      .catch(error => {
-            this.callMessage(error.response.data.message)
+        .catch(error => {
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
   },

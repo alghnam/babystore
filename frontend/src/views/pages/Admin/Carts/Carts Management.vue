@@ -11,8 +11,6 @@
           <thead>
             <tr>
               <th class="text-right text-uppercase">اسم العميل</th>
-              <th class="text-right text-uppercase">اسم المنتج</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
@@ -21,21 +19,8 @@
               <td class="text-right">
                 {{ item.user ? item.user.first_name : null }}
               </td>
-              <td class="text-right">
-                {{
-                  item.product_array_attributes[0]
-                    ? [item.product_array_attributes[0].product ? item.product_array_attributes[0].product.name : null]
-                    : null
-                }}
-              </td>
 
               <td class="text-right">
-                {{ item.original_status }}
-              </td>
-              <td class="text-right">
-                <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
-                  <v-icon color="black" class="white--text">mdi-pencil</v-icon>
-                </v-btn>
                 <v-btn color="default" class="mt-6" @click="showProducts(item)"> عرض المنتجات </v-btn>
 
                 <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
@@ -164,7 +149,6 @@ export default {
       this.$router.push('/trash-carts-management')
     },
     showProducts(item) {
-      console.log('55555', item)
       this.$router.push(`products-cart/${item.id}`)
     },
 
@@ -176,7 +160,8 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -193,11 +178,13 @@ export default {
             Object.assign(this.carts[this.editedIndex], {
               original_status: res.data.data.original_status,
             })
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -211,11 +198,13 @@ export default {
 
           .then(res => {
             this.carts.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

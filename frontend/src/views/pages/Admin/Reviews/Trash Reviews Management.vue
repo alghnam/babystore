@@ -1,11 +1,5 @@
 <template>
   <div>
-    <v-snackbar v-model="snackbar" :color="color">
-      {{ text }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false"> اغلاق </v-btn>
-      </template>
-    </v-snackbar>
     <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="restoreAll()">
       استعادة الكل
       <v-icon class="mr-3">mdi-reply-all</v-icon>
@@ -20,7 +14,6 @@
             <th class="text-center text-uppercase">اسم المنتج</th>
             <th class="text-center text-uppercase">الوصف</th>
             <th class="text-center text-uppercase">التقييم</th>
-            <th class="text-center text-uppercase">حالة الظهور</th>
             <th class="text-center text-uppercase">الاحداث</th>
           </tr>
         </thead>
@@ -47,9 +40,7 @@
                 large
               ></v-rating>
             </td>
-            <td class="text-center">
-              {{ item.original_status }}
-            </td>
+
             <td>
               <div>
                 <v-btn color="primary" class="mt-6" @click="restoreItem(item)"> استعادة </v-btn>
@@ -130,10 +121,12 @@ export default {
         .then(res => {
           this.reviews = res.data.data.data
           this.pageInfo = res.data.data
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -145,10 +138,12 @@ export default {
         .then(res => {
           const index = this.reviews.indexOf(item)
           this.reviews.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     restoreAll() {
@@ -156,10 +151,12 @@ export default {
         .get('admin/reviews/restore-all')
         .then(res => {
           this.reviews = []
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     createItem() {
@@ -173,10 +170,12 @@ export default {
           .get(`admin/reviews/force-delete/${item.id}`)
           .then(res => {
             this.reviews.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
     },
   },

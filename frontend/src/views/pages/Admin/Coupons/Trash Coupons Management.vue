@@ -25,7 +25,7 @@
               </td>
 
               <td class="text-center">
-                {{ item.order ? item.order.order_num : '-' }}
+                {{ item.order ? item.order.order_num : null }}
               </td>
               <td class="text-right">
                 {{ item.is_used }}
@@ -91,11 +91,13 @@ export default {
         .then(res => {
           this.coupons = res.data.data.data
           this.pageInfo = res.data.data
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -108,12 +110,14 @@ export default {
           if (res.data.message != null) {
             const index = this.coupons.indexOf(item)
             this.coupons.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           }
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -123,12 +127,14 @@ export default {
         .then(res => {
           if (res.data.message != null) {
             this.coupons = []
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           }
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -140,11 +146,13 @@ export default {
           .get(`admin/coupons/force-delete/${item.id}`)
           .then(res => {
             this.coupons.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

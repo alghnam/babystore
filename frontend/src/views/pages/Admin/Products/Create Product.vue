@@ -238,7 +238,6 @@
                                 :items="subcategorieso"
                                 v-model="editedItem.category"
                               ></v-select>
-                              editedItem.sub_category.id {{ editedItem.sub_category }}
                               <v-select
                                 v-if="editedItem.sub_category"
                                 class="col-sm-5 mx-auto"
@@ -515,7 +514,8 @@ export default {
           this.productsSimilar.push(res.data.data.name)
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     // },
@@ -594,14 +594,14 @@ export default {
             })
 
             .catch(error => {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             })
         }
       },
     },
     'editedItem.category.name': {
       handler: function (val) {
-        alert(val)
         // this.sub_category_id = val
         this.editedItem.category.id = val
         if (this.editedItem.category && this.editedItem.category.id !== undefined) {
@@ -620,7 +620,8 @@ export default {
 
             .catch(error => {
               if (error && error.response) {
-                this.callMessage(error.response.data.message)
+                this.$store.state.snackbar = true
+                this.$store.state.text = error.response.data.message
               }
             })
         }
@@ -656,7 +657,8 @@ export default {
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -680,10 +682,12 @@ export default {
           const index = this.imgs.indexOf(img)
           this.imgs.splice(index, 1)
           this.base_imgs.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     deleteImageNotStore(img, index) {
@@ -795,10 +799,12 @@ export default {
       this.$http
         .get(`admin/product-attributes/delete-many-attributes/${id}`)
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     saveSubProduct() {
@@ -809,11 +815,13 @@ export default {
             attributes: this.x.attr,
           })
           .then(res => {
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }, 500)
@@ -851,10 +859,12 @@ export default {
         })
 
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     saveAttributes(item) {
@@ -868,11 +878,13 @@ export default {
           })
 
           .then(res => {
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -883,11 +895,13 @@ export default {
             attributes: item.attrs,
           })
           .then(res => {
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -913,7 +927,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     saveStorageDetail() {
@@ -926,11 +941,13 @@ export default {
         })
 
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
 
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     deleteSimilar(similar) {
@@ -940,10 +957,12 @@ export default {
         .then(res => {
           const index = this.productsSimilar.indexOf(similar)
           this.productsSimilar.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     saveSeoProduct() {
@@ -967,10 +986,12 @@ export default {
         })
 
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     async saveSimilarProduct() {
@@ -992,7 +1013,8 @@ export default {
           .then(res => {})
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -1011,7 +1033,8 @@ export default {
         })
 
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     save() {
@@ -1077,12 +1100,17 @@ export default {
           }
           ;(this.editedItem = this.defaultItem), this.$router.push(`/edit-product/${this.product_id}`)
 
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
+          setTimeout(() => {
+            this.moveIntoEdit()
+          }, 500)
         })
 
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -1110,12 +1138,14 @@ export default {
             this.product_attribute_id == null
             this.main_attrs.splice(i, 1)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
 
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

@@ -11,7 +11,6 @@
             <tr>
               <th class="text-right text-uppercase">الاسم</th>
               <th class="text-right text-uppercase">الصورة</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
@@ -21,17 +20,12 @@
                 {{ item.name }}
               </td>
               <td class="text-right">
-                kkkkkkkk {{ item.image ? item.image : null }}
                 <div v-if="item.image">
                   <img
                     :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')"
                     alt="product image"
                   />
                 </div>
-              </td>
-
-              <td class="text-right">
-                {{ item.original_status }}
               </td>
 
               <td>
@@ -64,54 +58,40 @@
                   <v-card class="col-sm-7 mx-auto">
                     <v-card-title>
                       <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
-                        <v-icon large>mdi-account-circle</v-icon> ادارة اقسام الاسئلة
+                        <v-icon large>mdi-account-circle</v-icon> ادارة الاسئلة
                       </v-alert>
                     </v-card-title>
                     <v-card-text>
                       <div class="row">
-                        <v-text-field
-                          class="col-sm-5 mx-auto"
+                        <v-col cols="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
+                        <v-img
+                          :src="
+                            editedItem.image
+                              ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
+                              : ''
+                          "
+                          v-if="!editedItem.photo_url"
+                        ></v-img>
+                        <img
+                          :src="editedItem.photo_url"
+                          v-if="editedItem.photo_url"
+                          style="height: 118px; width: 84px"
+                        />
+
+                        <!-- image choose section -->
+                        <v-file-input
+                          truncate-length="15"
                           outlined
                           dense
-                          label="الاسم"
-                          v-model="editedItem.name"
-                        ></v-text-field>
-
-                        <v-col xs="12" sm="12" md="5" lg="5" xl="5">
-                          <v-img
-                            :src="
-                              editedItem.image
-                                ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
-                                : ''
-                            "
-                            v-if="!editedItem.photo_url"
-                          ></v-img>
-                          <img
-                            :src="editedItem.photo_url"
-                            v-if="editedItem.photo_url"
-                            style="height: 118px; width: 84px"
-                          />
-                        </v-col>
-                        <v-col xs="12" sm="12" md="12" lg="12" xl="12">
-                          <!-- image choose section -->
-                          <v-file-input
-                            truncate-length="15"
-                            outlined
-                            dense
-                            label="صورة المنتج"
-                            class="col-sm-5 mx-auto"
-                            v-model="photo"
-                          ></v-file-input>
-                        </v-col>
-                        <v-select
+                          label="صورة المنتج"
                           class="col-sm-5 mx-auto"
-                          outlined
-                          dense
-                          label="حالة الظهور"
-                          :items="statuses"
-                          v-model="editedItem.status"
-                        ></v-select>
+                          v-model="photo"
+                        ></v-file-input>
+                        </v-col>
+                        <v-col cols="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
 
+                        <v-text-field outlined dense label="الاسم" v-model="editedItem.name"></v-text-field>
+                        </v-col>
                         <div class="col-sm-5 mx-auto row">
                           <v-btn
                             color="primary lighten-1 rounded-tr-xl rounded-bl-xl"
@@ -234,7 +214,7 @@ export default {
       this.text = message
     },
     trimAttribute(value, size) {
-      if (value !== undefined) {
+      if (value !== undefined || value !==null) {
         let new_url = value.slice(0, 27) + '/thumbnail/' + value.slice(28)
         let index = new_url.length - 4
         let url = new_url.slice(0, index) + size + new_url.slice(index)
@@ -255,7 +235,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -268,7 +249,7 @@ export default {
       formData.append('image', this.photo)
       formData.append('name', this.editedItem.name)
 
-      formData.append('status', this.editedItem.status)
+      formData.append('status', 1)
       if (this.editedIndex > -1) {
         //edit route
         this.$http
@@ -288,11 +269,13 @@ export default {
             // })
             Object.assign(this.questions[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -308,11 +291,13 @@ export default {
             this.close()
             this.questions.push(res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -337,11 +322,13 @@ export default {
 
           .then(res => {
             this.questions.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

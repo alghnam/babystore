@@ -7,7 +7,6 @@
             <tr>
               <th class="text-right text-uppercase">user name</th>
               <th class="text-right text-uppercase">product name</th>
-              <th class="text-right text-uppercase">Status</th>
               <th class="text-right text-uppercase">Actions</th>
             </tr>
           </thead>
@@ -17,13 +16,8 @@
               <td class="text-right">
                 {{ item.product ? item.product.name : null }}
               </td>
-              <td class="text-right">
-                {{ item.original_status }}
-              </td>
+
               <td>
-                <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
-                  <v-icon color="black" class="white--text">mdi-pencil</v-icon>
-                </v-btn>
                 <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
                   <v-icon color="black" class="">mdi-delete</v-icon>
                 </v-btn>
@@ -34,7 +28,7 @@
 
         <template v-slot:top>
           <v-toolbar flat color="white">
-            favorites Management
+            ادارة المفضلات
             <v-dialog v-model="dialog">
               <template v-slot:expanded-item="{ headers, item }">
                 <td :colspan="headers.length">More info about {{ item.user_id }}</td>
@@ -44,7 +38,7 @@
                   <v-card class="col-sm-7 mx-auto">
                     <v-card-title>
                       <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
-                        <v-icon dark large>mdi-account-circle</v-icon> favorites Management
+                        <v-icon dark large>mdi-account-circle</v-icon> ادارة المفضلات
                       </v-alert>
                     </v-card-title>
                     <v-card-text>
@@ -178,7 +172,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -197,10 +192,12 @@ export default {
               original_status: res.data.data.original_status,
             })
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
       } else {
         this.$http
@@ -212,10 +209,12 @@ export default {
             this.dialog = false
             this.favorites.push(res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
       }
     },
@@ -240,10 +239,12 @@ export default {
 
           .then(res => {
             this.favorites.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
     },
 

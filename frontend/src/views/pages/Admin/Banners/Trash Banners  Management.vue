@@ -1,16 +1,19 @@
 <template>
   <div>
-    <v-btn color="primary" class="mt-6" @click="restoreAll()"> Restore All </v-btn>
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="restoreAll()">
+      استعادة الكل
+      <v-icon class="mr-3">mdi-reply-all</v-icon>
+    </v-btn>
     <v-col cols="12" class="pb-3">
       <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-right text-uppercase">title</th>
-              <th class="text-right text-uppercase">description</th>
-              <th class="text-right text-uppercase">product name</th>
-              <th class="text-right text-uppercase">Status</th>
-              <th class="text-right text-uppercase">Actions</th>
+              <th class="text-right text-uppercase">العنوان</th>
+              <th class="text-right text-uppercase">الوصف</th>
+              <th class="text-right text-uppercase">اسم المنتج</th>
+              <th class="text-right text-uppercase">الحالة</th>
+              <th class="text-right text-uppercase">الأحداث</th>
             </tr>
           </thead>
           <tbody>
@@ -18,8 +21,13 @@
               <td class="text-right">{{ item.title }}</td>
               <td class="text-right">{{ item.description }}</td>
               <td class="text-right">
-                {{ item.product ? item.product.name : null }}
-                {{ item.image ? item.image.url : null }}
+                {{ item.product.name.text ? item.product.name.text : item.product.name }}
+                <div v-if="item.image">
+                  <img
+                    :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')"
+                    alt="product image"
+                  />
+                </div>
               </td>
               <td class="text-right">
                 {{ item.original_status }}
@@ -36,6 +44,9 @@
               </td>
             </tr>
           </tbody>
+        </template>
+        <template v-slot:top>
+          <v-toolbar flat color="white">سلة المحذوفات </v-toolbar>
         </template>
       </v-simple-table>
     </v-col>
@@ -92,16 +103,26 @@ export default {
       this.snackbar = true
       this.text = message
     },
+        trimAttribute(value, size) {
+      if (value !== null) {
+        let new_url = value.slice(0, 13) + '/thumbnail/' + value.slice(14)
+        let index = new_url.length - 4
+        let url = new_url.slice(0, index) + size + new_url.slice(index)
+        return url.substr(0, url.length)
+      }
+    },
     getbanners() {
       this.$http
         .get(`admin/banners/trash?page=${this.page}&total=${this.total}`)
         .then(res => {
           this.banners = res.data.data.data
           this.pageInfo = res.data.data
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -113,10 +134,12 @@ export default {
         .then(res => {
           const index = this.banners.indexOf(item)
           this.banners.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     restoreAll() {
@@ -124,10 +147,12 @@ export default {
         .get('admin/banners/restore-all')
         .then(res => {
           this.banners = []
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -138,11 +163,13 @@ export default {
           .get(`admin/banners/force-delete/${item.id}`)
           .then(res => {
             this.banners.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

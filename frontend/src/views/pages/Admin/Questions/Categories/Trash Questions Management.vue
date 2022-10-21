@@ -10,7 +10,7 @@
           <thead>
             <tr>
               <th class="text-right text-uppercase">الاسم</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
+              <th class="text-right text-uppercase">الصورة</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
@@ -19,9 +19,13 @@
               <td class="text-right">
                 {{ item.name }}
               </td>
-
               <td class="text-right">
-                {{ item.original_status }}
+                <div v-if="item.image">
+                  <img
+                    :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')"
+                    alt="product image"
+                  />
+                </div>
               </td>
 
               <td class="text-right">
@@ -90,11 +94,13 @@ export default {
         .then(res => {
           this.questions = res.data.data.data
           this.pageInfo = res.data.data
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -106,11 +112,13 @@ export default {
         .then(res => {
           const index = this.questions.indexOf(item)
           this.questions.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -119,11 +127,13 @@ export default {
         .get('admin/question-categories/restore-all')
         .then(res => {
           this.questions = []
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -135,11 +145,13 @@ export default {
           .get(`admin/question-categories/force-delete/${item.id}`)
           .then(res => {
             this.questions.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

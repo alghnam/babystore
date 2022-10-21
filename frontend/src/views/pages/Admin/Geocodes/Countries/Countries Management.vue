@@ -13,7 +13,6 @@
           <tr>
             <th class="text-right text-uppercase">الاسم</th>
             <th class="text-right text-uppercase">الكود</th>
-            <th class="text-right text-uppercase">حالة الظهور</th>
             <th class="text-right text-uppercase">الاحداث</th>
           </tr>
         </thead>
@@ -21,9 +20,7 @@
           <tr v-for="item in countries" :key="item.id">
             <td class="text-right">{{ item.name }}</td>
             <td class="text-right">{{ item.code }}</td>
-            <td class="text-right">
-              {{ item.original_status }}
-            </td>
+       
 
             <td>
                   <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
@@ -74,14 +71,7 @@
                         label="الكود"
                         v-model="editedItem.code"
                       ></v-text-field>
-                      <v-select
-                        class="col-sm-5 mx-auto"
-                        outlined
-                        dense
-                        label="حالة الظهور"
-                        :items="statuses"
-                        v-model="editedItem.status"
-                      ></v-select>
+                     
 
                       <div class="col-sm-5 mx-auto row">
                         <v-btn
@@ -187,7 +177,8 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -199,24 +190,22 @@ export default {
             name: this.editedItem.name,
             code: this.editedItem.code,
 
-            status: this.editedItem.status,
+            status:1,
           })
 
           .then(res => {
             this.dialog = false
+            Object.assign(this.countries[this.editedIndex], res.data.data)
 
-              Object.assign(this.countries[this.editedIndex], {
-                id: this.editedItem.id,
-                name: this.editedItem.name,
-                code: this.editedItem.code,
-                original_status: res.data.data.original_status,
-              })
+           
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -225,23 +214,20 @@ export default {
             name: this.editedItem.name,
             code: this.editedItem.code,
 
-            status: this.editedItem.status,
+            status:1,
           })
 
           .then(res => {
             this.dialog = false
-            console.log('res.data.data',res.data.data)
-            this.countries.push({
-              id: res.data.data.id,
-              name: this.editedItem.name,
-              code: this.editedItem.code,
-                original_status: res.data.data.original_status,
-            })
-            this.callMessage(res.data.message)
+            this.countries.push(res.data.data)
+
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -267,12 +253,14 @@ export default {
 
           .then(res => {
               this.countries.splice(index, 1)
-              this.callMessage(res.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
             
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },

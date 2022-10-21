@@ -12,7 +12,6 @@
             <tr>
               <th class="text-right text-uppercase">الاسم</th>
               <th class="text-right text-uppercase">النوع</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
@@ -21,12 +20,9 @@
               <td class="text-right">{{ item.name }}</td>
               <td class="text-right">
                 {{ item.original_type }}
-                <p v-if="item.id == 3">[فيزا, كي نت]</p>
               </td>
 
-              <td class="text-right">
-                {{ item.original_status }}
-              </td>
+              
               <td>
                 <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
                   <v-icon color="black" class="white--text">mdi-pencil</v-icon>
@@ -76,16 +72,14 @@
                           :items="types"
                           v-model="editedItem.type"
                         ></v-select>
-                        {{ editedItem.type }}
-                        <v-select
+                        <!-- <v-select
                           class="col-sm-5 mx-auto"
                           outlined
                           dense
                           label="حالة الظهور"
                           :items="statuses"
                           v-model="editedItem.status"
-                        ></v-select>
-                        {{ editedItem.status }}
+                        ></v-select> -->
 
                         <div class="col-sm-5 mx-auto row">
                           <v-btn
@@ -203,7 +197,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -215,18 +210,23 @@ export default {
           .post(`admin/payments/update/${this.editedItem.id}`, {
             name: this.editedItem.name,
             type: this.editedItem.type,
-            status: this.editedItem.status,
+            status: 1,
           })
           .then(res => {
             this.dialog = false
 
             Object.assign(this.payments[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
+            this.dialog = false
+
+            console.log('555', this.$store.state.text)
             }
           })
       } else {
@@ -234,18 +234,20 @@ export default {
           .post('admin/payments/store', {
             name: this.editedItem.name,
             type: this.editedItem.type,
-            status: this.editedItem.status,
+            status: 1,
           })
 
           .then(res => {
             this.dialog = false
             this.payments.push(res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -270,11 +272,13 @@ export default {
 
           .then(res => {
             this.payments.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

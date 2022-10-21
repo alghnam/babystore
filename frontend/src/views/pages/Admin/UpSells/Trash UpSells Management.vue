@@ -1,45 +1,41 @@
 <template>
   <div>
- 
-    <v-btn color="primary" class="mt-6" @click="restoreAll()"> Restore All </v-btn>
-      <v-col cols="12" class="pb-3">
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="restoreAll()">
+      استعادة الكل
+      <v-icon class="mr-3">mdi-reply-all</v-icon>
+    </v-btn>
+    <v-col cols="12" class="pb-3">
+      <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th class="text-right text-uppercase">name</th>
+              <th class="text-right text-uppercase">description</th>
+              <th class="text-right text-uppercase">footer</th>
+              <th class="text-right text-uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in upsells" :key="item.id">
+              <td class="text-right">{{ item.name }}</td>
+              <td v-html="item.description"></td>
+              <td class="text-right">{{ item.footer }}</td>
 
-    <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th class="text-right text-uppercase">title</th>
-            <th class="text-right text-uppercase">description</th>
-            <th class="text-right text-uppercase">footer</th>
-            <th class="text-right text-uppercase">Status</th>
-            <th class="text-right text-uppercase">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in upsells" :key="item.id">
-            <td class="text-right">{{ item.title }}</td>
-            <td v-html="item.description"></td>
-            <td class="text-right">{{ item.footer }}</td>
+              <td class="text-right">
+                <div>
+                  <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="restoreItem(item)">
+                    <v-icon class="mr-3">mdi-reply-all</v-icon>
+                  </v-btn>
 
-            <td class="text-right">
-              {{ item.original_status }}
-            </td>
-            <td class="text-right">
-              <div>
-                <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="restoreItem(item)">
-                  <v-icon class="mr-3">mdi-reply-all</v-icon>
-                </v-btn>
-
-                <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
-                  <v-icon color="black" class="">mdi-delete</v-icon>
-                </v-btn>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </template>
-
-    </v-simple-table>
+                  <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
+                    <v-icon color="black" class="">mdi-delete</v-icon>
+                  </v-btn>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
     </v-col>
     <template>
       <v-pagination v-model="page" :length="pageInfo && pageInfo.last_page" @input="getupsells()" circle></v-pagination>
@@ -49,19 +45,14 @@
 
 <script>
 export default {
-  
   data() {
     return {
       dialog: null,
       upsells: [],
-  
+
       editedIndex: -1,
-      editedItem: {
-      
-      },
-      defaultItem: {
-       
-      },
+      editedItem: {},
+      defaultItem: {},
       snackbar: false,
       text: null,
       color: null,
@@ -91,10 +82,12 @@ export default {
         .then(res => {
           this.upsells = res.data.data.data
           this.pageInfo = res.data.data
-            this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -106,10 +99,12 @@ export default {
         .then(res => {
           const index = this.upsells.indexOf(item)
           this.upsells.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     restoreAll() {
@@ -117,13 +112,14 @@ export default {
         .get('admin/upsells/restore-all')
         .then(res => {
           this.upsells = []
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
-
 
     deleteItem(item) {
       const index = this.upsells.indexOf(item)
@@ -132,16 +128,16 @@ export default {
           .get(`admin/upsells/force-delete/${item.id}`)
           .then(res => {
             this.upsells.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },
-
-
   },
 }
 </script>

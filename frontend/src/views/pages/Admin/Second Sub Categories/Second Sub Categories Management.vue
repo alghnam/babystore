@@ -21,15 +21,11 @@
           <tbody>
             <tr v-for="item in sub_categories" :key="item.id">
               <td class="text-right">{{ item.name }}</td>
-               <td class="text-right">
-              kkkkkkkk {{ item.image ? item.image : null }}
-              <div v-if="item.image">
-                <img
-                  :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')"
-                  alt=" image"
-                />
-              </div>
-            </td>
+              <td class="text-right">
+                <div v-if="item.image">
+                  <img :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')" alt=" image" />
+                </div>
+              </td>
               <td class="text-center">
                 {{
                   item.category
@@ -86,48 +82,46 @@
                     </v-card-title>
                     <v-card-text>
                       <div class="row">
+                        <v-col xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"> </v-col>
+                        <v-col xs="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
+                          <v-img
+                            :src="
+                              editedItem.image
+                                ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
+                                : ''
+                            "
+                            v-if="!editedItem.photo_url"
+                            height="200px"
+                            width="200px"
+                            class="mx-auto"
+                          ></v-img>
+                          <v-img
+                            :src="editedItem.photo_url"
+                            v-if="editedItem.photo_url"
+                            height="200px"
+                            width="200px"
+                            class="mx-auto"
+                          ></v-img>
+                        </v-col>
+                        <v-col xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"> </v-col>
                         <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
-                          <v-text-field
-                            class="col-sm-5 mx-auto"
+                          <v-text-field outlined dense label="الاسم" v-model="editedItem.name"></v-text-field>
+                        </v-col>
+
+                        <v-col xs="12" sm="12" md="6" lg="6" xl="6">
+                          <!-- image choose section -->
+                          <v-file-input
+                            truncate-length="15"
                             outlined
                             dense
-                            label="الاسم"
-                            v-model="editedItem.name"
-                          ></v-text-field>
+                            prepend-icon=""
+                            prepend-inner-icon="mdi-file"
+                            label="صورة المنتج"
+                            v-model="photo"
+                          ></v-file-input>
                         </v-col>
-                                              <v-col xs="12" sm="12" md="5" lg="5" xl="5">
-                          
-                        <v-img
-                          :src="
-                            editedItem.image
-                              ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
-                              : ''
-                          "
-                          v-if="!editedItem.photo_url"
-                        ></v-img>
-                        <img
-                          :src="editedItem.photo_url"
-                          v-if="editedItem.photo_url"
-                          style="height: 118px; width: 84px"
-                        />
-                      </v-col>
-                      <v-col xs="12" sm="12" md="12" lg="12" xl="12">
-                        <!-- image choose section -->
-                        <v-file-input
-                          truncate-length="15"
-                          outlined
-                          dense
-                          label="صورة المنتج"
-                          class="col-sm-5 mx-auto"
-                          v-model="photo"
-                        ></v-file-input>
-                      </v-col>
                         <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
-                          <!-- <div v-if="editedItem.category">
-                            <div v-if="editedItem.category.main_category"> -->
-                            
                           <v-select
-                            class="col-sm-5 mx-auto"
                             outlined
                             dense
                             label="الفئة الرئيسية"
@@ -135,43 +129,19 @@
                             v-model="editedItem.category.main_category.id"
                             v-if="editedItem.category.main_category"
                           ></v-select>
-                          <!-- </div>
-                          </div> -->
-                          <!-- <div v-else> -->
-                          <!-- <v-select
-                          v-else
-                            class="col-sm-5 mx-auto"
-                            outlined
-                            dense
-                            label="الفئة الرئيسية"
-                            :items="maincategorieso"
-                            v-model="editedItem.category.main_category"
-                          ></v-select> -->
-                          <!-- </div> -->
                         </v-col>
                         <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
                           <v-select
-                            class="col-sm-5 mx-auto"
                             outlined
                             dense
                             label="الفئة الفرعية"
                             :items="subcategorieso"
                             v-model="editedItem.category.id"
                           ></v-select>
-                          <!-- <v-select
-                          v-else
-                          class="col-sm-5 mx-auto"
-                          outlined
-                          dense
-                          label="الفئة الفرعية"
-                          :items="subcategorieso"
-                          v-model="editedItem.category"
-                        ></v-select> -->
                         </v-col>
 
                         <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
                           <v-select
-                            class="col-sm-5 mx-auto"
                             outlined
                             dense
                             label="حالة الظهور"
@@ -179,6 +149,7 @@
                             v-model="editedItem.status"
                           ></v-select>
                         </v-col>
+                        <v-col xs="12" sm="12" md="5" lg="5" xl="5" class="mx-auto"> </v-col>
                         <div class="col-sm-5 mx-auto row">
                           <v-btn
                             color="primary lighten-1 rounded-tr-xl rounded-bl-xl"
@@ -242,7 +213,7 @@ export default {
           value: '0',
         },
       ],
-        photo: null,
+      photo: null,
 
       editedIndex: -1,
       editedItem: {
@@ -287,12 +258,10 @@ export default {
     subcategories() {
       return this.sub_categories
     },
-    
-    
   },
 
-   watch: {
-photo(val) {
+  watch: {
+    photo(val) {
       if (val) {
         let reader = new FileReader()
         reader.addEventListener('load', e => {
@@ -307,7 +276,6 @@ photo(val) {
       val || this.close()
     },
 
-   
     'editedItem.category.main_category.id': {
       handler: function (val) {
         this.main_category_id_edit = val
@@ -325,13 +293,13 @@ photo(val) {
 
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       },
     },
-
-    },
+  },
   created() {
     this.getsubcategories()
     this.getFirstSubCategories()
@@ -344,7 +312,7 @@ photo(val) {
     },
 
     trimAttribute(value, size) {
-      if (value !== null ) {
+      if (value !== null) {
         let new_url = value.slice(0, 28) + '/thumbnail/' + value.slice(29)
         let index = new_url.length - 4
         let url = new_url.slice(0, index) + size + new_url.slice(index)
@@ -366,7 +334,8 @@ photo(val) {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -407,7 +376,6 @@ photo(val) {
       let formData = []
       formData = new FormData()
 
-    
       formData.append('status', this.editedItem.status)
 
       formData.append('name', this.editedItem.name)
@@ -429,11 +397,13 @@ photo(val) {
             this.close()
             Object.assign(this.sub_categories[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -450,11 +420,13 @@ photo(val) {
             this.sub_categories.push(res.data.data)
 
             // Object.assign(this.sub_categories[this.editedIndex], res.data.data)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -463,17 +435,16 @@ photo(val) {
       this.$router.push(`/products-management/${item.id}`)
     },
     editItem(item) {
-        this.dialog = true
-      
-        item.category.main_category.id = Number(item.category.main_category.id)
-        item.category.id = Number(item.category.id)
+      this.dialog = true
 
-        this.editedIndex = this.sub_categories.indexOf(item)
+      item.category.main_category.id = Number(item.category.main_category.id)
+      item.category.id = Number(item.category.id)
 
-        Object.assign(this.editedItem, {
-          ...item,
-        })
-      
+      this.editedIndex = this.sub_categories.indexOf(item)
+
+      Object.assign(this.editedItem, {
+        ...item,
+      })
     },
     createItem() {
       this.dialog = true
@@ -487,7 +458,8 @@ photo(val) {
 
           .then(res => {
             this.subcategories.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
@@ -497,7 +469,7 @@ photo(val) {
     },
 
     close() {
-      this.dialog=false
+      this.dialog = false
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1

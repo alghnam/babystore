@@ -22,7 +22,7 @@
               <td class="text-right">{{ item.value }}</td>
 
               <td class="text-center">
-                {{ item.movement ? item.movement.id : '-' }}
+                {{ item.movement ? item.movement.id : null }}
               </td>
 
               <td class="text-right">
@@ -91,11 +91,13 @@ export default {
         .then(res => {
           this.movements = res.data.data.data
           this.pageInfo = res.data.data
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -107,11 +109,13 @@ export default {
         .then(res => {
           const index = this.movements.indexOf(item)
           this.movements.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -121,12 +125,14 @@ export default {
         .then(res => {
           if (res.data.message != null) {
             this.movements = []
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           }
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -138,11 +144,13 @@ export default {
           .get(`admin/movements/force-delete/${item.id}`)
           .then(res => {
             this.movements.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

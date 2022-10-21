@@ -111,7 +111,7 @@
                         <!-- price section -->
                         <v-col xs="12" sm="12" md="12" lg="12" xl="12">
                           <v-card>
-                            <v-list-item class="pr-0">
+                            <v-list-item class="pr-0 pl-0">
                               <v-list-item-content>
                                 <p class="text-right pr-3 pl-3" style="margin: auto">السعر</p>
                               </v-list-item-content>
@@ -130,9 +130,9 @@
                             <v-divider></v-divider>
                             <v-card-text v-show="show_prices" class="mt-3 pa-2" v-if="data_price == true">
                               <v-row>
-                                <v-col sm="12" md="9" lg="9" xl="9">
+                                <v-col sm="12" md="9" lg="9" xl="9" class="mx-auto">
                                   <v-row>
-                                    <v-col sm="12" md="3" lg="3" xl="3" class="mx-auto">
+                                    <v-col sm="12" md="5" lg="5" xl="5" class="mx-auto">
                                       <v-text-field
                                         style="width: 100%"
                                         outlined
@@ -143,7 +143,7 @@
                                       ></v-text-field>
                                     </v-col>
 
-                                    <v-col sm="12" md="3" lg="3" xl="3">
+                                    <v-col sm="12" md="5" lg="5" xl="5">
                                       <v-text-field
                                         style="width: 100%"
                                         outlined
@@ -162,14 +162,12 @@
                             </v-card-text>
                           </v-card>
                         </v-col>
-                        +++
                         <v-col xs="12" sm="12" md="12" lg="12" xl="12">
                           <v-card>
-                            <v-list-item class="pr-0">
+                            <v-list-item class="pr-0 pl-0">
                               <v-list-item-action class="pa-0">
                                 <v-switch class="mt-0 pa-0" v-model="data_variant" color="red" hide-details></v-switch>
                               </v-list-item-action>
-                              ggg {{ main_attrs }}
 
                               <v-list-item-content>
                                 <p class="text-right pr-3 pl-3" style="margin: auto">المتغيرات</p>
@@ -189,10 +187,10 @@
                             <v-divider></v-divider>
                             <v-card-text v-show="show_variants" class="mt-3 pa-2" v-if="data_variant == true">
                               <v-btn color="primary" class="mt-6" @click="addOption()">اضافة خيار </v-btn>
-                              <v-row v-if="main_attrs.length !== 0">
+                              <v-row v-if="main_attrs.length !== 0" class="mt-5">
                                 <v-col sm="12" md="12" lg="12" xl="12">
                                   <v-row>
-                                    <h4 style="margin-left: 186px">ادخل المواصفات التي تريديها لهذا المنتج</h4>
+                                    <h4 class="pr-3 pl-3">ادخل المواصفات التي تريديها لهذا المنتج</h4>
                                     <v-col sm="12" md="12" lg="12" xl="12" v-for="(item, i) in main_attrs" :key="i">
                                       <v-row>
                                         <v-col sm="12" md="3" lg="3" xl="3">
@@ -207,7 +205,8 @@
                                         </v-col>
                                         <v-col sm="12" md="7" lg="7" xl="7">
                                           <v-combobox
-                                            outlined
+                                            outli
+                                            ned
                                             dense
                                             label="القيمة"
                                             v-model="item.attrs"
@@ -217,21 +216,26 @@
                                             deletable-chips
                                           ></v-combobox>
                                         </v-col>
-                                        <v-col sm="12" md="2" lg="2" xl="2">
+                                        <v-col sm="12" md="2" lg="2" xl="2" class="d-flex">
                                           <v-btn
                                             color="blue lighten-1"
-                                            style="width: 100%"
                                             @click="saveAttributes(item)"
                                             dark
-                                            >حفظ <i class="fas fa-file mr-3"></i
-                                          ></v-btn>
+                                            fab
+                                            tile
+                                            x-small
+                                            class="rounded-lg mt-1 mx-auto"
+                                            ><v-icon>mdi-file</v-icon></v-btn
+                                          >
                                           <div
                                             v-if="
                                               (item.name == null || item.name == 'undefined' || item.name == ' ') &&
                                               (item.attrs == null || item.attrs == 'undefined' || item.attrs == ' ')
                                             "
                                           >
-                                            <v-btn color="primary" class="mt-6" @click="deleteOption(i)">حذف </v-btn>
+                                            <v-btn color="primary" class="mt-1" @click="deleteOption(i)">
+                                              <v-icon>mdi-delete</v-icon>
+                                            </v-btn>
                                           </div>
                                           <div
                                             v-if="
@@ -239,8 +243,15 @@
                                               (item.attrs !== null || item.attrs !== 'undefined' || item.attrs !== ' ')
                                             "
                                           >
-                                            <v-btn color="primary" class="mt-6" @click="deleteItem(item.id, i)"
-                                              >حذف المتغير
+                                            <v-btn
+                                              fab
+                                              tile
+                                              x-small
+                                              color="primary"
+                                              class="mt-1 rounded-lg"
+                                              @click="deleteItem(item.id, i)"
+                                            >
+                                              <v-icon>mdi-delete</v-icon>
                                             </v-btn>
                                           </div>
                                         </v-col>
@@ -264,13 +275,14 @@
                                               outlined
                                               v-model="x.attr[i].value"
                                               @change="x.attr[i].name = attr.name"
+                                              dense
                                             >
                                             </v-select>
                                           </v-col>
                                         </v-row>
                                       </v-col>
                                     </v-row>
-                                    <v-btn @click="saveSubProduct()" style="margin-left: 237px">حفظ</v-btn>
+                                    <v-btn @click="saveSubProduct()" color="primary" dark>حفظ</v-btn>
                                   </v-col>
 
                                   <v-col sm="12" md="12" lg="12" xl="12">
@@ -279,86 +291,93 @@
                                         <div v-if="editedItem.product_array_attributes">
                                           <div v-if="editedItem.product_array_attributes.length !== 0">
                                             <h4 style="margin-left: 240px">ادخل تفاصيل المواصفات لهذا المنتج</h4>
-                                            <div v-for="(attribute1, i) in editedItem.product_array_attributes">
-                                              <div v-if="attribute1">
-                                                <div v-if="attribute1.attributes" v-for="attr in attribute1.attributes">
-                                                  <div v-if="attr.name && attr.value">
-                                                    {{ attr.value }} : {{ attr.name }}
-                                                  </div>
-                                                </div>
-                                                22222222
-                                                <div v-if="attribute1.image">
-                                                  00000000000000000
-                                                  <img
-                                                    :src="
-                                                      $store.state.baseURL +
-                                                      '/storage/' +
-                                                      trimAttribute(attribute1.image.url, '(S)')
-                                                    "
-                                                    alt="product image"
-                                                    v-if="!photo"
-                                                  />
-                                                  <img
-                                                    :src="editedItem.photo_url"
-                                                    v-if="editedItem.photo_url"
-                                                    style="height: 118px; width: 84px"
-                                                  />
-                                                </div>
-
-                                                <v-file-input
-                                                  truncate-length="15"
-                                                  outlined
-                                                  dense
-                                                  label="صورة المنتج"
-                                                  class="col-sm-5 mx-auto"
-                                                  v-model="photo"
-                                                ></v-file-input>
-
-                                                <v-text-field
-                                                  class="col-sm-5 mx-auto"
-                                                  outlined
-                                                  dense
-                                                  label="الكمية"
-                                                  v-model="attribute1.quantity"
-                                                  type="number"
-                                                ></v-text-field>
-
-                                                <div>
-                                                  <h3>السعر</h3>
-
-                                                  <v-text-field
-                                                    class="col-sm-5 mx-auto"
-                                                    outlined
-                                                    dense
-                                                    label="السعر الأصلي قبل الخصم"
-                                                    v-model="attribute1.original_price"
-                                                    type="number"
-                                                  ></v-text-field>
-
-                                                  <v-text-field
-                                                    class="col-sm-5 mx-auto"
-                                                    outlined
-                                                    dense
-                                                    label="السعر النهائي بعد الخصم"
-                                                    v-model="attribute1.price_discount_ends"
-                                                    type="number"
-                                                  ></v-text-field>
-                                                </div>
-                                                attribute1 {{ attribute1 }}
-                                                <v-btn
-                                                  color="blue lighten-1"
-                                                  style="width: 17%; margin-left: 545px; margin-bottom: -69px"
-                                                  @click="saveDetailsArrayAttribute(attribute1)"
-                                                  dark
-                                                  >حفظ <i class="fas fa-file mr-3"></i
-                                                ></v-btn>
-                                              </div>
-                                              <v-btn
-                                                @click="deleteArrayAttribute(attribute1.id, i)"
-                                                style="margin-left: 0px"
-                                                >حذف</v-btn
+                                            <v-row>
+                                              <v-col
+                                                sm="12"
+                                                md="4"
+                                                lg="4"
+                                                xl="3"
+                                                class="mt-5"
+                                                v-for="(attribute1, i) in editedItem.product_array_attributes"
+                                                :key="i"
                                               >
-                                            </div>
+                                                <v-card elevation="15" min-height="200" class="pa-3">
+                                                  <div v-if="attribute1 && attribute1.attributes">
+                                                    <div v-for="(attr, i) in attribute1.attributes" :key="i">
+                                                      <div v-if="attr.name && attr.value" class="mt-3">
+                                                        <div v-if="i < 3">
+                                                          <v-chip
+                                                            label
+                                                            color="primary"
+                                                            dark
+                                                            style="width: 100% !important"
+                                                          >
+                                                            {{ attr.name }}
+                                                          </v-chip>
+                                                          <v-chip label style="width: 100% !important" class="mt-2">
+                                                            {{ attr.value }}
+                                                          </v-chip>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                    <v-btn text class="mt-3 w-100" @click="showDetails(attribute1)"
+                                                      >إضغط للمزيد</v-btn
+                                                    >
+                                                    <!-- <div v-if="attribute1.image">
+                                                      <img
+                                                        :src="
+                                                          $store.state.baseURL +
+                                                          '/storage/' +
+                                                          trimAttribute(attribute1.image.url, '(S)')
+                                                        "
+                                                        alt="product image"
+                                                        v-if="!photo"
+                                                      />
+                                                      <img
+                                                        :src="editedItem.photo_url"
+                                                        v-if="editedItem.photo_url"
+                                                        style="height: 118px; width: 84px"
+                                                      /> <img
+                                                        :src="
+                                                          $store.state.baseURL +
+                                                          '/storage/' +
+                                                          trimAttribute(attribute1.image.url, '(S)')
+                                                        "
+                                                        alt="product image"
+                                                        v-if="!photo"
+                                                      />
+                                                      <img
+                                                        :src="editedItem.photo_url"
+                                                        v-if="editedItem.photo_url"
+                                                        style="height: 118px; width: 84px"
+                                                      />
+                                                    </div> -->
+                                                  </div>
+                                                  <div class="w-100 mt-3">
+                                                    <v-btn
+                                                      @click="editAttr(attribute1, i)"
+                                                      style="margin-left: 0px"
+                                                      fab
+                                                      x-small
+                                                      class="rounded-lg"
+                                                      dark
+                                                      color="primary"
+                                                    >
+                                                      <v-icon>mdi-pen</v-icon>
+                                                    </v-btn>
+                                                    <v-btn
+                                                      @click="deleteArrayAttribute(attribute1.id, i)"
+                                                      style="margin-left: 0px"
+                                                      fab
+                                                      x-small
+                                                      class="rounded-lg mr-3"
+                                                    >
+                                                      <v-icon>mdi-delete</v-icon>
+                                                    </v-btn>
+                                                  </div>
+                                                </v-card>
+                                              </v-col>
+                                            </v-row>
                                           </div>
                                         </div>
                                       </v-col>
@@ -374,7 +393,7 @@
                         </v-col>
                         <v-col xs="12" sm="12" md="12" lg="12" xl="12">
                           <v-card>
-                            <v-list-item class="pr-0">
+                            <v-list-item class="pr-0 pl-0">
                               <v-list-item-action class="pa-0">
                                 <v-switch class="mt-0 pa-0" v-model="data_similar" color="red" hide-details></v-switch>
                               </v-list-item-action>
@@ -412,7 +431,6 @@
                                               dense
                                               label="المنتجات المشابهة"
                                               v-model="similars"
-                                              @click="getSimilars()"
                                             >
                                             </v-text-field>
                                           </template>
@@ -426,23 +444,49 @@
                                             </v-list-item>
                                           </v-list>
                                         </v-menu>
+                                        <!-- similar products cards  -->
+                                        <v-row>
+                                          <v-col
+                                            cols="12"
+                                            md="6"
+                                            lg="4"
+                                            xl="3"
+                                            v-for="similar in productsSimilar"
+                                            :key="similar.id"
+                                          >
+                                            <v-card min-height="200" elevation="15">
+                                              <v-img
+                                                height="100%"
+                                                width="100%"
+                                                :src="
+                                                  similar.product_images.length > 0
+                                                    ? $store.state.baseURL +
+                                                      '/storage/' +
+                                                      trimAttribute(similar.product_images[0].filename, '(S)')
+                                                    : ''
+                                                "
+                                              >
+                                                <v-btn color="red" tile icon class="" @click="deleteSimilar(similar)">
+                                                  x
+                                                </v-btn>
+                                                <v-chip v-if="similar.name" class="mt-2 w-100">{{
+                                                  similar.name
+                                                }}</v-chip>
+                                              </v-img>
+                                            </v-card>
+                                          </v-col>
 
-                                        <div v-for="similar in productsSimilar" :key="similar.id">
-                                          <h4 v-if="similar.name">{{ similar.name }}</h4>
+                                          <!-- <h4 v-if="similar.name">{{ similar.name }}</h4>
                                           <h4 v-if="similar.text">{{ similar.text }}</h4>
 
                                           <v-btn color="default" class="mt-6" @click="deleteSimilar(similar)">
-                                            حذف
-                                          </v-btn>
-                                        </div>
-
-                                        <v-btn
-                                          color="blue lighten-1"
-                                          style="margin-left: 543px"
-                                          @click="saveSimilarProduct()"
-                                          dark
-                                          >حفظ <i class="fas fa-file mr-3"></i
-                                        ></v-btn>
+                                            <v-icon>mdi-delete</v-icon>
+                                          </v-btn> -->
+                                        </v-row>
+                                        <!-- end of similar products  -->
+                                        <v-btn color="blue lighten-1" class="mt-5" @click="saveSimilarProduct()" dark>
+                                          <v-icon>mdi-file</v-icon>
+                                        </v-btn>
                                       </v-col>
                                     </v-row>
                                   </v-col>
@@ -490,7 +534,7 @@
                             <v-card-title style="direction: rtl">الظهور </v-card-title>
                             <v-card-text>
                               <v-select
-                                class="col-sm-5 mx-auto"
+                                class="col-sm-12 mx-auto"
                                 outlined
                                 dense
                                 label="الحالة"
@@ -498,7 +542,7 @@
                                 v-model="editedItem.status"
                               ></v-select>
                               <v-select
-                                class="col-sm-5 mx-auto"
+                                class="col-sm-12 mx-auto"
                                 outlined
                                 dense
                                 label="عليه عروض"
@@ -523,7 +567,7 @@
                                   {{ editedItem.category.main_category.name }}
                                   {{ editedItem.category.name }}
                                   <v-select
-                                    class="col-sm-5 mx-auto"
+                                    class="col-sm-12 mx-auto"
                                     outlined
                                     dense
                                     label="الفئة الرئيسية"
@@ -534,7 +578,7 @@
                               </div>
                               <div v-else>
                                 <v-select
-                                  class="col-sm-5 mx-auto"
+                                  class="col-sm-12 mx-auto"
                                   outlined
                                   dense
                                   label="الفئة الرئيسية"
@@ -542,10 +586,9 @@
                                   v-model="editedItem.category.main_category"
                                 ></v-select>
                               </div>
-                              {{ editedItem.category.id }}
                               <v-select
                                 v-if="editedItem.category"
-                                class="col-sm-5 mx-auto"
+                                class="col-sm-12 mx-auto"
                                 outlined
                                 dense
                                 label="الفئة الفرعية"
@@ -554,7 +597,7 @@
                               ></v-select>
                               <v-select
                                 v-else
-                                class="col-sm-5 mx-auto"
+                                class="col-sm-12 mx-auto"
                                 outlined
                                 dense
                                 label="الفئة الفرعية"
@@ -562,10 +605,9 @@
                                 v-model="editedItem.category"
                               ></v-select>
 
-                              editedItem.sub_category.id {{ editedItem.sub_category }}
                               <v-select
                                 v-if="editedItem.sub_category"
-                                class="col-sm-5 mx-auto"
+                                class="col-sm-12 mx-auto"
                                 outlined
                                 dense
                                 label="الفئة  الفرعية الثانية"
@@ -574,7 +616,7 @@
                               ></v-select>
                               <v-select
                                 v-else
-                                class="col-sm-5 mx-auto"
+                                class="col-sm-12 mx-auto"
                                 outlined
                                 dense
                                 label="الفئة الفرعية الثانية "
@@ -586,10 +628,10 @@
                         </v-col>
                       </v-row>
                     </v-card-text>
-                    <v-btn color="blue lighten-1" class="col-sm-12 mx-auto" @click="save()" dark
-                      >حفظ <i class="fas fa-file mr-3"></i
-                    ></v-btn>
                   </v-card>
+                  <v-btn color="blue lighten-1" class="col-sm-12 mx-auto mt-5" @click="save()" dark
+                    >حفظ <i class="fas fa-file mr-3"></i
+                  ></v-btn>
                 </v-col>
 
                 <div v-if="product_id !== null && showSimilars">
@@ -630,6 +672,106 @@
         </div>
       </div>
     </v-simple-table>
+    <!-- edit the sub product -->
+    <v-dialog
+      v-model="subPDialog"
+      :width="$vuetify.breakpoint.name == 'xs' || $vuetify.breakpoint.name == 'sm' ? '100vw' : '40vw'"
+    >
+      <v-card min-height="70vh" class="pa-0">
+        <v-row class="pa-10">
+          <v-col cols="12" md="5" lg="5" xl="5" class="mx-auto">
+            <v-img v-if="photo" elevation="15" :src="img" height="200"></v-img>
+            <v-img
+              v-else-if="editedSubItem.image"
+              elevation="15"
+              :src="$store.state.baseURL + '/storage/' + trimAttributeSubItem(editedSubItem.image.url, '(S)')"
+              height="200"
+            ></v-img>
+          </v-col>
+          <v-col cols="12" md="5" lg="5" xl="5" class="mx-auto"> </v-col>
+          <v-file-input
+            truncate-length="15"
+            outlined
+            dense
+            prepend-icon=""
+            prepend-inner-icon="mdi-file-image"
+            label="صورة المنتج"
+            class="col-sm-5 mx-auto"
+            v-model="photo"
+          ></v-file-input>
+
+          <v-text-field
+            class="col-sm-5 mx-auto"
+            outlined
+            dense
+            label="الكمية"
+            v-model="editedSubItem.quantity"
+            type="number"
+          ></v-text-field>
+
+          <v-col cols="12" xs="12" sm="12" md="5" lg="5" xl="5" class="mx-auto pr-0 pl-0">
+            <h3 class="mb-3">السعر</h3>
+
+            <v-text-field
+              class="col-sm-12 mx-auto"
+              outlined
+              dense
+              label="السعر الأصلي قبل الخصم"
+              v-model="editedSubItem.original_price"
+              type="number"
+            ></v-text-field>
+
+            <v-text-field
+              class="col-sm-12 mx-auto"
+              outlined
+              dense
+              label="السعر النهائي بعد الخصم"
+              v-model="editedSubItem.price_discount_ends"
+              type="number"
+            ></v-text-field>
+            <v-btn
+              color="blue lighten-1"
+              @click="saveDetailsArrayAttribute(editedSubItem)"
+              dark
+              class="mt-3"
+              style="width: 100%"
+              >حفظ <i class="fas fa-file mr-3"></i
+            ></v-btn>
+          </v-col>
+          <v-col cols="12" xs="12" sm="12" md="5" lg="5" xl="5" class="mx-auto"> </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="showDetailsDialog"
+      :width="$vuetify.breakpoint.name == 'xs' || $vuetify.breakpoint.name == 'sm' ? '100vw' : '25vw'"
+    >
+      <v-card min-height="70vh">
+        <v-row class="pa-3">
+          <v-col cols="12" md="12" lg="12" xl="12" class="mx-auto">
+            <v-img
+              class="w-100"
+              :src="$store.state.baseURL + '/storage/' + trimAttributeSubItem(editedSubItem.image.url, '(S)')"
+              v-if="editedSubItem.image"
+            ></v-img>
+          </v-col>
+        </v-row>
+        <div v-if="editedSubItem && editedSubItem.attributes">
+          <div v-for="(attr, i) in editedSubItem.attributes" :key="i">
+            <div v-if="attr.name && attr.value" class="mt-3">
+              <div class="pa-5">
+                <v-chip label color="primary" dark style="width: 100% !important">
+                  {{ attr.name }}
+                </v-chip>
+                <v-chip label style="width: 100% !important" class="mt-2">
+                  {{ attr.value }}
+                </v-chip>
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -742,7 +884,7 @@ export default {
           option: null,
           value: null,
         },
-        productArrayAttributes: {
+        product_array_attributes: {
           product_id: null,
           attributes: [],
         },
@@ -802,6 +944,10 @@ export default {
       showSimilars: false,
       base_imgs: [],
       i: 0,
+      subPDialog: false,
+      editedSubItem: {},
+      showDetailsDialog: false,
+      similarsIds: [],
     }
   },
 
@@ -825,7 +971,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -904,7 +1051,8 @@ export default {
 
             .catch(error => {
               if (error && error.response) {
-                this.callMessage(error.response.data.message)
+                this.$store.state.snackbar = true
+                this.$store.state.text = error.response.data.message
               }
             })
         }
@@ -930,7 +1078,8 @@ export default {
 
             .catch(error => {
               if (error && error.response) {
-                this.callMessage(error.response.data.message)
+                this.$store.state.snackbar = true
+                this.$store.state.text = error.response.data.message
               }
             })
         }
@@ -959,7 +1108,8 @@ export default {
 
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       },
@@ -976,11 +1126,14 @@ export default {
     similars(val) {
       if (val) {
         this.$http.get(`admin/products/search-for-similar/${val}`).then(res => {
+          this.productsSim = []
           res.data.data.forEach(product => {
-            //  this.productsSim = []
             this.productsSim.push({
               text: product.name,
+              name: product.name,
               value: product.id,
+              img: product.product_images[0],
+              product_images: product.product_images,
             })
           })
         })
@@ -994,16 +1147,61 @@ export default {
     this.getMainCategories()
   },
   methods: {
-    moveIntoEdit() {
-      this.$router.push(`/edit-product/${this.product_id}`)
+    saveDetailsArrayAttribute(attribute) {
+      let index = this.editedItem.product_array_attributes.indexOf(attribute)
+      this.product_array_attribute_id = attribute.id
+      let formData = []
+
+      formData = new FormData()
+
+      formData.append('image', this.photo)
+
+      formData.append('product_id', this.product_id)
+      formData.append('quantity', attribute.quantity)
+      if (attribute.original_price == undefined) {
+        formData.append('original_price', 0)
+      } else {
+        formData.append('original_price', attribute.original_price)
+      }
+      if (attribute.price_discount_ends == undefined) {
+        formData.append('price_discount_ends', 0)
+      } else {
+        formData.append('price_discount_ends', attribute.price_discount_ends)
+      }
+      formData.append('sku', attribute.sku)
+      formData.append('barcode', attribute.barcode)
+      formData.append('weight', attribute.weight)
+      this.$http
+        .post(`admin/product-attributes/update-details-array-attribute/${this.product_array_attribute_id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        })
+        .then((res) => {
+          console.log('tag', this.editedItem.product_array_attributes[index])
+          console.log('tag2', res.data.data.image)
+
+          Object.assign(this.editedItem.product_array_attributes[index], res.data.data)
+          this.subPDialog = false
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
+          this.photo = null
+          this.img = null
+        })
+        .catch(error => {
+
+          if (error && error.response) {
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
+          }
+        })
+
     },
     getSimilar(item) {
-      let similarsIds = []
-      this.productsSimilar.forEach(el => {
-        similarsIds.push(el.id)
-      })
-
-      if (!similarsIds.includes(item.value)) {
+      this.similarsIds.push(item.value)
+      this.productsSimilar.push(item)
+      if (!this.similarsIds.includes(item.value)) {
         this.productsSimilar.push(item)
         this.similars = item.name
       }
@@ -1056,16 +1254,34 @@ export default {
     },
 
     trimAttribute(value, size) {
-      let new_url = value.slice(0, 26) + 'thumbnail/' + value.slice(26)
-      let index = new_url.length - 4
-      let url = new_url.slice(0, index) + size + new_url.slice(index)
-      return url.substr(0, url.length)
+      if (value !== null || value !== undefined) {
+        let new_url = value.slice(0, 15) + 'thumbnail/' + value.slice(16)
+        return new_url
+        // let index = new_url.length - 4
+        // let url = new_url.slice(0, index) + size + new_url.slice(index)
+        // return url.substr(0, url.length)
+      }
+    },
+    trimAttributeSubItem(value, size) {
+      if (value !== null || value !== undefined) {
+        return value
+        // let new_url = value.slice(0, 43) + 'thumbnail/' + value.slice(44)
+        // return new_url
+        // let index = new_url.length - 4
+        // let url = new_url.slice(0, index) + size + new_url.slice(index)
+        // return url.substr(0, url.length)
+      }
     },
     trimSeo(value, size) {
       let new_url = value.slice(0, 15) + 'thumbnail/' + value.slice(15)
       let index = new_url.length - 4
+
       let url = new_url.slice(0, index) + size + new_url.slice(index)
       return url.substr(0, url.length)
+    },
+    editAttr(item, index) {
+      this.editedSubItem = item
+      this.subPDialog = true
     },
     showTrash() {
       this.$router.push('/trash-products-managment')
@@ -1095,69 +1311,33 @@ export default {
       this.$http
         .get(`admin/product-attributes/delete-many-attributes/${id}`)
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
 
           this.editedItem.product_array_attributes.splice(i, 1)
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     saveSubProduct() {
       this.$http
         .post('admin/product-attributes/store-many-attributes', {
           product_id: this.product_id,
-
           attributes: this.x.attr,
         })
         .then(res => {
-          this.editedItem.product_array_attributes
-          this.callMessage(res.data.message)
+          this.editedItem.product_array_attributes.push(res.data.data)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
-    saveDetailsArrayAttribute(attribute) {
-      this.product_array_attribute_id = attribute.id
-      let formData = []
-
-      formData = new FormData()
-
-      formData.append('image', this.photo)
-
-      formData.append('product_id', this.product_id)
-      formData.append('quantity', attribute.quantity)
-      if (attribute.original_price == undefined) {
-        formData.append('original_price', 0)
-      } else {
-        formData.append('original_price', attribute.original_price)
-      }
-      if (attribute.price_discount_ends == undefined) {
-        formData.append('price_discount_ends', 0)
-      } else {
-        formData.append('price_discount_ends', attribute.price_discount_ends)
-      }
-      formData.append('sku', attribute.sku)
-      formData.append('barcode', attribute.barcode)
-      formData.append('weight', attribute.weight)
-      this.$http
-        .post(`admin/product-attributes/update-details-array-attribute/${this.product_array_attribute_id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        })
-
-        .then(res => {
-          this.callMessage(res.data.message)
-        })
-        .catch(error => {
-          if (error && error.response) {
-            this.callMessage(error.response.data.message)
-          }
-        })
-    },
+    
     saveAttributes(item) {
       this.product_attribute_id = item.id
       if (item.id) {
@@ -1169,10 +1349,12 @@ export default {
           })
 
           .then(res => {
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
       } else {
         this.$http
@@ -1183,14 +1365,21 @@ export default {
           })
           .then(res => {
             // this.main_attrs.push({ id: res.data.data.id, name: res.data.data.option, attrs: JSON.parse(res.data.data.attributes) })
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
+    },
+
+    showDetails(item) {
+      this.editedSubItem = item
+      this.showDetailsDialog = true
     },
     showProduct() {
       this.product_id = this.$route.params.id
@@ -1223,7 +1412,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     saveStorageDetail() {
@@ -1236,11 +1426,13 @@ export default {
         })
 
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -1252,11 +1444,13 @@ export default {
           .then(res => {
             const index = this.productsSimilar.indexOf(similar)
             this.productsSimilar.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else if (similar.id) {
@@ -1266,11 +1460,13 @@ export default {
           .then(res => {
             const index = this.productsSimilar.indexOf(similar)
             this.productsSimilar.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -1296,10 +1492,12 @@ export default {
         })
 
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     async saveSimilarProduct() {
@@ -1318,14 +1516,16 @@ export default {
       this.$http
         .post(`admin/similar-products/update/${this.product_id}`, {
           // similar: this.productsSimilar,
-          similar: dum_products_sim,
+          similar: this.similarsIds,
         })
 
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -1341,7 +1541,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     save() {
@@ -1395,10 +1596,12 @@ export default {
         })
 
         .then(res => {
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -1413,10 +1616,12 @@ export default {
           const index = this.imgs.indexOf(img)
           this.imgs.splice(index, 1)
           this.base_imgs.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     deleteImageNotStore(index) {
@@ -1434,10 +1639,12 @@ export default {
           .then(res => {
             this.main_attrs.splice(i, 1)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
     },
 

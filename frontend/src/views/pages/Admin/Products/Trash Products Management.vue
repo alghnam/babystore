@@ -4,12 +4,7 @@
       استعادة الكل
       <v-icon class="mr-3">mdi-reply-all</v-icon>
     </v-btn>
-    <v-snackbar v-model="snackbar" :color="color">
-      {{ text }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false"> اغلاق </v-btn>
-      </template>
-    </v-snackbar>
+
     <v-col cols="12" class="pb-3">
       <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
         <template v-slot:default>
@@ -63,8 +58,9 @@
                 {{ item.original_status }}
               </td>
               <td class="text-right">
-                <v-btn color="primary" class="mt-6" @click="restoreItem(item)"> استعادة </v-btn>
-
+                <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="restoreItem(item)">
+                  <v-icon class="mr-3">mdi-reply-all</v-icon>
+                </v-btn>
                 <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
                   <v-icon color="black" class="">mdi-delete</v-icon>
                 </v-btn>
@@ -74,7 +70,7 @@
         </template>
 
         <template v-slot:top>
-          <v-toolbar flat color="white"> Trash products Management </v-toolbar>
+          <v-toolbar flat color="white"> سلة المحذوفات </v-toolbar>
         </template>
       </v-simple-table>
     </v-col>
@@ -141,10 +137,12 @@ export default {
         .then(res => {
           this.products = res.data.data.data
           this.pageInfo = res.data.data
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -155,10 +153,12 @@ export default {
         .then(res => {
           const index = this.products.indexOf(item)
           this.products.splice(index, 1)
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     restoreAll() {
@@ -166,10 +166,12 @@ export default {
         .get('admin/products/restore-all')
         .then(res => {
           this.products = []
-          this.callMessage(res.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -179,12 +181,14 @@ export default {
         this.$http
           .get(`admin/products/force-delete/${item.id}`)
           .then(res => {
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
+            this.products.splice(index, 1)
           })
           .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           })
-      this.products.splice(index, 1)
     },
   },
 }

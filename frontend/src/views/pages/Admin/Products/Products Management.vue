@@ -10,7 +10,6 @@
       <v-icon class="mr-3">mdi-plus</v-icon>
     </v-btn>
 
-    <v-btn color="primary" class="mt-6" @click="showReviews()"> الاراء </v-btn>
     <v-col cols="12" class="pb-3">
       <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
         <template v-slot:default>
@@ -136,12 +135,9 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
-    },
-
-    showReviews() {
-      this.$router.push('/reviews-management')
     },
 
     editItem(item) {
@@ -153,11 +149,16 @@ export default {
     deleteItem(item) {
       const index = this.products.indexOf(item)
       confirm('هل أنت متأكد من حذف هذا العنصر؟') && this.$http.get(`admin/products/destroy/${item.id}`)
-      this.callMessage(res.data.message)
 
-        .then(res => {})
+        .then(res => {
+            this.products.splice(index, 1)
+          this.$store.state.snackbar = true
+          this.$store.state.text = res.data.message
+
+        })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
   },

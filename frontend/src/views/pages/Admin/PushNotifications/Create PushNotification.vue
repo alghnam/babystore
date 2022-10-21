@@ -25,7 +25,7 @@
               <v-card-text>
                 <div class="row">
                   <!-- left section -->
-                  <v-col xs="12" sm="12" md="8" lg="8" xl="8">
+                  <v-col xs="12" sm="12" md="8" lg="8" xl="8" class="mx-auto">
                     <v-card outlined>
                       <v-card-text>
                         <v-row>
@@ -109,12 +109,11 @@
                                           </div>
 
                                           <v-btn
-                                            color="blue lighten-1"
-                                            class="col-sm-5 mx-auto"
+                                            color="blue lighten-1 mt-3 mr-2 ml-2"
                                             @click="saveUserNotification()"
                                             dark
-                                            >حفظ <i class="fas fa-file mr-3"></i
-                                          ></v-btn>
+                                            >حفظ <v-icon>mdi-file</v-icon></v-btn
+                                          >
                                         </v-col>
                                       </v-row>
                                     </v-col>
@@ -225,7 +224,8 @@ export default {
           this.usersNotification.push(res.data.data.name)
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     // },
@@ -247,7 +247,8 @@ export default {
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -255,9 +256,7 @@ export default {
       }
     },
   },
-  created() {
-    this.getMainCategories()
-  },
+  created() {},
   methods: {
     callMessage(message) {
       this.snackbar = true
@@ -313,7 +312,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },

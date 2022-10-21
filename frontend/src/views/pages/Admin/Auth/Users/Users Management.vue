@@ -1,29 +1,20 @@
 <template>
   <div>
-    <v-snackbar v-model="snackbar" :color="color">
-      {{ text }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false"> Close </v-btn>
-      </template>
-    </v-snackbar>
-
-    <v-btn color="primary" class="mt-6" @click="showTrash()"> Trash </v-btn>
-
-    <v-btn color="primary" class="mt-6" outlined @click="createItem()"> Create </v-btn>
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" @click="showTrash()">
+      سلة المحذوفات
+      <v-icon class="mr-3">mdi-delete</v-icon>
+    </v-btn>
 
     <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
       <template v-slot:default>
         <thead>
           <tr>
-            <th class="text-right text-uppercase">First Name</th>
-            <th class="text-right text-uppercase">last Name</th>
+            <th class="text-right text-uppercase">الاسم الأول</th>
+            <th class="text-right text-uppercase">الاسم الأخير</th>
 
-            <th class="text-right text-uppercase">Phone No.</th>
+            <th class="text-right text-uppercase">رقم الهاتف</th>
 
-            <th class="text-right text-uppercase">Status</th>
-
-            <th class="text-right text-uppercase">Actions</th>
+            <th class="text-right text-uppercase">الأحداث</th>
           </tr>
         </thead>
 
@@ -40,15 +31,13 @@
             </td>
 
             <td class="text-right">
-              {{ item.original_status }}
-            </td>
-
-            <td class="text-right">
               <div v-if="item.id !== 1">
-                <v-btn color="primary" class="mt-6" @click="editItem(item)">
-                  <v-icon color="black">mdi-pencil</v-icon> Edit
+                <v-btn color="primary" class="mt-1 rounded-lg" fab x-small tile @click="editItem(item)">
+                  <v-icon color="black" class="white--text">mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn color="default" class="mt-6" @click="deleteItem(item)"> Delete </v-btn>
+                <v-btn color="default" class="mt-1 mr-3 rounded-lg" fab x-small tile @click="deleteItem(item)">
+                  <v-icon color="black" class="">mdi-delete</v-icon>
+                </v-btn>
               </div>
             </td>
           </tr>
@@ -57,7 +46,7 @@
 
       <template v-slot:top>
         <v-toolbar flat color="white">
-          Users Management
+          ادارة المستخدمين
           <v-dialog v-model="dialog">
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="primary" dark class="rounded-lg mr-auto" v-bind="attrs" v-on="on" fab tile x-small
@@ -73,7 +62,7 @@
                 <v-card class="col-sm-7 mx-auto">
                   <v-card-title>
                     <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
-                      <v-icon large>mdi-account-circle</v-icon> Users Management
+                      <v-icon large>mdi-account-circle</v-icon> ادارة المستخدمين
                     </v-alert>
                   </v-card-title>
                   <v-card-text>
@@ -82,21 +71,21 @@
                         class="col-sm-5 mx-auto"
                         outlined
                         dense
-                        label="first_name"
+                        label="الاسم الأول"
                         v-model="editedItem.first_name"
                       ></v-text-field>
                       <v-text-field
                         class="col-sm-5 mx-auto"
                         outlined
                         dense
-                        label="last_name"
+                        label="الاسم الأخير"
                         v-model="editedItem.last_name"
                       ></v-text-field>
                       <v-text-field
                         class="col-sm-5 mx-auto"
                         outlined
                         dense
-                        label="phone_no"
+                        label="رقم الهاتف"
                         type="number"
                         v-model="editedItem.phone_no"
                       ></v-text-field>
@@ -104,19 +93,19 @@
                         class="col-sm-5 mx-auto"
                         outlined
                         dense
-                        label="roles"
+                        label="الأدوار"
                         :items="roles"
                         v-model="editedItem.roles"
                         multiple
                       ></v-select>
-                      <v-select
+                      <!-- <v-select
                         class="col-sm-5 mx-auto"
                         outlined
                         dense
-                        label="status"
+                        label="الحالة"
                         :items="statuses"
                         v-model="editedItem.status"
-                      ></v-select>
+                      ></v-select> -->
 
                       <div class="col-sm-5 mx-auto row">
                         <v-btn
@@ -160,20 +149,16 @@ export default {
       users: [],
       roles: [],
       send_roles: [],
-      statuses: [
-        {
-          text: 'Pending',
-          value: '0',
-        },
-        {
-          text: 'Verified',
-          value: '1',
-        },
-        {
-          text: 'Reject Verification',
-          value: '-1',
-        },
-      ],
+      //  statuses: [
+      //     {
+      //       text: 'Active',
+      //       value: '1',
+      //     },
+      //     {
+      //       text: 'InActive',
+      //       value: '0',
+      //     },
+      //   ],
       confirms: [
         {
           text: 'confirmed',
@@ -239,20 +224,19 @@ export default {
       this.text = message
     },
     showTrash() {
-      this.$router.push('/trash-users-managment')
+      this.$router.push('/trash-users-management')
     },
     getUsers() {
-
       this.$http
-        // .get(`admin/users/get-all-paginates?page=${this.page}&total=${this.total}`)
-        .get(`admin/orders/latest`)
+        .get(`admin/users/get-all-paginates?page=${this.page}&total=${this.total}`)
         .then(res => {
           this.users = res.data.data.data
           this.pageInfo = res.data.data
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -270,7 +254,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -295,7 +280,8 @@ export default {
       formData.append('last_name', this.editedItem.last_name)
       formData.append('phone_no', this.editedItem.phone_no)
       formData.append('roles', this.editedItem.roles)
-      formData.append('status', this.editedItem.status)
+      // formData.append('status', this.editedItem.status)
+      formData.append('status', 1)
 
       if (this.editedIndex > -1) {
         //edit route
@@ -310,13 +296,15 @@ export default {
             this.dialog = false
             Object.assign(this.users[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             this.dialog = false
 
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -332,13 +320,15 @@ export default {
             this.dialog = false
             this.users.push(res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             this.dialog = false
 
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -365,7 +355,8 @@ export default {
           this.dialog = true
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
     createItem() {
@@ -380,11 +371,13 @@ export default {
 
           .then(res => {
             this.users.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar = true
+            this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar = true
+              this.$store.state.text = error.response.data.message
             }
           })
     },

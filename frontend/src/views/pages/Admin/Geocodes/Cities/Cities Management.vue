@@ -12,7 +12,6 @@
               <th class="text-right text-uppercase">الاسم</th>
               <th class="text-right text-uppercase">الكود</th>
               <th class="text-right text-uppercase">الدولة</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
@@ -22,9 +21,6 @@
               <td class="text-right">{{ item.code }}</td>
               <td class="text-right">
                 {{ item.country.name.text ? item.country.name.text : item.country.name }}
-              </td>
-              <td class="text-right">
-                {{ item.original_status }}
               </td>
 
               <td>
@@ -57,7 +53,7 @@
                   <v-card class="col-sm-7 mx-auto">
                     <v-card-title>
                       <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
-                        <v-icon large>mdi-account-circle</v-icon> ادارة المدن
+                        <v-icon large dark>mdi-account-circle</v-icon> ادارة المدن
                       </v-alert>
                     </v-card-title>
                     <v-card-text>
@@ -83,7 +79,7 @@
                           dense
                           label="اختر الدولة"
                           :items="countrieso"
-                          v-model="editedItem.country.name"
+                          v-model="editedItem.country.id"
                         ></v-select>
                         <v-select
                           v-else
@@ -94,15 +90,7 @@
                           :items="countrieso"
                           v-model="editedItem.country"
                         ></v-select>
-                        <v-select
-                          class="col-sm-5 mx-auto"
-                          outlined
-                          dense
-                          label="حالة الظهور"
-                          :items="statuses"
-                          v-model="editedItem.status"
-                        ></v-select>
-
+                        <div class="col-sm-5 mx-auto"></div>
                         <div class="col-sm-5 mx-auto row">
                           <v-btn
                             color="primary lighten-1 rounded-tr-xl rounded-bl-xl"
@@ -187,7 +175,7 @@ export default {
     dialog(val) {
       val || this.close()
     },
-    'editedItem.country.name': {
+    'editedItem.country.id': {
       handler: function (val) {
         this.editedItem.country.id = val
       },
@@ -215,7 +203,8 @@ export default {
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -228,12 +217,13 @@ export default {
             this.countrieso.push({
               text: country.name,
               value: country.id,
-            })
+            })  
           })
         })
         .catch(error => {
           if (error && error.response) {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
           }
         })
     },
@@ -242,6 +232,7 @@ export default {
       // if (this.editedItem.country.id == undefined) {
       //   this.editedItem.country.id = this.editedItem.parent_id
       // }
+      console.log('.editedItem.country.id', this.editedItem.country.id)
       if (this.editedIndex > -1) {
         //edit route
         this.$http
@@ -250,23 +241,21 @@ export default {
             code: this.editedItem.code,
             country_id: this.editedItem.country.id,
 
-            status: this.editedItem.status,
+            status: 1,
           })
 
           .then(res => {
+            this.close()
             this.dialog = false
-            Object.assign(this.cities[this.editedIndex], {
-              name: this.editedItem.name,
-              code: this.editedItem.code,
-              country_id: this.editedItem.country.id,
-              original_status: res.data.data.original_status,
-            })
+            Object.assign(this.cities[this.editedIndex], res.data.data)
 
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
       } else {
@@ -276,24 +265,20 @@ export default {
             code: this.editedItem.code,
             country_id: this.editedItem.country.id,
 
-            status: this.editedItem.status.value,
+            status: 1,
           })
 
           .then(res => {
+            this.close()
             this.dialog = false
-            this.cities.push({
-              id: res.data.data.id,
-              name: this.editedItem.name,
-              code: this.editedItem.code,
-              country: this.editedItem.country,
-              original_status: res.data.data.original_status,
-            })
-         
-            this.callMessage(res.data.message)
+            this.cities.push(res.data.data)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
       }
@@ -301,11 +286,24 @@ export default {
 
     editItem(item) {
       this.dialog = true
-      Object.assign(this.editedItem, {
-        ...item,
-      })
-
       this.editedIndex = this.cities.indexOf(item)
+      // Object.assign(this.editedItem, {
+      //   ...item,
+      // })
+      let id = Number(item.country.id)
+
+      this.editedItem = {}
+      this.editedItem = Object.assign(
+        {},
+        {
+          ...item,
+        },
+      )
+      setTimeout(() => {
+        this.editedItem.country.id = id
+      }, 1000)
+
+      console.log('this.editedItem', this.editedItem)
     },
     createItem() {
       this.dialog = true
@@ -319,11 +317,13 @@ export default {
 
           .then(res => {
             this.cities.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
           })
           .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },

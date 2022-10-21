@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-btn color="primary" class="mt-6" outlined @click="createItem()"> انشاء </v-btn>
+    <v-btn color="primary" class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl" outlined @click="createItem()">
+      انشاء
+      <v-icon class="mr-3">mdi-plus-circle</v-icon>
+    </v-btn>
     <v-col cols="12" class="pb-3">
       <v-simple-table class="mx-auto pb-5 rounded-xl elevation-10">
         <template v-slot:default>
@@ -8,7 +11,6 @@
             <tr>
               <th class="text-right text-uppercase">العنوان</th>
               <th class="text-right text-uppercase">موضوع الرسالة</th>
-              <th class="text-right text-uppercase">اسم المستخدم</th>
               <th class="text-right text-uppercase">الاحداث</th>
             </tr>
           </thead>
@@ -16,93 +18,21 @@
             <tr v-for="item in pushnotifications" :key="item.id">
               <td class="text-right">{{ item.title }}</td>
               <td class="text-right">{{ item.body }}</td>
-              <td class="text-right">
-                {{ item.users[0] ? item.users[0].phone_no : null }}
-              </td>
-              <td class="text-right">
-                {{ item.original_status }}
-              </td>
+
               <td class="text-right">
                 <div>
-                  <v-btn color="default" class="mt-6" @click="showUsers(item)"> عرض المستخدمين </v-btn>
-                  <v-btn color="default" class="mt-6" @click="deleteItem(item)"> Delete </v-btn>
+                  <v-btn
+                    color="primary"
+                    class="mt-6 ml-auto rounded-tr-xl rounded-bl-xl"
+                    outlined
+                    @click="showUsers(item)"
+                  >
+                    عرض المستخدمين
+                  </v-btn>
                 </div>
               </td>
             </tr>
           </tbody>
-        </template>
-
-        <template v-slot:top>
-          <v-toolbar flat color="white">
-            ادارة الاشعارات
-            <v-dialog v-model="dialog">
-              <template v-slot:expanded-item="{ headers, item }">
-                <td :colspan="headers.length">More info about {{ item.user_id }}</td>
-              </template>
-              <div class="container">
-                <div class="row">
-                  <v-card class="col-sm-7 mx-auto">
-                    <v-card-title>
-                      <v-alert class="col-sm-12 mx-auto white--text font-2 text-center" color="primary">
-                        <v-icon dark large>mdi-account-circle</v-icon> ادارة الاشعارات
-                      </v-alert>
-                    </v-card-title>
-                    <v-card-text>
-                      <div class="row">
-                        <v-text-field
-                          class="col-sm-5 mx-auto"
-                          outlined
-                          dense
-                          label="العنوان"
-                          v-model="editedItem.title"
-                        ></v-text-field>
-                        <v-text-field
-                          class="white--text ma-5"
-                          v-bind="attrs"
-                          v-on="on"
-                          outlined
-                          dense
-                          label="الموضوع"
-                          v-model="editedItem.body"
-                        >
-                        </v-text-field>
-
-                        <vue-editor v-model="editedItem.description" :editorToolbar="customToolbar"></vue-editor>
-
-                        <v-select
-                          class="col-sm-5 mx-auto"
-                          outlined
-                          dense
-                          label="حالة الظهور"
-                          :items="statuses"
-                          v-model="editedItem.status"
-                        ></v-select>
-
-                        <div class="col-sm-5 mx-auto row">
-                          <v-btn
-                            color="primary lighten-1 rounded-tr-xl rounded-bl-xl"
-                            class="col-sm-5 mx-auto"
-                            @click="save()"
-                            dark
-                            >حفظ <i class="fas fa-file mr-3"></i
-                          ></v-btn>
-                          <v-btn
-                            color="white"
-                            light
-                            class="col-sm-5 mx-auto black--text rounded-tr-xl rounded-bl-xl"
-                            @click="close()"
-                            dark
-                            >رجوع
-                            <v-icon class="mr-3">mdi-reply-all</v-icon>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-card-text>
-                  </v-card>
-                </div>
-              </div>
-            </v-dialog>
-          </v-toolbar>
         </template>
       </v-simple-table>
     </v-col>
@@ -243,7 +173,8 @@ export default {
           })
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -259,7 +190,8 @@ export default {
           this.pageInfo = res.data.data
         })
         .catch(error => {
-          this.callMessage(error.response.data.message)
+          this.$store.state.snackbar = true
+          this.$store.state.text = error.response.data.message
         })
     },
 
@@ -270,23 +202,6 @@ export default {
       })
 
       this.dialog = true
-    },
-
-    deleteItem(item) {
-      const index = this.pushnotifications.indexOf(item)
-      confirm('هل أنت متأكد من حذف هذا العنصر؟') &&
-        this.$http
-          .get(`admin/pushnotifications/destroy/${item.id}`)
-
-          .then(res => {
-            this.pushnotifications.splice(index, 1)
-            this.callMessage(res.data.message)
-          })
-          .catch(error => {
-            if (error && error.response) {
-              this.callMessage(error.response.data.message)
-            }
-          })
     },
 
     close() {

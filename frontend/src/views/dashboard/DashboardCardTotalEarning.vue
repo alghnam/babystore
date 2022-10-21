@@ -4,11 +4,7 @@
       <span>Total Earning</span>
       <v-spacer></v-spacer>
 
-      <v-btn
-        icon
-        small
-        class="me-n3 mt-n2"
-      >
+      <v-btn icon small class="me-n3 mt-n2">
         <v-icon>
           {{ icons.mdiDotsVertical }}
         </v-icon>
@@ -18,42 +14,28 @@
     <v-card-text class="my-7">
       <div class="d-flex align-center">
         <h1 class="text-4xl font-weight-semibold">
-          $24,895
+          {{ totalEarning }}
         </h1>
 
         <div class="d-flex align-center mb-n3">
-          <v-icon
-            size="40"
-            color="success"
-          >
+          <v-icon size="40" color="success">
             {{ icons.mdiMenuUp }}
           </v-icon>
           <span class="text-base font-weight-medium success--text ms-n2">10%</span>
         </div>
       </div>
 
-      <h4 class="mt-2 font-weight-medium">
-        Compared to $84,325 last year
-      </h4>
+      <h4 class="mt-2 font-weight-medium">Compared to $84,325 last year</h4>
     </v-card-text>
 
     <v-card-text>
       <div
-        v-for="(earning,index) in totalEarning"
+        v-for="(earning, index) in totalEarning"
         :key="earning.avatar"
-        :class="`d-flex align-start ${index >0 ? 'mt-8':''}`"
+        :class="`d-flex align-start ${index > 0 ? 'mt-8' : ''}`"
       >
-        <v-avatar
-          rounded
-          size="38"
-          color="#5e56690a"
-          class="me-4"
-        >
-          <v-img
-            contain
-            :src="earning.avatar"
-            height="20"
-          ></v-img>
+        <v-avatar rounded size="38" color="#5e56690a" class="me-4">
+          <v-img contain :src="earning.avatar" height="20"></v-img>
         </v-avatar>
 
         <div class="d-flex align-center flex-grow-1 flex-wrap">
@@ -70,10 +52,7 @@
             <p class="text--primary font-weight-medium mb-1">
               {{ earning.earning }}
             </p>
-            <v-progress-linear
-              :value="earning.progress"
-              :color="earning.color"
-            ></v-progress-linear>
+            <v-progress-linear :value="earning.progress" :color="earning.color"></v-progress-linear>
           </div>
         </div>
       </div>
@@ -117,6 +96,24 @@ export default {
       totalEarning,
       icons: { mdiDotsVertical, mdiMenuUp },
     }
+  },
+  created() {
+    this.totalEarning()
+  },
+  methods: {
+    totalEarning() {
+      this.$http
+        .get('admin/orders/prices-sent-delivered-orders')
+        .then(res => {
+          this.totalEarning = res.data.data
+        })
+        .catch(error => {
+          if (error && error.response) {
+            this.$store.state.snackbar = true
+            this.$store.state.text = error.response.data.message
+          }
+        })
+    },
   },
 }
 </script>

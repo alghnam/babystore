@@ -11,17 +11,11 @@
         <v-card-text>
           <v-list>
             <v-list-item
-              v-for="(data,index) in deposit"
+              v-for="(data, index) in deposit"
               :key="data.img"
-              :class="`d-flex px-0 ${index > 0 ? 'mt-4':''}`"
+              :class="`d-flex px-0 ${index > 0 ? 'mt-4' : ''}`"
             >
-              <v-img
-                contain
-                max-height="30"
-                max-width="30"
-                :src="data.img"
-                class="me-3"
-              ></v-img>
+              <v-img contain max-height="30" max-width="30" :src="data.img" class="me-3"></v-img>
 
               <div class="d-flex align-center flex-grow-1 flex-wrap">
                 <div class="me-auto pe-2">
@@ -38,10 +32,7 @@
         </v-card-text>
       </div>
 
-      <v-divider
-        class="my-sm-5 mx-5"
-        :vertical="$vuetify.breakpoint.smAndUp"
-      ></v-divider>
+      <v-divider class="my-sm-5 mx-5" :vertical="$vuetify.breakpoint.smAndUp"></v-divider>
 
       <div class="flex-grow-1">
         <v-card-title>
@@ -53,16 +44,11 @@
         <v-card-text>
           <v-list>
             <v-list-item
-              v-for="(data,index) in withdraw"
+              v-for="(data, index) in withdraw"
               :key="data.img"
-              :class="`d-flex px-0 ${index > 0 ? 'mt-4':''}`"
+              :class="`d-flex px-0 ${index > 0 ? 'mt-4' : ''}`"
             >
-              <v-img
-                max-height="30"
-                max-width="30"
-                :src="data.img"
-                class="me-3"
-              ></v-img>
+              <v-img max-height="30" max-width="30" :src="data.img" class="me-3"></v-img>
 
               <div class="d-flex align-center flex-grow-1 flex-wrap">
                 <div class="me-auto pe-2">

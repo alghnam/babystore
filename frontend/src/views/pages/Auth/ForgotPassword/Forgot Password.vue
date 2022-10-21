@@ -93,7 +93,8 @@ export default {
         })
         .then(res => {
          console.log('res.data.data', res.data.data)
-this.callMessage(res.data.message)
+this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
           localStorage.setItem('phone_no', this.phone_no)
           localStorage.setItem('rand', res.data.data.rand)
               //go into page write a code
@@ -101,7 +102,8 @@ this.callMessage(res.data.message)
            
         })
       .catch(error => {
-            this.callMessage(error.response.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
         })
     },
   },

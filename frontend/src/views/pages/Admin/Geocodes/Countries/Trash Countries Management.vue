@@ -13,7 +13,6 @@
           <tr>
             <th class="text-right text-uppercase">الاسم </th>
             <th class="text-right text-uppercase">الكود</th>
-            <th class="text-right text-uppercase">حالة الظهور</th>
             <th class="text-right text-uppercase">الاحداث</th>
           </tr>
         </thead>
@@ -21,9 +20,7 @@
           <tr v-for="item in countries" :key="item.id">
             <td class="text-right">{{ item.name }}</td>
             <td class="text-right">{{ item.code }}</td>
-            <td class="text-right">
-              {{ item.status}}
-            </td>
+          
 
             <td>
 
@@ -93,11 +90,13 @@ export default {
         .then(res => {
           this.countries = res.data.data.data
           this.pageInfo = res.data.data
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
         })
                         .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },
@@ -109,14 +108,15 @@ export default {
       this.$http
         .get(`admin/countries/restore/${this.editedItem.id}`)
         .then(res => {
-            if (res.data.message != null) {
               this.countries.splice(index, 1)
-            this.callMessage(res.data.message)
-            }
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
+            
         })
                         .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },
@@ -127,13 +127,15 @@ export default {
         
             if (res.data.message != null) {
               this.countries = []
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
             }
           
         })
                          .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },
@@ -145,12 +147,14 @@ export default {
           .get(`admin/countries/force-delete/${item.id}`)
           .then(res => {
             this.countries.splice(index, 1)
-            this.callMessage(res.data.message)
+            this.$store.state.snackbar=true
+          this.$store.state.text = res.data.message
 
           })
                  .catch(error => {
             if (error && error.response) {
-              this.callMessage(error.response.data.message)
+              this.$store.state.snackbar=true
+          this.$store.state.text = error.response.data.message
             }
           })
     },
