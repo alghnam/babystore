@@ -293,7 +293,7 @@ class CategoryController extends Controller
             if(is_string($Category)){
                 return response()->json(['status'=>false,'message'=>$Category],404);
             }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category->load(['mainCategory','image'])],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$Category],200);
 
         
         }catch(\Exception $ex){

@@ -80,6 +80,7 @@ class WalletController extends Controller
         public function pointsWallet(){
           try{
                 $pointsWallet=$this->walletRepo->pointsWallet($this->wallet);
+
        
                 $data=[
                     'count'=>$pointsWallet
@@ -94,9 +95,13 @@ class WalletController extends Controller
          try{
             $user=auth()->guard('api')->user();
             $wallet=Wallet::where(['user_id'=>$user->id])->first();
-            $couponsCount=Coupon::where(['is_used'=>0])->count();
+            $couponsCount=Coupon::where(['is_used'=>0])->where('end_date','>',now())->count();
             $location = geoip(request()->ip());
             $currencyCountry=$location->currency;
+            if($wallet->amount){
+            $convertingamountWallet =  $this->baseRepo->priceCalculation($wallet->amount);
+            $wallet->amount=$convertingamountWallet;
+        }
             $data=[
                     'points_wallet'=>$wallet->points,
                     'amount_wallet'=>$wallet->amount,
@@ -171,9 +176,9 @@ class WalletController extends Controller
     public function balanceWallet(){
         try{
             $wallet=$this->walletRepo->balanceWallet($this->wallet);
-            $data=[
-                'amount'=>$wallet->amount
-                ];
+            $currency=$this->baseRepo->countryCurrency();
+            $wallet->currency=$currency;
+            
                     return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$wallet],200);
         }catch(\Exception $ex){
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);

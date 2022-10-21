@@ -103,18 +103,17 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
                }
 
              if($category->image){
-                //   dd($data['image']);
                  $category->image()->update(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Category\Entities\Category']);
-               return $category;
 
              }else{
        
                  $category->image()->create(['url'=>$data['image'],'imageable_id'=>$category->id,'imageable_type'=>'Modules\Category\Entities\Category']);
-                                    //   dd($category->image);
-                                               return $category;
+                                 
 
              }
          }
+                        return $category;
+
 
         }    
 

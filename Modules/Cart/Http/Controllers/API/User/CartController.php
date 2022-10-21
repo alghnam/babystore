@@ -103,7 +103,20 @@ class CartController extends Controller
                 }
                 $user=auth()->guard('api')->user();
                 if($user==null){
-                    return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cart],200);
+            //convert this price that in dinar into currency user
+                    $location = geoip(request()->ip());
+                    $cart->currency_country=$location->currency;
+                    if($location->currency!==config('constants.currency_system')){
+                        if($cart->productArrayAttributes){
+                          foreach($cart->productArrayAttributes as $proAttr){
+                                if($proAttr->price_discount_ends){
+                                      $convertingPriceEnds =  $this->baseRepo->priceCalculation($proAttr->price_discount_ends);
+                                    $proAttr->price_discount_ends=$convertingPriceEnds;
+                                }
+                          }
+                        }
+                    }
+                return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$cart],200);
 
                 }else{
                     if(count($user->addresses)!==0){
@@ -113,22 +126,13 @@ class CartController extends Controller
                     }
                     //convert this price that in dinar into currency user
                     $location = geoip(request()->ip());
-                    $currencyCountry=$location->currency;
-                    $cart->currency_country=$currencyCountry;
-                    $currencySystem='KWD';
-                    if($location->currency!==$currencySystem){
+                    $cart->currency_country=$location->currency;
+                    if($location->currency!==config('constants.currency_system')){
                         if($cart->productArrayAttributes){
                           foreach($cart->productArrayAttributes as $proAttr){
-                               
                                 if($proAttr->price_discount_ends){
-                                    
-                                      $convertingCurrencies=  Currency::convert()
-                                    ->from($currencySystem)
-                                    ->to($currencyCountry)
-                                    ->amount($proAttr->price_discount_ends)
-                                    ->get();
-                              
-                                    $proAttr->price_discount_ends=round($convertingCurrencies,2);
+                                      $convertingPriceEnds =  $this->baseRepo->priceCalculation($proAttr->price_discount_ends);
+                                    $proAttr->price_discount_ends=$convertingPriceEnds;
                                 }
                           }
                         }

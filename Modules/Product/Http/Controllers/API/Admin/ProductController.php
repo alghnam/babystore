@@ -74,6 +74,7 @@ class ProductController extends Controller
           
      }
       public function search($word){
+          
           try{
                   $products=$this->productRepo->search($this->product,$word);
             return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$products],200);

@@ -18,12 +18,11 @@ class EloquentRepository
     }
     public function all($model){
   //  $modelData=$model->where('locale',config('app.locale'))->where('status',1)->get();
-    $modelData=$model->get();
+    $modelData=$model->where('status',1)->get();
        return  $modelData;
    }
    public  function trash($model,$request){
        $modelData=$this->findAllItemsOnlyTrashed($model);
-    //   dd($modelData);
         if(is_string($modelData)){
             return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
         }
@@ -38,9 +37,7 @@ class EloquentRepository
         return $item;
     }
     public function findItemOnlyTrashed($id,$model){     
-        // dd($model);
         $itemInTrash=$model->onlyTrashed()->where('id',$id)->first();//item in trash
-        // dd($itemInTrash);
         if(empty($itemInTrash)){
             return 'هذا العنصر غير موجود في سلة المحذوفات';
         }else{
@@ -49,15 +46,13 @@ class EloquentRepository
        }
     }
     public function findAllItemsOnlyTrashed($model){      
-               $itemsInTrash=$model->onlyTrashed()->get();//items in trash
-        //  dd($itemsInTrash);
+        $itemsInTrash=$model->onlyTrashed()->get();//items in trash
        if(count($itemsInTrash)==0){
            return 'لا يوجد اي عناصر في سلة المحذوفات';
                 // return trans('messages.there is not found any items in trash');
        }else{
 
            $items=$model->onlyTrashed();//get items from trash
-        // dd($items);
            return $items;
        }
     }

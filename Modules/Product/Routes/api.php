@@ -11,7 +11,7 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
                     Route::get('search/{word}', [ProductControllerAdmin::class,'search'])->name('api.admin.products.search');    
 
         Route::get('some', [ProductControllerAdmin::class,'someProducts'])->name('api.admin.products.some-products');    
-        Route::get('search/{word}', [ProductControllerAdmin::class,'search'])->name('api.admin.products.search');    
+  
         Route::get('/get-all-paginates', [ProductControllerAdmin::class,'getAllPaginates'])->name('api.admin.products.get-all-products-paginate');
         
         Route::get('/get-products-for-category/{id}', [ProductControllerAdmin::class,'getProductsForCategory'])->name('api.admin.categories.get-products-for-category');

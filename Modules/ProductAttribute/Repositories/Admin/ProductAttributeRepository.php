@@ -135,8 +135,9 @@ class ProductAttributeRepository extends EloquentRepository implements ProductAt
                    }else{
                        $data['image']=$productAttribute->image;
                    }
-                  $data['image']= str_replace("public/","",$data['image']);
+                //   dd($data['image']);
                  if($productAttribute->image){
+                     
                      $productAttribute->image()->update(['url'=>$data['image'],'imageable_id'=>$productAttribute->id,'imageable_type'=>'Modules\ProductAttribute\Entities\ProductArrayAttribute']);
                  }else{
                      $productAttribute->image()->create(['url'=>$data['image'],'imageable_id'=>$productAttribute->id,'imageable_type'=>'Modules\ProductAttribute\Entities\ProductArrayAttribute']);

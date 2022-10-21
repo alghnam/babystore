@@ -288,18 +288,18 @@ class UserController extends Controller
     public function forceDelete(DeleteUserRequest $request,$id)
     {
         //to make force destroy for a user must be this user  not found in users table  , must be found in trash users
-         try{
+        //  try{
         $user=$this->userRepo->forceDelete($id,$this->user);
-   if(is_string($user)){
+        if(is_string($user)){
             return response()->json(['status'=>false,'message'=>$user],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$users],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$user],200);
 
         
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        } 
+        // } 
        
     }
 }

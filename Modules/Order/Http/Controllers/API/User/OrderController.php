@@ -326,39 +326,7 @@ class OrderController extends Controller
         // } 
     }
     
-    public function getCheckoutId($totalPrice=2){
-          $url = "https://eu-test.oppwa.com/v1/checkouts";
-    	$data = "entityId=8a8294174b7ecb28014b9699220015ca" .
-                    "&amount=".$totalPrice .
-                    "&currency=EUR" .
-                    "&paymentType=DB";
-    
-    	$ch = curl_init();
-    	curl_setopt($ch, CURLOPT_URL, $url);
-    	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                       'Authorization:Bearer OGE4Mjk0MTc0YjdlY2IyODAxNGI5Njk5MjIwMDE1Y2N8c3k2S0pzVDg='));
-    	curl_setopt($ch, CURLOPT_POST, 1);
-    	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
-    	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    	$responseData = curl_exec($ch);
-    	if(curl_errno($ch)) {
-    		return curl_error($ch);
-    	}
-    	curl_close($ch);
-    	$res=json_decode($responseData,true);
 
-    	if($res['id']){
-    	    return view('visa')->with(compact('res'));
-    	             $user=auth()->guard('api')->user();
-
-    	            	 Storage::put($user->id.'-checkoutId',$res['id']);
-    	    return $res;
-    	}else{
-    	    return 'وجد خطا ما , يرجى المحاولة فيما بعد';
-    	}
-    }
-    
     public function paymentProcess($totalPrice,$orderId){
                 $paymentProcess=$this->orderRepo->paymentProcess($totalPrice,$orderId);
         return $paymentProcess;
@@ -378,7 +346,7 @@ class OrderController extends Controller
                     }else{
                         $cardName='كي نت';
                     }
-            //         dd($paymentProcess);
+                    
             //  $cardName=$paymentProcess->card->scheme;
 
                   $order=Order::where('id',$orderId)->first();
@@ -393,17 +361,57 @@ class OrderController extends Controller
                     $service_id= Storage::get($userId.'-service_id');
                     $address_id= Storage::get($userId.'-address_id');
                     $payment_id= Storage::get($userId.'-payment_id');
-                    // dd($cardName);
                     $this->orderRepo->processAfterPayment($userId,$wallet,$order,$cart,$totalPriceBill,$coupon_id,$payment_id,$service_id,$address_id,$status=1,$type=3,$cardName);
                     $coupon= Coupon::where(['id'=>$coupon_id])->first();
+                            $location = geoip(request()->ip());
 
+                    if($location->currency!==config('constants.currency_system')){
+
+                        if($order->price){
+                            $convertingPrice =  $this->baseRepo->priceCalculation($order->price);
+                            $order->price=$convertingPrice;
+                        }
+                        if($order->service){
+                            $convertingValueService =  $this->baseRepo->priceCalculation($order->service->value);
+                            $order->service->value=$convertingValueService;
+                        }
+                         if($coupon){
+                            $convertingValueCoupon =  $this->baseRepo->priceCalculation($coupon->value);
+                            $coupon->value=$convertingValueCoupon;
+                        
+                         }
+                         if($order->coupon){
+                            $convertingValuecouponE =  $this->baseRepo->priceCalculation($order->coupon->value);
+                            $order->coupon->value=$convertingValuecouponE;
+                        }
+                    }
+        
                            $arrUpsellsPro=[];
                     $productsOrder=[];
                     if(count($order->productArrayAttributes)){
                         $productsOrder=$order->productArrayAttributes()->with('product')->get();
-            
-                       foreach($order->productArrayAttributes as $productOrder){
+                        $location = geoip(request()->ip());
+
+                        if($location->currency!==config('constants.currency_system')){
+
+                            foreach($productsOrder as $productOrder){
                             if($productOrder->pivot->quantity!==0){
+                                if($productOrder->original_price){
+                                    $convertingOriginalPrice =  $this->baseRepo->priceCalculation($productOrder->original_price);
+                                    $productOrder->original_price=$convertingOriginalPrice;
+                                }
+                                if($productOrder->price_discount_ends){
+                                    $convertingPriceEnds =  $this->baseRepo->priceCalculation($productOrder->price_discount_ends);
+                                    $productOrder->price_discount_ends=$convertingPriceEnds;
+                                }
+                                 if($productOrder->product->original_price){
+                                        $convertingOriginalPrice =  $this->baseRepo->priceCalculation($productOrder->product->original_price);
+                                        $productOrder->product->original_price=$convertingOriginalPrice;
+                                    }
+                                if($productOrder->product->price_discount_ends){
+                                    $convertingPriceEnds =  $this->baseRepo->priceCalculation($productOrder->product->price_discount_ends);
+                                    $productOrder->product->price_discount_ends=$convertingPriceEnds;
+                                }
                               $upsellsPro= UpSell::where(['product_id'=>$productOrder->product_id])->first();
                                 if(!empty($upsellsPro)){
                                     $upsells=$upsellsPro->upsells;
@@ -424,9 +432,10 @@ class OrderController extends Controller
                                 }
                             }
                        }
+                        }
                     }
                     $data=[
-                        'order'=>$order->load(['payment','service']),
+                        'order'=>$order->load(['payment']),
                         'coupon'=>$coupon,
                         'products'=>$productsOrder,
                         'upsells'=>$arrUpsellsPro
@@ -592,6 +601,7 @@ class OrderController extends Controller
                                 $convertingPriceEnds =  $this->baseRepo->priceCalculation($proo->price_discount_ends);
                                 $proo->price_discount_ends=$convertingPriceEnds;
                             }
+                            
                         }
                     }
                     $this->orderRepo->processAfterPaymentForRefinishing($wallet,$order,$totalPrice,$payment_id,$product_array_attributes,$status=1,$type=3);

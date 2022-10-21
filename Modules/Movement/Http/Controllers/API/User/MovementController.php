@@ -58,6 +58,10 @@ class MovementController extends Controller
                 
             }
         }
+        if($wallet->amount){
+            $convertingamountWallet =  $this->baseRepo->priceCalculation($wallet->amount);
+            $wallet->amount=$convertingamountWallet;
+        }
         $data=[
             'points_wallet'=>$wallet->amount,
             'movements'=>$Movements,

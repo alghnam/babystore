@@ -59,29 +59,25 @@ class RoleRepository extends EloquentRepository implements RoleRepositoryInterfa
     }
         return $role;
     }
+
+    
+    
     public function forceDelete($id,$model){
         //to make force destroy for an item must be this item  not found in items table  , must be found in trash items
         $itemInTableitems = $this->find($id,$model);//find this item from  table items
-        if(empty($itemInTableitems)){//this item not found in items table
-            $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
-            if(empty($itemInTrash)){//this item not found in trash items
-            //   return __('this item  found in system so you cannt   delete it by forcely , you can delete it Temporarily after that delete it by forcely');
-            
-            return 'هذا العنصر  غير موجود بسلة المحذوفات لذلك يمكنك حذفه من النظام بالبداية وبعد ذلك حذفه من سلة المحذوفات  ';
-
- 
-            }else{
+        // dd($itemInTableitems);
+        if(is_string($itemInTableitems)){//this item not found in items table
+            return $itemInTableitems;
+        }
+        
+        $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
+        if(is_string($itemInTrash)){//this item not found in trash items table
+            return 'هذا العنصر غير موجود في سلة المحذوفات';
+        }
                 $itemInTrash->detachPermissions($itemInTrash->permissions);
-                $itemInTrash->forceDelete();
-                return $itemInTrash;
-            }
-        }else{
-            // return __('not found');
-            return 'غير موجود بالنظام ';
-                  
-                  }
+            $itemInTrash->forceDelete();
 
-
-
+            return 200;
     }
+    
 }

@@ -80,21 +80,21 @@ class RegisterRepository extends EloquentRepository implements RegisterRepositor
    }
    
                public function resendCode($model,$rand){
-                                                     $phone_no_reg= Storage::get($rand.'-phone_no_reg');
+                $phone_no_reg= Storage::get($rand.'-phone_no_reg');
 
-  if($phone_no_reg==null){
-      return 'يجب عليك كتابة رقم الموبايل قبل المجي هنا';
-
-  }
-         // Delete all old code that user send before.
-            $model->where('phone_no', $phone_no_reg)->delete();
-        $code=mt_rand(1000, 9999);
-
-        //insert code 
-        $model->insert(['code'=>$code,'phone_no'=>$phone_no_reg]);
-         // Send sms to phone
-        // $this->smsRepo->send($code,$phone_no_reg);
-       return $code;
+                  if($phone_no_reg==null){
+                      return 'يجب عليك كتابة رقم الموبايل قبل المجي هنا';
+                
+                  }
+             // Delete all old code that user send before.
+                $model->where('phone_no', $phone_no_reg)->delete();
+            $code=mt_rand(1000, 9999);
+    
+            //insert code 
+            $model->insert(['code'=>$code,'phone_no'=>$phone_no_reg]);
+             // Send sms to phone
+            // $this->smsRepo->send($code,$phone_no_reg);
+           return $code;
          
     }
 

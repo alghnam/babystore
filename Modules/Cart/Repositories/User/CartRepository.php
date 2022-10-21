@@ -10,13 +10,18 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Modules\Cart\Repositories\User\CartRepositoryInterface;
 use DB;
-    use Illuminate\Support\Facades\Auth;
-    use Modules\Product\Entities\Product;
-    use Modules\SubProduct\Entities\SubProduct;
-    use Modules\ProductAttribute\Entities\ProductArrayAttribute;
+use Illuminate\Support\Facades\Auth;
+use Modules\Product\Entities\Product;
+use Modules\SubProduct\Entities\SubProduct;
+use Modules\ProductAttribute\Entities\ProductArrayAttribute;
+use App\Repositories\BaseRepository;
 
 class CartRepository extends EloquentRepository implements CartRepositoryInterface
 {
+        public function __construct(BaseRepository $baseRepo)
+    {
+        $this->baseRepo = $baseRepo;
+    }
    
     //methods recalling
         public function examinCart($cart){
@@ -103,6 +108,7 @@ class CartRepository extends EloquentRepository implements CartRepositoryInterfa
                 Storage::put('session_id',$session_id);
             }
             $cart=$model->where('session_id',$session_id)->first();
+            
            return $this->examinCart($cart);
            
         }else{

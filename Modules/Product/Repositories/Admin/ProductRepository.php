@@ -34,7 +34,7 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
       public function search($model,$words){
     $modelData=$model->where(function ($query) use ($words) {
               $query->where('name', 'like', '%' . $words . '%');
-         })->get();
+         })->with('productImages')->get();
          return $modelData;
       }
             public function getProductsForSubCategoryTable($model,$subCategoryId){
@@ -52,7 +52,7 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
   public function searchForSimilars($model,$words){
     $modelData=$model->where(function ($query) use ($words) {
               $query->where('name', 'like', '%' . $words . '%');
-         })->get();
+         })->with(['productImages'])->get();
        return  $modelData;
    
     }
@@ -195,29 +195,7 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
        return $productsInInventory;
     }
 
-    public function forceDelete($id,$model){
-        //to make force destroy for an item must be this item  not found in items table  , must be found in trash items
-        $itemInTableitems = $this->find($id,$model);//find this item from  table items
-        if(empty($itemInTableitems)){//this item not found in items table
-            $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
-            if(empty($itemInTrash)){//this item not found in trash items
-            // return __('not found');
-            return 'غير  موجود هذا العنصر بسلة المحذوفات ';
-            
-                        }else{
-                 MediaClass::delete($itemInTrash->image);
-               
-                $itemInTrash->forceDelete();
-                
-                return $itemInTrash;
-            }
-        }else{
-                        // return __('not found');
-            return 'غير موجود بالنظام ';
-                }
-
-
-    }
+   
     public function deleteImage($idImage){
         
        $image= ProductImage::find($idImage);

@@ -29,9 +29,8 @@ class QuestionRepository extends EloquentRepository implements QuestionRepositor
                 if($request->hasFile('image')){
                     $file_path_original= MediaClass::store($request->file('image'),'questions-categories-images');//store Category image
                     
-                                                        $file_path_original_without_public= str_replace("public/","",$file_path_original);
+                    $data['image']=$file_path_original;
 
-                $data['image']=$file_path_original_without_public;
                 }else{
                     $data['image']=$Category->image;
                 }

@@ -57,19 +57,15 @@ class UpSellRepository extends EloquentRepository implements UpSellRepositoryInt
             if(!empty($data['upsells'])){
                 $upsell= $model->where('id',$id)->first();
                 if(!empty($upsell)){
-                    //  $upsellsWithoutThisPro = \array_filter($upsell->upsells, static function ($element) {
-                    //     return $element !== $productId;
-                    // });
                     $resultExistProduct=  in_array($upsell->product_id, $upsell->upsells);
-                    if($resultExistProduct==true){
-                        return 'من فضلك لا تضع المنتج نفسه ضمن مبيعاته';
-                    }
+                    // if($resultExistProduct==true){
+                    //     return 'من فضلك لا تضع المنتج نفسه ضمن مبيعاته';
+                    // }
                     foreach($data['upsells'] as $sell){
                       $resultExistUpsells=  in_array($sell, $upsell->upsells);
                        if($resultExistUpsells){
                            return 'لا يمكنك اضافة مبيعات نفسها على المنتج نفسه اكثر من مرة ';
                        }
-                    //   dd($upsell->upsells);
                     $upsells=$upsell->upsells;
                     array_push($upsells,$sell);
                         $upsell->upsells=$upsells;
@@ -100,7 +96,7 @@ class UpSellRepository extends EloquentRepository implements UpSellRepositoryInt
        $upsell= Upsell::where('product_id',$productId)->first();
       $upsells= $upsell->upsells;
         foreach( $upsells as $upsellId){
-          $proUpsell=  Product::where(['id'=>$upsellId])->first();
+          $proUpsell=  Product::where(['id'=>$upsellId])->with(['productImages'])->first();
         //   dd($proUpsell);
           if(empty($proUpsell)){
                                                     //   unset($upsellId);
@@ -128,25 +124,8 @@ class UpSellRepository extends EloquentRepository implements UpSellRepositoryInt
       if(!$result){
           return 'العنصر الذي تريد حذفه غير موجود بالفعل  هنا لحذفه';
       }
-    //   dd($upsellId);
-     // array_diff( $upsells, [(int)$upsellId] );
-    //   if (($upsellId = array_search($element, $upsells)) !== false) {
-    //         unset($upsells[$upsellId]);
-    //     }
-        //         $upsells = array_filter($upsells, static function ($element) {
-        //          //   dd($upsellId);
-        //     return $element !== 159;
-        // }, ARRAY_FILTER_USE_BOTH);
-//         $upsells = array_flip($upsells);
-// unset($upsells[$upsellId]);
-// $upsells = array_flip($upsells);
-//array_splice($upsells, array_search($upsellId, $upsells ), 1);
-// foreach ($upsells as $key => $value){
-//     if ($value == $upsellId) {
-//         unset($upsells[$key]);
-//     }
-// }
-                                array_splice($upsells, array_search($upsellId, $upsells ), 1);
+
+            array_splice($upsells, array_search($upsellId, $upsells ), 1);
                       $upsell->upsells=$upsells;
                       $upsell->save();
 

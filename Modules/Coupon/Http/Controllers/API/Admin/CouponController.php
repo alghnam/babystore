@@ -214,7 +214,7 @@ class CouponController extends Controller
             if(is_string($coupon)){
                 return response()->json(['status'=>false,'message'=>$coupon],404);
             }
-            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupons],200);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$coupon],200);
         }catch(\Exception $ex){
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 

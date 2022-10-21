@@ -119,11 +119,9 @@ class User extends Authenticatable
     public function getOriginalStatusAttribute(){
         $value=$this->attributes['status'];
         if($value==0){
-            return 'Pending';
+            return 'InActive';
         }elseif ($value==1) {
-            return 'Verified';
-        }elseif ($value==-1) {
-            return 'Reject Verification';
+            return 'Active';
         }
     }
     

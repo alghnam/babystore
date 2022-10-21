@@ -49,13 +49,13 @@ class UpdateServiceRequest extends FormRequest
     public function rules()
     {
  
-              
             return [
                'period' => ['required','max:255'],
                'value' => ['required','max:255','numeric'],
             'status' => ['sometimes', 'in:1,0'],
 
             ];
+            
 
 
     }
@@ -68,6 +68,11 @@ class UpdateServiceRequest extends FormRequest
         return [
 
         ];
+    }
+      protected function failedAction()
+    {
+        // throw new AuthorizationException(__('Cannt make any action here'));
+        throw new AuthorizationException('لا تستطيع فعل هذا الامر هنا');
     }
         /**
      * Handle a failed authorization attempt.

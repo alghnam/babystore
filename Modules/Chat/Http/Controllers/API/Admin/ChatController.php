@@ -137,7 +137,7 @@ class ChatController extends Controller
             $chat= $this->chatRepo->store($request,$this->chat);
              broadcast(new NewChatMessage($chat))->toOthers();
 
-            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat],200);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$chat->load('client')],200);
 
         
         }catch(\Exception $ex){

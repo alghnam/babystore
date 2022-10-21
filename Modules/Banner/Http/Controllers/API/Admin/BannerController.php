@@ -119,7 +119,7 @@ class BannerController extends Controller
     {
          try{
        $banner= $this->bannerRepo->store($request,$this->banner);
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$banner->load('image')],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$banner->load(['image','product'])],200);
 
         
         }catch(\Exception $ex){
@@ -167,7 +167,7 @@ class BannerController extends Controller
                     if(is_string($banner)){
             return response()->json(['status'=>false,'message'=>$banner],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$banner->load('image')],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$banner->load(['image','product'])],200);
 
         
         }catch(\Exception $ex){

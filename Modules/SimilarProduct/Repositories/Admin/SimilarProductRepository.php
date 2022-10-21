@@ -31,13 +31,12 @@ class SimilarProductRepository extends EloquentRepository implements SimilarProd
     public function updateSimilar($request,$model,$productId){
         $data=$request->all();
       $product= Product::where(['id'=>$productId])->first();
-    //   dd($data['similar']);
       if(!empty($data['similar'])){
           foreach($data['similar'] as $simi){
                  $similarCount=$model->where(['product_id'=>$productId,'similar'=>$simi])->count();
-                    // if($similarCount!==0){
-                    //     return 'لا يمكنك اضافة المنتج نفسه اكثر من مرة';
-                    // }
+                    if($similarCount!==0){
+                        return 'لا يمكنك اضافة المنتج نفسه اكثر من مرة';
+                    }
               $similar=new $model;
               $similar->product_id=$productId;
               $similar->similar=$simi;
@@ -47,7 +46,7 @@ class SimilarProductRepository extends EloquentRepository implements SimilarProd
          
       //$product->similarProducts()->attach($data['similar']);
       }
-      return $product;
+      return $product->similarProducts;
     
     }
     public function destroySimilar($model,$productId,$similarId){

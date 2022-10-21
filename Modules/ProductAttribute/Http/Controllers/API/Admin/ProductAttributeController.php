@@ -256,7 +256,7 @@ class ProductAttributeController extends Controller
                if(is_string($productArrayAttributes)){
             return response()->json(['status'=>false,'message'=>$productArrayAttributes],400);
             }
-            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$productArrayAttributes],200);
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$productArrayAttributes->load('image')],200);
 
         
         }catch(\Exception $ex){

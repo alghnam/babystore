@@ -114,15 +114,15 @@ class CityController extends Controller
      */
     public function store(StoreCityRequest $request)
     {
-         try{
+        //  try{
        $city= $this->cityRepo->store($request,$this->city);
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$city->load('country')],200);
 
         
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        } 
+        // } 
     }
 
     /**

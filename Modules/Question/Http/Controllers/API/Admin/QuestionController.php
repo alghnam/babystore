@@ -108,7 +108,7 @@ class QuestionController extends Controller
        if(is_string($question)){
             return response()->json(['status'=>false,'message'=>$question],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$question],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$question->load('questionCategory')],200);
 
         
       }catch(\Exception $ex){
@@ -155,7 +155,7 @@ class QuestionController extends Controller
             if(is_string($question)){
             return response()->json(['status'=>false,'message'=>$question],404);
         }
-          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$question],200);
+          return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$question->load('questionCategory')],200);
 
         
         }catch(\Exception $ex){

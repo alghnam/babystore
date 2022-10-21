@@ -24,15 +24,16 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
           return  $modelData;
     }
 
+
        public  function trash($model,$request){
        $modelData=$this->findAllItemsOnlyTrashed($model);
         if(is_string($modelData)){
-                            return 'لا يوجد اي فئات في سلة المحذوفات الى الان';
-
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
         }
        $modelData=$this->findAllItemsOnlyTrashed($model)->with(['category','category.mainCategory','image'])->withoutGlobalScope(ActiveScope::class)->paginate($request->total);
         return $modelData;
     }
+    
         public function getSecondSubCategoriesForSub($model,$categoryId){
         $modelData=$model->withoutGlobalScope(ActiveScope::class)->where('category_id',$categoryId)->with(['category','category.mainCategory','image'])->get();
         

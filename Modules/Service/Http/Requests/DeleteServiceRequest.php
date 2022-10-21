@@ -50,8 +50,13 @@ class DeleteServiceRequest extends FormRequest
     {
         return [
         ];
+            
     }
-
+  protected function failedAction()
+    {
+        // throw new AuthorizationException(__('Cannt make any action here'));
+        throw new AuthorizationException('لا تستطيع فعل هذا الامر هنا');
+    }
     /**
      * Handle a failed authorization attempt.
      *

@@ -52,10 +52,22 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
         $order->save();
     }
     public function paymentProcessFinishing($totalPriceBill,$orderId,$paymentId){
-            
+        $location = geoip(request()->ip());
+
+        if($location->currency!==config('constants.currency_system')){
+
+             $convertingPrice =  $this->baseRepo->priceCalculation($totalPriceBill);
+        }     
            $user=auth()->guard('api')->user();
-            $data['amount']= $totalPriceBill;
-            $data['currency']= "KWD";
+            $data['amount']= $convertingPrice;
+                        $data['currency']= "KWD";
+
+            // if($paymentId==3){//payment_id:3->kent
+            // $data['currency']= "KWD";
+            // }elseif($paymentId==4){//payment_id:4->all(visa)
+            // $data['currency']= $location->currency;
+
+            // }
             $data['customer']['first_name']= $user->first_name;
             $data['customer']['email']= $user->email;
             // ra@gmail.com
@@ -94,10 +106,22 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
 }
 
     public function paymentProcessReFinishing($totalPrice,$orderId,$name){
+            $location = geoip(request()->ip());
+
+            if($location->currency!==config('constants.currency_system')){
             
+            $convertingPrice =  $this->baseRepo->priceCalculation($totalPrice);
+            }
            $user=auth()->guard('api')->user();
-            $data['amount']= $totalPrice;
-            $data['currency']= "USD";
+            $data['amount']= $convertingPrice;
+                        $data['currency']= "KWD";
+
+            if($paymentId==3){//payment_id:3->kent
+            $data['currency']= "KWD";
+            }elseif($paymentId==4){//payment_id:4->all(visa)
+            $data['currency']= $location->currency;
+
+            }
             $data['customer']['first_name']= $user->first_name;
             $data['customer']['email']= $user->email;
             // ra@gmail.com

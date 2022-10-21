@@ -35,41 +35,18 @@ class TownRepository extends EloquentRepository implements TownRepositoryInterfa
     public function store($request,$model){
         $data=$request->validated();        
         $town=  $model->create($data);
-        if($request->roles){
-            $town->roles()->attach($data['roles']);
-        }
+
        return $town;
     
     }
     public function update($request,$id,$model){
         $town=$model->findOrFail($id);
         $town->update($request->validated());
-        if($request->roles){
-            $town->roles()->sync($request->roles);
-        }
+
         return $town;
     }
 
 
-    public function forceDelete($id,$model){
-        //to make force destroy for an item must be this item  not found in items table  , must be found in trash items
-        $itemInTableitems = $this->find($id,$model);//find this item from  table items
-        if(empty($itemInTableitems)){//this item not found in items table
-            $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
-            if(empty($itemInTrash)){//this item not found in trash items
-                return 404;
-            }else{
-                if($itemInTrash->roles){
-                    $itemInTrash->roles()->detach($itemInTrash->roles);
-                }
-                $itemInTrash->forceDelete();
-                return 200;
-            }
-        }else{
-            return 400;
-        }
 
-
-    }
 
 }
