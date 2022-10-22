@@ -351,8 +351,8 @@ class ProductController extends Controller
      public function restoreAll(){
           try{
          $products =  $this->productRepo->restoreAll($this->product);
-          if(is_string($product)){
-            return response()->json(['status'=>false,'message'=>$product],404);
+          if(is_string($products)){
+            return response()->json(['status'=>false,'message'=>$products],404);
         }
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$products],200);
 
@@ -390,10 +390,10 @@ class ProductController extends Controller
         
         
      }
-     public function forceDelete(DeleteProductRequest $request,$id)
+     public function forceDelete($id)
      {
           try{
-         //to make force destroy for a Product must be this Product  not found in Products table  , must be found in trash Products
+        //  //to make force destroy for a Product must be this Product  not found in Products table  , must be found in trash Products
          $product=$this->productRepo->forceDelete($id,$this->product);
           if(is_string($product)){
             return response()->json(['status'=>false,'message'=>$product],404);
@@ -401,7 +401,7 @@ class ProductController extends Controller
         
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$product],200);
 
-        
+  
         }catch(\Exception $ex){
             return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 

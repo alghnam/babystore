@@ -112,7 +112,14 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
        return  $modelData;
    
     }
-    
+       public  function trash($model,$request){
+       $modelData=$this->findAllItemsOnlyTrashed($model);
+        if(is_string($modelData)){
+            return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
+        }
+       $modelData=$this->findAllItemsOnlyTrashed($model)->withoutGlobalScope(ActiveScope::class)->with('category.mainCategory')->paginate($request->total);
+        return $modelData;
+    }
 
 
     // methods overrides
@@ -210,6 +217,28 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
        return $image;
         
     }
+    public function findE($id,$model){
+        $item=$model->withoutGlobalScope(ActiveScope::class)->withTrashed()->where('id',$id)->first();
+        if(empty($item)){
+            return 'هذا العنصر غير موجود بالنظام';
+        }
+        return $item;
+    }
+     public function forceDelete($id,$model){
+        //to make force destroy for an item must be this item  not found in items table  , must be found in trash items
+        $itemInTableitems = $this->findE($id,$model);//find this item from  table items
+        if(is_string($itemInTableitems)){//this item not found in items table
+            return $itemInTableitems;
+        }
+        
+        $itemInTrash= $this->findItemOnlyTrashed($id,$model);//find this item from trash 
+        if(is_string($itemInTrash)){//this item not found in trash items table
+            return 'هذا العنصر غير موجود في سلة المحذوفات';
+        }
+            $itemInTrash->forceDelete();
+            return 200;
+    }
+
 
     
 }

@@ -53,6 +53,8 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
             if(!empty($data['image'])){
                 if($request->hasFile('image')){
                     $file_path_original_image_Category= MediaClass::store($request->file('image'),'second-sub-categories-images');//store category image
+                    $file_path_original_image_Category= str_replace("public/","",$file_path_original_image_Category);
+
                     $data['image']=$file_path_original_image_Category;
                 }else{
                     $data['image']=$category->image;
@@ -78,6 +80,8 @@ class CategoryRepository extends EloquentRepository implements CategoryRepositor
          if(!empty($data['image'])){
                if($request->hasFile('image')){
                    $file_path_original= MediaClass::store($request->file('image'),'second-sub-categories-images');//store category image
+                    $file_path_original= str_replace("public/","",$file_path_original);
+
                    $data['image']=$file_path_original;
     
                }else{

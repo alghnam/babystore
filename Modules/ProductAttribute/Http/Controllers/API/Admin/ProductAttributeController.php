@@ -251,7 +251,7 @@ class ProductAttributeController extends Controller
         } 
     }  
     public function updateDetailsArrayAttribute($id,UpdateDetailsArrayProductAttributesRequest $request){
-        try{
+        // try{
         $productArrayAttributes =  $this->productAttributeRepo->updateDetailsArrayProductAttributes($id,$request,$this->productArrayAttribute);
                if(is_string($productArrayAttributes)){
             return response()->json(['status'=>false,'message'=>$productArrayAttributes],400);
@@ -259,10 +259,10 @@ class ProductAttributeController extends Controller
             return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$productArrayAttributes->load('image')],200);
 
         
-        }catch(\Exception $ex){
-            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        // }catch(\Exception $ex){
+        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        } 
+        // } 
     }
             public function deleteManyAttributes($id){
                 try{

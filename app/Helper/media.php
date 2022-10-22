@@ -1,6 +1,5 @@
 <?php
     function typesThumbnail($media){
-//dd($media);
         if(!empty($media)){
             
         $filenamewithextension = $media->getClientOriginalName();

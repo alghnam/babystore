@@ -5,6 +5,8 @@ use Modules\Order\Http\Controllers\API\User\OrderController as OrderControllerUs
 /**************************Routes Admin***************************** */
 Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(function(){
     Route::get('/counts-all-data', [OrderControllerAdmin::class,'countsAllData'])->name('api.admin.counts-all-data');    
+    Route::get('/show-currency', [OrderControllerAdmin::class,'showCurrency'])->name('api.admin.show-currency');    
+
     Route::prefix('orders')->group(function(){
         Route::get('/', [OrderControllerAdmin::class,'index'])->name('api.admin.orders.index');    
         Route::get('/count', [OrderControllerAdmin::class,'countData'])->name('api.admin.orders.count-data');    

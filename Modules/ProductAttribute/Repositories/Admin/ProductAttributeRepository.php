@@ -63,7 +63,8 @@ class ProductAttributeRepository extends EloquentRepository implements ProductAt
                 $data= $request->validated();//req : product_id , attrs
                 foreach($data['attributes'] as $v){
                     if($v['value']==null){
-                        return 'يجب عليك الاختيار من جميع الخيارات';//cannt add your request , because you must fill all inputs
+
+                        return 'يجب عليك الاختيار من جميع الخيارات او عليك اعادة تحميل الصفحة';
                     }
                 }
                 $ProductArrayAttribute= new  ProductArrayAttribute();
@@ -131,6 +132,8 @@ class ProductAttributeRepository extends EloquentRepository implements ProductAt
                 if(!empty($data['image'])){
                    if($request->hasFile('image')){
                        $file_path_original= MediaClass::store($request->file('image'),'product-attributes-images');//store productAttribute image
+                        $file_path_original= str_replace("public/","",$file_path_original);
+
                        $data['image']=$file_path_original;
                    }else{
                        $data['image']=$productAttribute->image;
@@ -143,6 +146,13 @@ class ProductAttributeRepository extends EloquentRepository implements ProductAt
                      $productAttribute->image()->create(['url'=>$data['image'],'imageable_id'=>$productAttribute->id,'imageable_type'=>'Modules\ProductAttribute\Entities\ProductArrayAttribute']);
                  }
              }
+            //  $image=$data['image'];
+            // $img= str_replace("public/","",$image);
+            // dd($productAttribute->image);
+            // if($productAttribute->image){
+            //     $productAttribute->image->url=$img;
+                
+            // }
             return $productAttribute;
             }
             

@@ -19,18 +19,17 @@ class MediaClass {
         //create small thumbnail
         $smallthumbnailpath = public_path('storage/'.$foldername.'/thumbnail/'.$smallthumbnail);
         
-        // dd(createThumbnail($smallthumbnailpath, 150, 93));
-        createThumbnail($smallthumbnailpath, 150, 93);
+        // createThumbnail($smallthumbnailpath, 150, 93);
 
         //create medium thumbnail
         $mediumthumbnailpath = public_path('storage/'.$foldername.'/thumbnail/'.$mediumthumbnail);
 
-         createThumbnail($mediumthumbnailpath, 300, 185);
+        //  createThumbnail($mediumthumbnailpath, 300, 185);
 
         //create large thumbnail
         $largethumbnailpath = public_path('storage/'.$foldername.'/thumbnail/'.$largethumbnail);
 
-         createThumbnail($largethumbnailpath, 550, 340);
+        //  createThumbnail($largethumbnailpath, 550, 340);
         return $file_path_original;
 
     }

@@ -30,6 +30,7 @@ class EloquentRepository
         return $modelData;
     }
     public function find($id,$model){
+
         $item=$model->withoutGlobalScope(ActiveScope::class)->withTrashed()->where('id',$id)->first();
         if(empty($item)){
             return 'هذا العنصر غير موجود بالنظام';

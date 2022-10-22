@@ -106,6 +106,7 @@ class OrderController extends Controller
     //  }
          public function pricesSentDeliveredOrders(){
          $pricesSentDeliveredOrders=$this->orderRepo->pricesSentDeliveredOrders($this->order);
+         
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$pricesSentDeliveredOrders],200);
           
      }
@@ -120,8 +121,14 @@ class OrderController extends Controller
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$shippingOrders],200);
           
      }
+     public function showCurrency(){
+        $showCurrency=$this->baseRepo->countryCurrency();
+        return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$showCurrency],200);
+     }
          public function getOrdersGroupMonth(){
+
             $getOrdersGroupMonth=$this->orderRepo->getOrdersGroupMonth($this->order);
+           
             return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$getOrdersGroupMonth],200);
           
         }
