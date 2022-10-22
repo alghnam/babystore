@@ -5,7 +5,7 @@
       <v-card class="mx-auto">
         <v-card-text class="margin-top: 74px;">
           <v-avatar size="96" class="mr-4" v-if="user.image">
-            <img :src="$store.state.baseURL + '/storage/' + trimAttribute(user.image.url, '(S)')" alt="product image" />
+            <img  :src="$store.state.baseURL + '/storage/' + trimAttribute(user.image.url, '(S)')" alt="product image" />
           </v-avatar>
           <v-avatar size="96" class="mr-4" v-else>
             <img
@@ -63,7 +63,6 @@
               </v-card-title>
               <v-card-text>
                 <div class="row">
-                  {{ user }}
                   <v-text-field
                     style="width: 100%"
                     outlined
@@ -95,10 +94,11 @@
                     type="number"
                   ></v-text-field>
                   <v-img
+                  style="width: 10px;" 
                     :src="user.image ? $store.state.baseURL + '/storage/' + trimAttribute(user.image.url, '(S)') : ''"
                     v-if="!user.photo_url"
                   ></v-img>
-                  <img :src="user.photo_url" v-if="user.photo_url" style="height: 118px; width: 84px" />
+                  <img  :src="user.photo_url" v-if="user.photo_url" style="height: 118px; width: 84px" />
                   <v-file-input
                     truncate-length="15"
                     outlined

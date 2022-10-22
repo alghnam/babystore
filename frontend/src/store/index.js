@@ -5,10 +5,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    baseURL: "https://www.baby-store.sharmhostxyz.xyz",
+    baseURL: "https://www.babystore-backend.almoswaq.com",
     token: null,
     user: {},
-    snakbar: false,
+    snackbar: false,
     text: ""
   }, 
   mutations: {},

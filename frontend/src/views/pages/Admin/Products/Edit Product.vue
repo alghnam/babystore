@@ -454,7 +454,7 @@
                                             v-for="similar in productsSimilar"
                                             :key="similar.id"
                                           >
-                                            <v-card min-height="200" elevation="15">
+                                            <v-card  elevation="15">
                                               <v-img
                                                 height="100%"
                                                 width="100%"
@@ -462,7 +462,7 @@
                                                   similar.product_images.length > 0
                                                     ? $store.state.baseURL +
                                                       '/storage/' +
-                                                      trimAttribute(similar.product_images[0].filename, '(S)')
+                                                      similar.product_images[0].filename
                                                     : ''
                                                 "
                                               >
@@ -674,7 +674,7 @@
     </v-simple-table>
     <!-- edit the sub product -->
     <v-dialog
-      v-model="subPDialog"
+      v-model="subPDialog" 
       :width="$vuetify.breakpoint.name == 'xs' || $vuetify.breakpoint.name == 'sm' ? '100vw' : '40vw'"
     >
       <v-card min-height="70vh" class="pa-0">
@@ -684,7 +684,7 @@
             <v-img
               v-else-if="editedSubItem.image"
               elevation="15"
-              :src="$store.state.baseURL + '/storage/' + trimAttributeSubItem(editedSubItem.image.url, '(S)')"
+              :src="$store.state.baseURL + '/storage/' + editedSubItem.image.url"
               height="200"
             ></v-img>
           </v-col>
@@ -751,7 +751,7 @@
           <v-col cols="12" md="12" lg="12" xl="12" class="mx-auto">
             <v-img
               class="w-100"
-              :src="$store.state.baseURL + '/storage/' + trimAttributeSubItem(editedSubItem.image.url, '(S)')"
+              :src="$store.state.baseURL + '/storage/' + editedSubItem.image.url"
               v-if="editedSubItem.image"
             ></v-img>
           </v-col>
@@ -1179,8 +1179,6 @@ export default {
           },
         })
         .then((res) => {
-          console.log('tag', this.editedItem.product_array_attributes[index])
-          console.log('tag2', res.data.data.image)
 
           Object.assign(this.editedItem.product_array_attributes[index], res.data.data)
           this.subPDialog = false
@@ -1264,18 +1262,18 @@ export default {
     },
     trimAttributeSubItem(value, size) {
       if (value !== null || value !== undefined) {
-        return value
-        // let new_url = value.slice(0, 43) + 'thumbnail/' + value.slice(44)
-        // return new_url
-        // let index = new_url.length - 4
-        // let url = new_url.slice(0, index) + size + new_url.slice(index)
-        // return url.substr(0, url.length)
+        // return value
+        let new_url = value.slice(0, 32) + '/thumbnail/' + value.slice(33) 
+       return new_url 
+
+        //  let index = new_url.length - 4
+        //  let url = new_url.slice(0, index) + size + new_url.slice(index)
+        //  return url.substr(0, url.length)
       }
     },
     trimSeo(value, size) {
       let new_url = value.slice(0, 15) + 'thumbnail/' + value.slice(15)
       let index = new_url.length - 4
-
       let url = new_url.slice(0, index) + size + new_url.slice(index)
       return url.substr(0, url.length)
     },
@@ -1306,6 +1304,7 @@ export default {
     deleteOption(index) {
       this.deleteO = true
       this.main_attrs.splice(index, 1)
+
     },
     deleteArrayAttribute(id, i) {
       this.$http
@@ -1637,14 +1636,15 @@ export default {
           .get(`admin/product-attributes/destroy/${item}`)
 
           .then(res => {
+            
             this.main_attrs.splice(i, 1)
 
             this.$store.state.snackbar = true
             this.$store.state.text = res.data.message
           })
           .catch(error => {
-            this.$store.state.snackbar = true
             this.$store.state.text = error.response.data.message
+            this.$store.state.snackbar = true
           })
     },
 

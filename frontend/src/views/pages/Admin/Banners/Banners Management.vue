@@ -23,7 +23,7 @@
               <td class="text-right">
                 {{ item.product.name.text ? item.product.name.text : item.product.name }}
                 <div v-if="item.image">
-                  <img
+                  <img style="width: 100px;"
                     :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')"
                     alt="product image"
                   />
@@ -69,7 +69,7 @@
                       <v-row>
                         <v-col cols="12" xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"></v-col>
                         <v-col cols="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
-                          <v-img
+                          <v-img 
                             :src="
                               editedItem.image
                                 ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')

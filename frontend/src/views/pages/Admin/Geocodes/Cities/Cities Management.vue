@@ -229,10 +229,7 @@ export default {
     },
 
     save() {
-      // if (this.editedItem.country.id == undefined) {
-      //   this.editedItem.country.id = this.editedItem.parent_id
-      // }
-      console.log('.editedItem.country.id', this.editedItem.country.id)
+
       if (this.editedIndex > -1) {
         //edit route
         this.$http
@@ -303,7 +300,6 @@ export default {
         this.editedItem.country.id = id
       }, 1000)
 
-      console.log('this.editedItem', this.editedItem)
     },
     createItem() {
       this.dialog = true

@@ -77,14 +77,12 @@ export default {
   },
   methods: {
     logout() {
-      console.log('ffrrr')
       this.$http.get('logout').then(() => {
         localStorage.removeItem('token')
         this.$router.push('/login')
       })
     },
     goToProfile() {
-      console.log('4444', '')
       this.$router.push('/profile')
     },
   },

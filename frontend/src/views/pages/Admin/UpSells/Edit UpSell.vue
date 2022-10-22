@@ -130,11 +130,8 @@
                                         v-for="proo in productUpsells"
                                         :key="proo.id"
                                       >
-                                        <v-card elevation="15" min-height="200" class="">
-                                          <v-img
-                                            height="100%"
-                                            :src="$store.state.baseURL + '/storage/' + trimAttribute(proo.img, '(S)')"
-                                          >
+                                        <v-card elevation="15"  class="">
+                                          <v-img height="100%" :src="$store.state.baseURL + '/storage/' + proo.img">
                                             <v-btn
                                               color="red"
                                               tile
@@ -164,10 +161,17 @@
                                     v-for="upsellProduct in upsellsProduct"
                                     :key="upsellProduct"
                                   >
-                                    <v-card elevation="15" min-height="200" class="">
-                                      <v-img height="100%">
-                                        <!-- :src="$store.state.baseURL + '/storage/' + trimAttribute(upsellProduct, '(S)')" -->
-
+                                    <v-card elevation="15" class="">
+                                      <v-img
+                                        height="100%"
+                                        :src="
+                                          upsellProduct.product_images.length > 0
+                                            ? $store.state.baseURL +
+                                              '/storage/' +
+                                              upsellProduct.product_images[0].filename
+                                            : ''
+                                        "
+                                      >
                                         <v-btn
                                           color="red"
                                           tile

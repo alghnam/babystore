@@ -10,49 +10,42 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-right text-uppercase">الاسم</th>
+                     <th class="text-right text-uppercase">الاسم</th>
               <th class="text-right text-uppercase">الفئة الرئيسية</th>
               <th class="text-right text-uppercase">الفئة الفرعية</th>
+              <th class="text-right text-center text-uppercase">عليه عروض</th>
+              <th class="text-right text-center text-uppercase">السعر النهائي بعد الخصم</th>
+              <th class="text-right text-center text-uppercase">الكمية</th>
+              <th class="text-right text-center text-uppercase">السعر الأصلي</th>
               <th class="text-right text-uppercase">الوصف</th>
-              <th class="text-right text-uppercase">الكمية</th>
-              <th class="text-right text-uppercase">عداد الخصم</th>
-              <th class="text-right text-uppercase">السعر الأصلي قبل الخصم</th>
-              <th class="text-right text-uppercase">السعر بعد الخصم</th>
-              <th class="text-right text-uppercase">السعر النهائي بعد الخصم</th>
-              <th class="text-right text-uppercase">حالة الظهور</th>
-              <th class="text-right text-uppercase">الاحداث</th>
+              <th class="text-right text-center text-uppercase">حالة الظهور</th>
+              <th class="text-right text-center text-uppercase">الاحداث</th>
             </tr>
           </thead>
 
           <tbody>
             <tr v-for="item in products" :key="item.id">
-              <td class="text-right">{{ item.name }}</td>
+                            <td class="text-right">{{ item.name }}</td>
               <td class="text-right">
                 {{ item.category ? (item.category.main_category ? item.category.main_category.name : null) : null }}
               </td>
               <td class="text-right">
                 {{ item.category ? item.category.name : null }}
               </td>
-
               <td class="text-right">
-                {{ item.quantity }}
-              </td>
-              <td class="text-right">
-                {{ item.counter_discount }}
-              </td>
-              <td class="text-right">
-                {{ item.original_price }}
-              </td>
-              <td class="text-right">
-                {{ item.price_after_discount }}
+                {{ item.original_is_offers }}
               </td>
               <td class="text-right">
                 {{ item.price_discount_ends }}
               </td>
-
               <td class="text-right">
-                {{ item.description }}
+                {{ item.quantity }}
               </td>
+              <td class="text-right">
+                {{ item.original_price }}
+              </td>
+
+              <td class="text-right" v-html="item.description"></td>
 
               <td class="text-right">
                 {{ item.original_status }}

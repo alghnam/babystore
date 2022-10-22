@@ -21,7 +21,7 @@
               <th class="text-right text-center text-uppercase">عليه عروض</th>
               <th class="text-right text-center text-uppercase">السعر النهائي بعد الخصم</th>
               <th class="text-right text-center text-uppercase">الكمية</th>
-              <th class="text-right text-center text-uppercase">عداد الخصم</th>
+              <th class="text-right text-center text-uppercase">السعر الأصلي</th>
               <th class="text-right text-uppercase">الوصف</th>
               <th class="text-right text-center text-uppercase">حالة الظهور</th>
               <th class="text-right text-center text-uppercase">الاحداث</th>
@@ -47,7 +47,7 @@
                 {{ item.quantity }}
               </td>
               <td class="text-right">
-                {{ item.counter_discount }}
+                {{ item.original_price }}
               </td>
 
               <td class="text-right" v-html="item.description"></td>

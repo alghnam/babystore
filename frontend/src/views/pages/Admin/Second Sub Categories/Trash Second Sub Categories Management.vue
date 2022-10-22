@@ -43,7 +43,7 @@
         </template>
 
         <template v-slot:top>
-          <v-toolbar flat color="white"> سلة محذوفات ادارة الفئات</v-toolbar>
+          <v-toolbar flat color="white"> سلة محذوفات ادارة الفئات الفرعية الثانية</v-toolbar>
         </template>
       </v-simple-table>
     </v-col>

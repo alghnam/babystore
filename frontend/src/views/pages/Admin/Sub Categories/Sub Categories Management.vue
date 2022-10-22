@@ -32,8 +32,8 @@
                 </td>
                 <td class="text-right">
                   <div v-if="item.image">
-                    <img
-                      :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')"
+                    <img style="width: 114px;"
+                      :src="$store.state.baseURL + '/storage/' + item.image.url"
                       alt="product image"
                     />
                   </div>
@@ -78,40 +78,44 @@
                       </v-card-title>
                       <v-card-text>
                         <v-row>
-                          <v-col cols="12" xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"></v-col>
-                          <v-col cols="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
-                            <v-img
-                              :src="
-                                editedItem.image
-                                  ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
-                                  : ''
-                              "
-                              v-if="!editedItem.photo_url"
-                              contain
-                              width="200px"
-                              class="mx-auto"
-                            ></v-img>
-                            <img
-                              :src="editedItem.photo_url"
-                              v-if="editedItem.photo_url"
-                              contain
-                              width="200px"
-                              class="mx-auto"
-                            />
-                          </v-col>
-                          <v-col cols="12" xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"></v-col>
-                          <v-col cols="12" xs="12" sm="12" md="6" lg="6" xl="6" class="">
-                            <!-- image choose section -->
-                            <v-file-input
-                              truncate-length="15"
-                              outlined
-                              dense
-                              prepend-icon=""
-                              prepend-inner-icon="mdi-file"
-                              label="صورة الفئة"
-                              v-model="photo"
-                            ></v-file-input>
-                          </v-col>
+                          <v-col xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"> </v-col>
+                        <v-col xs="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
+                          <v-img
+                            :src="
+                              editedItem.image
+                                ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
+                                : ''
+                            "
+                            v-if="!editedItem.photo_url"
+                            height="200px"
+                            width="200px"
+                            class="mx-auto"
+                          ></v-img>
+                          <v-img
+                            :src="editedItem.photo_url"
+                            v-if="editedItem.photo_url"
+                            height="200px"
+                            width="200px"
+                            class="mx-auto"
+                          ></v-img>
+                        </v-col>
+                        <v-col xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"> </v-col>
+                        <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
+                          <v-text-field outlined dense label="الاسم" v-model="editedItem.name"></v-text-field>
+                        </v-col>
+
+                        <v-col xs="12" sm="12" md="6" lg="6" xl="6">
+                          <!-- image choose section -->
+                          <v-file-input
+                            truncate-length="15"
+                            outlined
+                            dense
+                            prepend-icon=""
+                            prepend-inner-icon="mdi-file"
+                            label="صورة المنتج"
+                            v-model="photo"
+                          ></v-file-input>
+                        </v-col>
                           <v-col cols="12" md="6" lg="6" xl="6" class="">
                             <v-text-field outlined dense label="الاسم" v-model="editedItem.name"></v-text-field>
                           </v-col>
@@ -226,7 +230,6 @@ export default {
       snackbar: false,
       text: null,
       color: null,
-      photos: [],
       total: 0,
       pageInfo: null,
       page: 1,
@@ -364,7 +367,6 @@ export default {
     },
 
     editItem(item) {
-      console.log('wwwwwwwwwwwwww', item)
       this.editedIndex = this.sub_categories.indexOf(item)
       let id = Number(item.main_category.id)
 

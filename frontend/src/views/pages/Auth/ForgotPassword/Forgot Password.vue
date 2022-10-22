@@ -92,8 +92,7 @@ export default {
           phone_no: this.phone_no,
         })
         .then(res => {
-         console.log('res.data.data', res.data.data)
-this.$store.state.snackbar=true
+          this.$store.state.snackbar=true
           this.$store.state.text = res.data.message
           localStorage.setItem('phone_no', this.phone_no)
           localStorage.setItem('rand', res.data.data.rand)

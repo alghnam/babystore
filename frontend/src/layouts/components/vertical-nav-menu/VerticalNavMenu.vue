@@ -30,7 +30,7 @@
     <v-list expand shaped class="vertical-nav-menu-items pr-5">
       <nav-menu-link title="لوحة التحكم" to="/dashboard" :icon="icons.mdiHomeOutline"></nav-menu-link>
 
-      <nav-menu-group title=" الحسابات" icon="mdi-chart-box">
+      <nav-menu-group title=" المستخدمين " icon="mdi-account-group">
         <nav-menu-group title="المستخدمين " icon="mdi-account-group">
           <nav-menu-link title="ادارة المستخدمين" to="/users-management"></nav-menu-link>
           <nav-menu-link title="سلة المحذوفات " to="/trash-users-management"></nav-menu-link>
@@ -39,18 +39,20 @@
           <nav-menu-link title="ادارة الادوار" to="/roles-management"></nav-menu-link>
           <nav-menu-link title="سلة المحذوفات " to="/trash-roles-management"></nav-menu-link>
         </nav-menu-group>
-
-        <nav-menu-group title="الدول " icon="mdi-flag">
-          <nav-menu-link title="ادارة الدول" to="/countries-management"></nav-menu-link>
-          <nav-menu-link title="سلة المحذوفات " to="/trash-countries-management"></nav-menu-link>
-        </nav-menu-group>
-        <nav-menu-group title="المدن " icon="mdi-map-marker-circle">
-          <nav-menu-link title="ادارة المدن" to="/cities-management"></nav-menu-link>
-          <nav-menu-link title="سلة المحذوفات " to="/trash-cities-management"></nav-menu-link>
-        </nav-menu-group>
-        <nav-menu-group title="المناطق " icon="mdi-map-marker-circle">
-          <nav-menu-link title="ادارة المناطق" to="/towns-management"></nav-menu-link>
-          <nav-menu-link title="سلة المحذوفات " to="/trash-towns-management"></nav-menu-link>
+      </nav-menu-group>
+      <nav-menu-group title=" المناطق الجغرافية " icon="mdi-flag">
+          <nav-menu-group title="الدول " icon="mdi-flag">
+            <nav-menu-link title="ادارة الدول" to="/countries-management"></nav-menu-link>
+            <nav-menu-link title="سلة المحذوفات " to="/trash-countries-management"></nav-menu-link>
+          </nav-menu-group>
+          <nav-menu-group title="المدن " icon="mdi-map-marker-circle">
+            <nav-menu-link title="ادارة المدن" to="/cities-management"></nav-menu-link>
+            <nav-menu-link title="سلة المحذوفات " to="/trash-cities-management"></nav-menu-link>
+          </nav-menu-group>
+          <nav-menu-group title="المناطق " icon="mdi-map-marker-circle">
+            <nav-menu-link title="ادارة المناطق" to="/towns-management"></nav-menu-link>
+            <nav-menu-link title="سلة المحذوفات " to="/trash-towns-management"></nav-menu-link>
+          </nav-menu-group>
         </nav-menu-group>
       </nav-menu-group>
 

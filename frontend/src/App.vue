@@ -2,9 +2,9 @@
   <component :is="resolveLayout">
     <v-snackbar v-model="$store.state.snackbar" :color="color">
       {{ $store.state.text }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn color="pink" text v-bind="attrs" @click="$store.state.snackbar = false"> اغلاق </v-btn>
+     <template v-slot:action="{ attrs }"> 
+        <v-btn color="pink" text  @click="$store.state.snackbar = false"> اغلاق </v-btn>
+        
       </template>
     </v-snackbar>
 
@@ -47,6 +47,8 @@ export default {
       snackbar:false,
       text:null
     }
+  },
+  watch:{
   },
   setup() {
     const { route } = useRouter()

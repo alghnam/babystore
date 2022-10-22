@@ -158,7 +158,6 @@ export default {
             original_status: res.data.data.original_status,
           })
 
-          console.log('this.editedItem.status.text', this.editedItem.status.text)
 
           this.$store.state.snackbar = true
           this.$store.state.text = res.data.message

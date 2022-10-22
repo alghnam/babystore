@@ -23,7 +23,7 @@
               <td class="text-right">{{ item.name }}</td>
               <td class="text-right">
                 <div v-if="item.image">
-                  <img :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')" alt=" image" />
+                  <img style="width: 100px;" :src="$store.state.baseURL + '/storage/' + trimAttribute(item.image.url, '(S)')" alt=" image" />
                 </div>
               </td>
               <td class="text-center">
@@ -320,7 +320,7 @@ export default {
       }
     },
     showTrash() {
-      this.$router.push('/trash-sub-categories-management')
+      this.$router.push('/trash-second-sub-categories-management')
     },
     getMainCategories() {
       this.$http

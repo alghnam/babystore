@@ -226,7 +226,6 @@ export default {
               this.$store.state.text = error.response.data.message
             this.dialog = false
 
-            console.log('555', this.$store.state.text)
             }
           })
       } else {
