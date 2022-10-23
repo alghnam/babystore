@@ -375,8 +375,8 @@ export default {
           })
           .then(res => {
             this.close()
-            Object.assign(this.banners[this.editedIndex], res.data.data)
 
+            Object.assign(this.banners[this.editedIndex], res.data.data)
             this.$store.state.snackbar = true
             this.$store.state.text = res.data.message
           })

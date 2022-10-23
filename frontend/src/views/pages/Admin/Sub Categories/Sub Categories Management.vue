@@ -32,7 +32,8 @@
                 </td>
                 <td class="text-right">
                   <div v-if="item.image">
-                    <img style="width: 114px;"
+                    <img
+                      style="width: 114px"
                       :src="$store.state.baseURL + '/storage/' + item.image.url"
                       alt="product image"
                     />
@@ -79,43 +80,37 @@
                       <v-card-text>
                         <v-row>
                           <v-col xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"> </v-col>
-                        <v-col xs="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
-                          <v-img
-                            :src="
-                              editedItem.image
-                                ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
-                                : ''
-                            "
-                            v-if="!editedItem.photo_url"
-                            height="200px"
-                            width="200px"
-                            class="mx-auto"
-                          ></v-img>
-                          <v-img
-                            :src="editedItem.photo_url"
-                            v-if="editedItem.photo_url"
-                            height="200px"
-                            width="200px"
-                            class="mx-auto"
-                          ></v-img>
-                        </v-col>
-                        <v-col xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"> </v-col>
-                        <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
-                          <v-text-field outlined dense label="الاسم" v-model="editedItem.name"></v-text-field>
-                        </v-col>
+                          <v-col xs="12" sm="12" md="6" lg="6" xl="6" class="mx-auto">
+                            <v-img
+                              :src="
+                                editedItem.image
+                                  ? $store.state.baseURL + '/storage/' + trimAttribute(editedItem.image.url, '(S)')
+                                  : ''
+                              "
+                              v-if="!photo"
+                              height="200px"
+                              width="200px"
+                              class="mx-auto"
+                            ></v-img>
+                            <v-img :src="img" v-else-if="photo" height="200px" width="200px" class="mx-auto"></v-img>
+                          </v-col>
+                          <v-col xs="12" sm="12" md="3" lg="3" xl="3" class="mx-auto"> </v-col>
+                          <v-col cols="12" md="6" lg="6" xl="6" class="mx-auto">
+                            <v-text-field outlined dense label="الاسم" v-model="editedItem.name"></v-text-field>
+                          </v-col>
 
-                        <v-col xs="12" sm="12" md="6" lg="6" xl="6">
-                          <!-- image choose section -->
-                          <v-file-input
-                            truncate-length="15"
-                            outlined
-                            dense
-                            prepend-icon=""
-                            prepend-inner-icon="mdi-file"
-                            label="صورة المنتج"
-                            v-model="photo"
-                          ></v-file-input>
-                        </v-col>
+                          <v-col xs="12" sm="12" md="6" lg="6" xl="6">
+                            <!-- image choose section -->
+                            <v-file-input
+                              truncate-length="15"
+                              outlined
+                              dense
+                              prepend-icon=""
+                              prepend-inner-icon="mdi-file"
+                              label="صورة المنتج"
+                              v-model="photo"
+                            ></v-file-input>
+                          </v-col>
                           <v-col cols="12" md="6" lg="6" xl="6" class="">
                             <v-text-field outlined dense label="الاسم" v-model="editedItem.name"></v-text-field>
                           </v-col>
@@ -215,6 +210,7 @@ export default {
         // photo: null,
         image: null,
       },
+      img: null,
       defaultItem: {
         id: null,
         main_category: {
@@ -240,7 +236,10 @@ export default {
       if (val) {
         let reader = new FileReader()
         reader.addEventListener('load', e => {
-          this.editedItem.photo_url = e.target.result
+          setTimeout(() => {
+            this.editedItem.photo_url = e.target.result
+            this.img = e.target.result
+          }, 1000)
         })
         reader.readAsDataURL(val)
       } else {
@@ -409,7 +408,8 @@ export default {
       this.dialog = false
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
-
+        this.img = null
+        this.photo = null
         this.editedIndex = -1
       })
     },
