@@ -1,0 +1,13 @@
+{
+    "name": "SystemReview",
+    "alias": "systemreview",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\SystemReview\\Providers\\SystemReviewServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
