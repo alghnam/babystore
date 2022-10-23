@@ -1,0 +1,13 @@
+{
+    "name": "Geocode",
+    "alias": "geocode",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Geocode\\Providers\\GeocodeServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

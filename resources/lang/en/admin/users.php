@@ -1,0 +1,21 @@
+<?php
+return [
+    'Users Management'=>'Users Management',
+    'Create'=>'Create',
+    'view users in trash'=>'view users in trash',
+    'Name/Email'=>'Name/Email',
+    'Password'=>'Password',
+    'First Name'=>'First Name',
+    'Last Name'=>'Last Name',
+    'Image'=>'Image',
+    'Country'=>'Country',
+    'City'=>'City',
+    'Town'=>'Town',
+    'Phone No1.'=>'Phone No1.',
+    'Phone No2.'=>'Phone No2.',
+    'Status'=>'Status',
+    'Created At'=>'Created At',
+    'Delete'=>'Delete',
+    'Edit'=>'Edit',
+    'Show'=>'Show',
+];

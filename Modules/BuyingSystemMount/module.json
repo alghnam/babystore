@@ -1,0 +1,13 @@
+{
+    "name": "BuyingSystemMount",
+    "alias": "buyingsystemmount",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\BuyingSystemMount\\Providers\\BuyingSystemMountServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
