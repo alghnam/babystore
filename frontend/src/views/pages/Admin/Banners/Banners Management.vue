@@ -358,7 +358,7 @@ export default {
       let formData = []
 
       formData = new FormData()
-      formData.append('image', this.photo)
+      this.photo ? formData.append('image', this.photo) : ""
       formData.append('product_id', this.product_id)
       formData.append('title', this.editedItem.title)
       formData.append('status', this.editedItem.status)
@@ -374,9 +374,8 @@ export default {
             },
           })
           .then(res => {
-            this.close()
-
             Object.assign(this.banners[this.editedIndex], res.data.data)
+            this.close()
             this.$store.state.snackbar = true
             this.$store.state.text = res.data.message
           })
@@ -396,8 +395,8 @@ export default {
           })
 
           .then(res => {
-            this.close()
             this.banners.push(res.data.data)
+            this.close()
 
             this.$store.state.snackbar = true
             this.$store.state.text = res.data.message

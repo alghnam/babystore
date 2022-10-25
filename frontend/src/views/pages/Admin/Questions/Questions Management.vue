@@ -71,17 +71,9 @@
                           dense
                           label="اختر الفئة"
                           :items="questionCategorieso"
-                          v-model="editedItem.question_category.name"
+                          v-model="editedItem.question_category.id"
                         ></v-select>
-                        <v-select
-                          v-else
-                          class="col-sm-5 mx-auto"
-                          outlined
-                          dense
-                          label="اختر الفئة"
-                          :items="questionCategorieso"
-                          v-model="editedItem.question_category"
-                        ></v-select>
+                      
                         <v-text-field
                           class="col-sm-5 mx-auto"
                           outlined
@@ -95,7 +87,7 @@
                           :editorToolbar="customToolbar"
                         ></vue-editor>
 
-                        <div class="col-sm-5 mx-auto row">
+                        <div class="col-sm-5 mx-auto row" style="margin-top: 42px;">
                           <v-btn
                             color="primary lighten-1 rounded-tr-xl rounded-bl-xl"
                             class="col-sm-5 mx-auto"
@@ -200,7 +192,7 @@ export default {
     dialog(val) {
       val || this.close()
     },
-    'editedItem.question_category.name': {
+    'editedItem.question_category.id': {
       handler: function (val) {
         this.editedItem.question_category.id = val
       },
@@ -300,12 +292,9 @@ export default {
           })
       }
     },
-    editItem(item) {
-      this.dialog = true
-      this.editedIndex = this.questions.indexOf(item)
-      // Object.assign(this.editedItem, {
-      //   ...item,
-      // })
+ editItem(item) {
+
+            this.editedIndex = this.questions.indexOf(item)
       let id = Number(item.question_category.id)
 
       this.editedItem = {}
@@ -315,9 +304,11 @@ export default {
           ...item,
         },
       )
+      console.log('this.editedItem.question_category',this.editedItem.question_category)
       setTimeout(() => {
         this.editedItem.question_category.id = id
       }, 1000)
+      this.dialog = true
     },
     createItem() {
       this.dialog = true

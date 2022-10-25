@@ -832,7 +832,7 @@ export default {
 
       formData = new FormData()
 
-      formData.append('image', this.photo)
+      this.photo ? formData.append('image', this.photo) : ""
 
       formData.append('product_id', this.product_id)
       formData.append('quantity', attribute.quantity)
@@ -965,35 +965,35 @@ export default {
           this.$store.state.text = error.response.data.message
         })
     },
-    saveSeoProduct() {
-      let formData = []
+    // saveSeoProduct() {
+    //   let formData = []
 
-      formData = new FormData()
+    //   formData = new FormData()
 
-      this.photos_seo.forEach(file => {
-        formData.append('seo_images[]', file)
-      })
-      formData.append('slug', this.editedItem.seo.slug)
-      formData.append('title', this.editedItem.seo.title)
-      formData.append('meta_description', this.editedItem.seo.meta_description)
-      formData.append('product_id', this.product_id)
-      this.$http
-        .post(`admin/seos/update/${this.editedItem.seo.id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        })
+    //   this.photos_seo.forEach(file => {
+    //     formData.append('seo_images[]', file)
+    //   })
+    //   formData.append('slug', this.editedItem.seo.slug)
+    //   formData.append('title', this.editedItem.seo.title)
+    //   formData.append('meta_description', this.editedItem.seo.meta_description)
+    //   formData.append('product_id', this.product_id)
+    //   this.$http
+    //     .post(`admin/seos/update/${this.editedItem.seo.id}`, formData, {
+    //       headers: {
+    //         'Content-Type': 'multipart/form-data',
+    //         'X-Requested-With': 'XMLHttpRequest',
+    //       },
+    //     })
 
-        .then(res => {
-          this.$store.state.snackbar = true
-          this.$store.state.text = res.data.message
-        })
-        .catch(error => {
-          this.$store.state.snackbar = true
-          this.$store.state.text = error.response.data.message
-        })
-    },
+    //     .then(res => {
+    //       this.$store.state.snackbar = true
+    //       this.$store.state.text = res.data.message
+    //     })
+    //     .catch(error => {
+    //       this.$store.state.snackbar = true
+    //       this.$store.state.text = error.response.data.message
+    //     })
+    // },
     async saveSimilarProduct() {
       let dum_products_sim = []
       if (this.productsSimilar) {

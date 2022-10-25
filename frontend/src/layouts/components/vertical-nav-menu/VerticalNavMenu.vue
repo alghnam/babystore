@@ -27,9 +27,13 @@
     </div>
 
     <!-- Navigation Items -->
-    <v-list expand shaped class="vertical-nav-menu-items pr-5">
-      <nav-menu-link title="لوحة التحكم" to="/dashboard" :icon="icons.mdiHomeOutline"></nav-menu-link>
-
+    <v-list expand shaped class="vertical-nav-menu-items pr-5" no-acion flat> 
+      <!-- <nav-menu-link title="لوحة التحكم" to="/dashboard" :icon="icons.mdiHomeOutline" flat ></nav-menu-link> --></nav-menu-link>
+      <v-list-item link exact to="/">
+      <v-list-item-icon>
+      <v-icon>mdi-home</v-icon>
+      </v-list-item-icon>
+      <v-list-item-title>الرئيسية</v-list-item-title></v-list-item>
       <nav-menu-group title=" المستخدمين " icon="mdi-account-group">
         <nav-menu-group title="المستخدمين " icon="mdi-account-group">
           <nav-menu-link title="ادارة المستخدمين" to="/users-management"></nav-menu-link>

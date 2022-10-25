@@ -246,7 +246,7 @@ export default {
 
       formData = new FormData()
 
-      formData.append('image', this.photo)
+      this.photo ? formData.append('image', this.photo) : ""
       formData.append('name', this.editedItem.name)
 
       formData.append('status', 1)

@@ -319,7 +319,7 @@ export default {
         this.editedItem.main_category.id = this.editedItem.parent_id
       }
       formData.append('parent_id', this.editedItem.main_category.id)
-      formData.append('image', this.photo)
+      this.photo ? formData.append('image', this.photo) : ""
       if (this.editedIndex > -1) {
         //edit route
         this.$http
