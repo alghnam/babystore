@@ -133,13 +133,29 @@ class OrderController extends Controller
           
         }
         public function getAllPaginates(Request $request){
-            // try{
+            try{
                 
                 $orders=$this->orderRepo->getAllPaginates($this->order,$request);
              if(is_string($orders)){
                     return response()->json(['status'=>false,'message'=>$orders],400);
                 }
             return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$orders],200);
+
+        
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+
+        } 
+    }
+    
+    public function getAllProductsOrderPaginates(Request $request,$id){
+        // try{
+                
+                $products=$this->orderRepo->getAllProductsOrderPaginates($request,$this->order,$id);
+             if(is_string($products)){
+                    return response()->json(['status'=>false,'message'=>$products],400);
+                }
+            return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$products],200);
 
         
         // }catch(\Exception $ex){

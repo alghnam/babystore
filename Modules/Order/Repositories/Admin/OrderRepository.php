@@ -112,4 +112,9 @@ class OrderRepository extends EloquentRepository implements OrderRepositoryInter
        return  $arrOrdersGroupMonth;
     }
 
+            public function getAllProductsOrderPaginates($request,$model,$id){
+       $getAllProductsOrderPaginates= $model->where(['id'=>$id])->first();
+        return $getAllProductsOrderPaginates->productArrayAttributes()->with(['product'])->paginate($request->total);
+
+    }
     }

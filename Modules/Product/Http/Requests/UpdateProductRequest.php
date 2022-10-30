@@ -63,7 +63,7 @@ class UpdateProductRequest extends FormRequest
 
                 'quantity'=>['required','numeric'],
             'original_price' => ['required','numeric'],
-                'price_discount_ends'=>['required','numeric'],
+            'price_discount_ends' => ['nullable'],
                             'is_offers' => ['required', 'in:1,0'],
 
                 'status' => ['required', 'in:1,0']

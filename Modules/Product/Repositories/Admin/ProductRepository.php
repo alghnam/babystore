@@ -125,6 +125,9 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
     // methods overrides
     public function store($request,$model){
         $data=$request->validated();
+        if($data['is_offers']==0){
+            $data['price_discount_ends']=$data['original_price'];
+        }
               if($data['original_price']==0){
             return 'يجب ان يتجاوز السعر الاصلي  : الصفر';
         }
@@ -158,7 +161,11 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
         $product=$this->find($id,$model);
         if(!empty($product)){
             
+            
             $data= $request->validated();
+                    if($data['is_offers']==0){
+            $data['price_discount_ends']=$data['original_price'];
+        }
               if($data['original_price']==0){
             return 'يجب ان يتجاوز السعر الاصلي  : الصفر';
         }

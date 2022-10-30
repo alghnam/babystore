@@ -50,7 +50,7 @@ class StoreCityRequest extends FormRequest
             'name' => 'required|unique:cities|max:255',
             'code' => ['required', 'max:100'],
             'decription'=>['max:1000'],
-            'country_id' => ['numeric','exists:countries,id'],
+            'country_id' => ['required','numeric','exists:countries,id'],
 
             'status' => ['required', 'in:1,0']
         ];

@@ -53,9 +53,9 @@ class StoreProductRequest extends FormRequest
             'description' => ['nullable'],
             'quantity' => ['numeric'],
             'original_price' => ['required','numeric'],
-            'price_discount_ends' => ['numeric'],
+            'price_discount_ends' => ['nullable'],
             'category_id' => ['required','numeric','exists:categories,id,parent_id,!null'],
-                        'sub_category_id' => ['nullable','numeric','exists:sub_categoriess,id'],
+            'sub_category_id' => ['nullable','numeric','exists:sub_categoriess,id'],
 
             // 'product_images'=>['sometimes', 'array','mimes:jpeg,bmp,png,gif,svg'],
             'product_images'=>['sometimes', 'array'],

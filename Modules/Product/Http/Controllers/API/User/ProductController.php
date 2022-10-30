@@ -382,7 +382,12 @@ public function showAttributesProduct($id){
     
       public function showAttributeIdForArray(Request $request,$id){
            // try{
+           
           $data=$request->all();
+          if(empty($data['attributes'])){
+                return response()->json(['status'=>false,'message'=>'يجب عليك الاختيار من الخصائص المعروضة أمامك']);
+              
+          }
           $ProductArrayAttributes=ProductArrayAttribute::where(['product_id'=>$id])->get();
          $arr=[];
           $attrs=json_decode($data['attributes'],true);

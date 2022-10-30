@@ -85,6 +85,12 @@ class ProductAttributeRepository extends EloquentRepository implements ProductAt
             }
             public function saveDetailsArrayProductAttributes($request,$model){
                  $data= $request->validated();//req : product_id , attrs
+                 $product =Product::find($data['product_id']);
+
+                  if($product->is_offers==0){
+                     $data['price_discount_ends']=$data['original_price'];
+                     
+                 }
                              if($data['original_price']==0){
             return 'يجب ان يتجاوز السعر الاصلي  : الصفر';
         }
@@ -99,6 +105,11 @@ class ProductAttributeRepository extends EloquentRepository implements ProductAt
             }            
             public function updateDetailsArrayProductAttributes($id,$request,$model){
                  $data= $request->validated();//req : product_id , attrs
+                $product =Product::find($data['product_id']);
+                 if($product->is_offers==0){
+                     $data['price_discount_ends']=$data['original_price'];
+                     
+                 }
                              if($data['original_price']==0){
             return 'يجب ان يتجاوز السعر الاصلي  : الصفر';
         }
@@ -111,7 +122,6 @@ class ProductAttributeRepository extends EloquentRepository implements ProductAt
                 $enteredData=  Arr::except($data ,['image']);
                $productAttribute= ProductArrayAttribute::where('id',$id)->first();
                $productAttribute->update($enteredData);
-                               $product =Product::find($data['product_id']);
                  
                  $totalQuantityAttrs=0;
                  $totalPriceAttrs=0;

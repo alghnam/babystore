@@ -38,7 +38,8 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
 
     }
 
- public function search($model,$words,$request){
+
+ public function search($model,$words){
             $user=auth()->guard('api')->user();
                 if($user==null){
                     //generate session id
@@ -47,64 +48,27 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
                         $session_id= Str::random(30);
                         Storage::put('session_id',$session_id);
                         Search::insert(['word'=>$words,'session_id'=>$session_id]);
-                       
-                         $modelData=$model->where(function ($query) use ($words) {
-                              $query->where('name', 'like', '%' . $words . '%');
-                         })->with(['productImages'])->paginate($request->total);
+
                     }else{
+                        
                        Search::insert(['word'=>$words,'session_id'=>$session_id]);
-                     
-                        Search::insert(['word'=>$words,'session_id'=>$session_id]);
                         $modelData=$model->where(function ($query) use ($words) {
-                        $query->where('name', 'like', '%' . $words . '%');
-                        })->with(['productImages'])->paginate($request->total);
+                              $query->where('name', 'like', '%' . $words . '%');
+                         })->with(['productImages'])->get();
                         
                     }
                 }else{
                     Search::insert(['word'=>$words,'user_id'=>$user->id]);
-                    
                     $modelData=$model->where(function ($query) use ($words) {
-                    $query->where('name', 'like', '%' . $words . '%');
-                     })->with(['productImages','favorites'=> function ($hasMany) {
+                              $query->where('name', 'like', '%' . $words . '%');
+                         })->with(['productImages','favorites'=> function ($hasMany) {
                         $hasMany->where('user_id', auth()->guard('api')->user()->id);
-                    }])->paginate($request->total);
+                    }])->get();
                 }
-            $location = geoip(request()->ip());
-            if($location->currency!==config('constants.currency_system')){
-                //convert this price that in dinar into currency user
-                foreach($modelData as $pro){
-                    $pro->currency_country=$this->baseRepo->countryCurrency();
-                    if($pro->original_price){
-                        $convertingOriginalPrice =  $this->baseRepo->priceCalculation($pro->original_price);
-                        $pro->original_price=$convertingOriginalPrice;
-                    }
-                    if($pro->price_discount_ends){
-                        $convertingPriceEnds =  $this->baseRepo->priceCalculation($pro->price_discount_ends);
-                        $pro->price_discount_ends=$convertingPriceEnds;
-                    }
-                    if($pro->productArrayAttributes){
-                    foreach($pro->productArrayAttributes as $attr){
-                         //convert this price that in dinar into currency user
-                        if($attr->original_price){
-                            $convertingOriginalPrice =  $this->baseRepo->priceCalculation($attr->original_price);
-                            $attr->original_price=$convertingOriginalPrice;
-                        }
-                        if($attr->price_discount_ends){
-                            $convertingPriceEnds =  $this->baseRepo->priceCalculation($attr->price_discount_ends);
-                            $attr->price_discount_ends=$convertingPriceEnds;
-                        }
-                    }
-                }
-                    
-                }
-            //   dd($modelData);
-            
-            }
 
        return  $modelData;
    
     }
-
         public function searchMoreSale($model,$words,$request){
             $user=auth()->guard('api')->user();
                 if($user==null){
@@ -1356,7 +1320,7 @@ class ProductRepository extends EloquentRepository implements ProductRepositoryI
     // methods overrides
 
     public function showAttributeIdForArray(Request $request){
-        // dd($request->attributes);
+        
        $showAttributeIdForArray= ProductArrayAttribute::where(['attributes'=>$request->attributes])->first();
        if(empty($showAttributeIdForArray)){
            return 'غير موجود بالنظام , من فضلك حاول الاختيار مرة اخرى';

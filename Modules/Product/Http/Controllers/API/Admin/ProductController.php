@@ -164,7 +164,7 @@ class ProductController extends Controller
       */
      public function store(StoreProductRequest $request)
      {
-        //   try{
+           try{
          $product=$this->productRepo->store($request,$this->product);
                   if(is_string($product)){
             return response()->json(['status'=>false,'message'=>$product],400);
@@ -172,10 +172,10 @@ class ProductController extends Controller
           return response()->json(['status'=>true,'message'=>config('constants.success'),'data'=>$product],200);
 
         
-        // }catch(\Exception $ex){
-        //     return response()->json(['status'=>false,'message'=>config('constants.error')],500);
+        }catch(\Exception $ex){
+            return response()->json(['status'=>false,'message'=>config('constants.error')],500);
 
-        // } 
+        } 
      }
  
      /**

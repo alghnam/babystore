@@ -9,7 +9,7 @@ use App\Scopes\ActiveScope;
 class MovementRepository extends EloquentRepository implements MovementRepositoryInterface
 {
         public function getAllPaginates($model,$request){
-        $modelData=$model->with('wallet')->withoutGlobalScope(ActiveScope::class)->latest()->paginate($request->total);
+        $modelData=$model->with('wallet.user')->withoutGlobalScope(ActiveScope::class)->latest()->paginate($request->total);
           return  $modelData;
     }
   
@@ -19,7 +19,7 @@ class MovementRepository extends EloquentRepository implements MovementRepositor
             return 'لا يوجد اي عناصر في سلة المحذوفات الى الان';
 
         }
-       $modelData=$this->findAllItemsOnlyTrashed($model)->withoutGlobalScope(ActiveScope::class)->with(['wallet'])->paginate($request->total);
+       $modelData=$this->findAllItemsOnlyTrashed($model)->withoutGlobalScope(ActiveScope::class)->with(['wallet.user'])->paginate($request->total);
         return $modelData;
     }
 }

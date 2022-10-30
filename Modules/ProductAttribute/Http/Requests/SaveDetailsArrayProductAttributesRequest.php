@@ -55,7 +55,7 @@ class SaveDetailsArrayProductAttributesRequest extends FormRequest
                   'product_id' => ['required','numeric','exists:products,id'],
                 'quantity' => ['required','numeric'],
                 'original_price' => ['required','numeric'],
-                'price_discount_ends' => ['required','numeric'],
+                'price_discount_ends' => ['nullable'],
                 'sku' => ['nullable','max:255'],
                 'barcode' => ['nullable','max:255',Rule::unique('storage_details')],
                 'weight' => ['nullable','max:255'],

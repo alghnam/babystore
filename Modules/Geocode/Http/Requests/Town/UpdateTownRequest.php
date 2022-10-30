@@ -52,7 +52,7 @@ class UpdateTownRequest extends FormRequest
         return [
             'name' => ['required','max:225',Rule::unique('towns')->ignore($this->id)],
             'status' => ['sometimes', 'in:1,0'],
-            'city_id' => ['numeric','exists:cities,id'],
+            'city_id' => ['required','numeric','exists:cities,id'],
 
         ];
     }

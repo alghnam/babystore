@@ -17,6 +17,8 @@ Route::prefix('admin')->middleware(['auth:api'])->namespace('API')->group(functi
         Route::get('/get-all-paginates', [OrderControllerAdmin::class,'getAllPaginates'])->name('api.admin.orders.get-all-orders-paginate');
         Route::get('/latest', [OrderControllerAdmin::class,'getLatestOrders'])->name('api.admin.orders.get-latest-orders');
             
+        Route::get('/get-all-products-order-paginates/{id}', [OrderControllerAdmin::class,'getAllProductsOrderPaginates'])->name('api.admin.orders.get-all-products-order-paginates');
+
         Route::get('trash', [OrderControllerAdmin::class,'trash'])->name('api.admin.orders.trash');
         Route::get('restore-all', [OrderControllerAdmin::class,'restoreAll'])->name('api.admin.orders.restore-all');
         Route::get('restore/{id}', [OrderControllerAdmin::class,'restore'])->name('api.admin.orders.restore');
